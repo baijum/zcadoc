@@ -1424,6 +1424,108 @@ handlers registered for the event::
   'datetime'
 
 
+ZCA usage in Zope
+-----------------
+
+.. note::
+
+  This chapter is not yet completed.  I welcome your suggestions :)
+
+Zope Component Architecture is used in both Zope 3 and Zope 2.  This
+chapter go through ZCA usage in Zope.
+
+
+ZCML
+~~~~
+
+The Zope Configuration Markup Language (ZCML) is an XML based
+configuration system for registration of components.  So, instead of
+using Python API for registration, you can use ZCML.  But to use ZCML,
+unfortunately, you will be required to install more dependency
+packages.
+
+To install these packages::
+
+  $ easy_install "zope.component [zcml]"
+
+To register an adapter::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      factory=".company.EmployeeSalary"
+      provides=".interfaces.ISalary"
+      for=".interfaces.IEmployee" 
+      />
+
+The `provides` and `for` attributes are optional, provided you have
+declared it in the implementation::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      factory=".company.EmployeeSalary"
+      />
+
+If you want to register the component as named adapter, you can give a
+`name` attribute::
+
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      factory=".company.EmployeeSalary"
+      name="salary"
+      />
+
+Utilities are also registered similarly.
+
+To register an utility::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      component=".database.connection"
+      provides=".interfaces.IConnection"
+      />
+
+The `provides` attribute is optional, provided you have declared it in
+the implementation::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      component=".database.connection"
+      />
+
+If you want to register the component as named adapter, you can give a
+`name` attribute::
+
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      component=".database.connection"
+      name="Database Connection"
+      />
+
+Instead of directly using the component, you can also give a factory::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      factory=".database.Connection"
+      />
+
+
+Adapater
+~~~~~~~~
+
+
+Utility
+~~~~~~~
+
+
 Reference
 ---------
 
@@ -3757,7 +3859,6 @@ Example::
       3. A chapter on usage of ZCA in Zope 3
       4. A chapter on implementation of ZCA
 
-  - A note about adapter pattern and adapter in Zope 3.
   - Introduction should elaborate why objects should have formal interfaces.
   - In adapter chapter describe why it is beneficial to register the adapter.
   - A note about registration of components using ZCML in Zope 3
