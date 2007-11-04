@@ -1522,9 +1522,29 @@ Instead of directly using the component, you can also give a factory::
       factory=".database.Connection"
       />
 
-Registering 
-Adapater
-~~~~~~~~
+TODO: Registration of subscription adapter & handler
+
+
+Adapter
+~~~~~~~
+
+ - zope.app.container.contained.NameChooser
+ - zope.location.traversing.LocationPhysicallyLocatable
+ - zope.size.DefaultSized
+ - zope.app.zptpage.ZPTReadFile
+   zope.app.zptpage.ZPTWriteFile
+   zope.app.zptpage.Sized
+ - zope.app.publication.traversers.NoTraverser
+ - zope.app.file.FileReadFile
+   zope.app.file.FileWriteFile
+ - zope.app.principalannotation.annotations
+ - zope.app.keyreference.persistent.KeyReferenceToPersistent
+ - zope.app.folder.filerepresentation.ReadDirectory
+ - zope.securitypolicy.rolepermission.AnnotationRolePermissionManager
+ - zope.annotation.attribute.AttributeAnnotations
+ - zope.traversing.adapters.Traverser
+ - zope.traversing.adapters.DefaultTraversable
+ - zope.traversing.adapters.RootPhysicallyLocatable
 
 
 Utility
@@ -3859,7 +3879,6 @@ Example::
 
   - Chapters planned for future (priority wise):
 
-      1. A chapter on usage of ZCA in Zope
-      2. A case study: desktop application
-      3. A chapter on testing ZCA based application
-      4. A chapter on implementation of ZCA
+      1. A case study: desktop application
+      2. A chapter on testing ZCA based application
+      3. A chapter on implementation of ZCA
