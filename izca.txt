@@ -485,8 +485,8 @@ Zope component architecture provides `adapter` components to solve
 these kinds of problems.  In fact, `GuestRegistrarNG` is an adapter
 without explicit interface declaration.  This tutorial will discuss
 adapters after introducing the concept of interfaces.  Interfaces are
-one of the foundations Zope components, so understanding the concept
-and usage of interfaces is very important.
+one of the foundations of Zope components, so understanding the
+concept and usage of interfaces is very important.
 
 
 Interface
@@ -497,13 +497,16 @@ Introduction
 ~~~~~~~~~~~~
 
 `Design Patterns` is a classic book in software engineering by the
-`Gang of Four` [#patternbook]_ .  In this book they recommend: Program
-to an interface, not to an implementation.  Interface define the
-behaviour and state of objects.  An interface describes how you work
-with the object.  If you like metaphor, think of interface as a
-`contract for object`.  Another metaphor which may help is `blueprint
-for objects`.  In the code, methods and attributes are forming the
-object's interface.
+`Gang of Four` [#patternbook]_ .  In this book they recommend:
+"Program to an interface, not an implementation".  Defining formal
+interfaces helps you better understand system.  Moreover interface
+brings you all the benefits of ZCA.
+
+Interface define the behaviour and state of objects.  An interface
+describes how you work with the object.  If you like metaphor, think
+of interface as a `contract for object`.  Another metaphor which may
+help is `blueprint for objects`.  In the code, methods and attributes
+are forming the object's interface.
 
 The notion of interface is very explicit in mordern languages like
 Java, C#, VB.NET etc.  Also these languages provide some syntax for
@@ -687,7 +690,7 @@ be an interface from Zope component architecture point of view.  An
 interface can be implemented, as you already noted, in a class or any
 other callable object.
 
-The registrar interface defined here is `IRegistrar` .  The
+The registrar interface defined here is `IRegistrar`.  The
 documentation string for interface gives an idea about the object.  By
 defining a method in the interface, you made a contract for the
 component, that there will be a method with same name available.  For
@@ -1517,7 +1520,7 @@ Instead of directly using the component, you can also give a factory::
       factory=".database.Connection"
       />
 
-
+Registering 
 Adapater
 ~~~~~~~~
 
@@ -3854,12 +3857,7 @@ Example::
 
   - Chapters planned for future (priority wise):
 
-      1. A case study: desktop application
-      2. A chapter on testing ZCA based application
-      3. A chapter on usage of ZCA in Zope 3
+      1. A chapter on usage of ZCA in Zope
+      2. A case study: desktop application
+      3. A chapter on testing ZCA based application
       4. A chapter on implementation of ZCA
-
-  - Introduction should elaborate why objects should have formal interfaces.
-  - In adapter chapter describe why it is beneficial to register the adapter.
-  - A note about registration of components using ZCML in Zope 3
-  - Add `See also` note in reference
