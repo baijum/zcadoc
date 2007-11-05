@@ -150,6 +150,8 @@ all these eggs in the same line.)::
   $ easy_install /path/to/zope.proxy-3.4.x.tar.gz
   ...
 
+These methods install ZCA to the ``system Python``, which Jim Fulton
+describes as "evil, evil, evil, evil".
 
 Experimenting with code
 ~~~~~~~~~~~~~~~~~~~~~~~
