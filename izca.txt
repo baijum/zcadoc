@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.91
+:Version: 0.3.92
 
 Copyright (C) 2007 Baiju M <baiju.m.mail AT gmail.com>.
 
@@ -193,7 +193,7 @@ code in this book.
 Using `zc.buildout` with `zc.recipe.egg` recipe you can create Python
 interpreter with specified Python eggs.  First, install `zc.buildout`
 using `easy_install` command.  (You may also do it inside virtual
-environment) .  To create new buildout to experiment with Python eggs,
+environment).  To create new buildout to experiment with Python eggs,
 first create a directory and initialize it using ``buildout init``
 command::
 
@@ -236,6 +236,7 @@ code in this book.
 .. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
 .. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
 .. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
+
 
 An example
 ----------
@@ -2557,7 +2558,7 @@ Return the interfaces implemented for a class' instances.
 
  - Signature: `implementedBy(class_)`
 
-Example::
+Example 1::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -2576,6 +2577,32 @@ Example::
   >>> from zope.interface import implementedBy
   >>> implementedBy(Greeter)
   <implementedBy __builtin__.Greeter>
+
+Example 2::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+  >>> from zope.interface import implements
+
+  >>> class IPerson(Interface):
+  ...     name = Attribute("Name of person")
+
+  >>> class ISpecial(Interface):
+  ...     pass
+
+  >>> class Person(object):
+  ...     implements(IPerson)
+  ...     name = u""
+
+  >>> from zope.interface import classImplements
+  >>> classImplements(Person, ISpecial)
+
+  >>> from zope.interface import implementedBy
+  
+  To get a list of all interfaces implemented by that class::
+  
+  >>> [x.__name__ for x in implementedBy(Person)]
+  ['IPerson', 'ISpecial']
 
 
 implementer
@@ -2793,7 +2820,7 @@ asserting that it implements an extended interface.
 
  - Signature: `providedBy(object)`
 
-Example::
+Example 1::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2816,6 +2843,33 @@ Example::
   >>> from zope.interface import providedBy
   >>> IPerson in providedBy(jack)
   True
+
+Example 2::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+  >>> from zope.interface import implements
+
+  >>> class IPerson(Interface):
+  ...     name = Attribute("Name of person")
+
+  >>> class ISpecial(Interface):
+  ...     pass
+
+  >>> class Person(object):
+  ...     implements(IPerson)
+  ...     name = u""
+
+  >>> from zope.interface import classImplements
+  >>> classImplements(Person, ISpecial)
+  >>> from zope.interface import providedBy
+  >>> jack = Person()
+  >>> jack.name = "Jack"
+  
+  To get a list of all interfaces provided by that object::
+  
+  >>> [x.__name__ for x in providedBy(jack)]
+  ['IPerson', 'ISpecial']
 
 
 queryAdapter
