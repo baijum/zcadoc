@@ -152,25 +152,19 @@ all these eggs in the same line.)::
   $ easy_install /path/to/zope.proxy-3.4.x.tar.gz
   ...
 
+These methods install ZCA to the ``system Python``, in the
+``site-packages`` directory, which can cause problems.  In a Zope3
+mailing list post, Jim Fulton recommends against using the system
+Python [#systempython]_.
+
 
 Experimenting with code
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There are many ways to experiment with code in this book.  First
-approach is to install ``zope.component`` using `easy_install` as
-described in the previous section.  This will install
-``zope.component``, ``zope.interface`` and other dependency packages in
-your Python's `site-packages` .  Now you can import ``zope.interface``
-and ``zope.component`` from your `python` .
-
-A better approach will be using `virtualenv` or `zc.buildout` .
-You can also use these two tools together.
-
-With `virtualenv` and `zc.buildout` you are getting an isolated
-working environment for developing Python applications.  This is very
-good for learning and exploring new things in Python modules.  The
-`zc.buildout` gives you more advanced features for developing
-applications.
+`virtualenv` and `zc.buildout` are tools which install ZCA to an
+isolated working environment.  This is a good practice for
+experimenting with code, and familiarity with these tools will be
+beneficial when developing and deploying applications.
 
 You can install `virtualenv` using `easy_install`::
 
@@ -241,7 +235,7 @@ code in this book.
 .. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
 .. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
 .. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
-
+.. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
 An example
 ----------
