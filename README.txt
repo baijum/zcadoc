@@ -54,6 +54,22 @@ We will merge it to our branches and later we will publish it.
  - My Email Id: mbaiju AT muthukadan.net
  - Kent's Email Id: ktenney AT gmail.com
 
+
+Guidelines
+----------
+
+Use double back-ticks (``) for: 
+
+ - commands
+ - directories
+ - packages
+ - modules
+ - classes
+ - functions
+
+Use single back-tick (`) when you want to high-light some text.
+
+
 Regards,
 Baiju M
 http://www.muthukadan.net

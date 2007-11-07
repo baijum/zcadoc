@@ -48,8 +48,8 @@ Zope Component Architecture (ZCA) is a Python framework for supporting
 component based design and programming.  ZCA is very well suited to
 developing large Python software systems.  ZCA is not specific to the
 Zope web application server, it can be used for developing any Python
-application.  Maybe it should be called the ``Python Component
-Architecture``.
+application.  Maybe it should be called the `Python Component
+Architecture`.
 
 There are two core packages related to Zope component architecture:
 
@@ -145,14 +145,14 @@ and ``zope.proxy``.
   6. ``zope.component``
 
 To install these packages, after downloading them, you can use
-`easy_install` command with argument as the eggs.  (You may also give
-all these eggs in the same line.)::
+``easy_install`` command with argument as the eggs.  (You may also
+give all these eggs in the same line.)::
 
   $ easy_install /path/to/zope.interface-3.4.x.tar.gz
   $ easy_install /path/to/zope.proxy-3.4.x.tar.gz
   ...
 
-These methods install ZCA to the ``system Python``, in the
+These methods install ZCA to the `system Python`, in the
 ``site-packages`` directory, which can cause problems.  In a Zope3
 mailing list post, Jim Fulton recommends against using the system
 Python [#systempython]_.
@@ -161,12 +161,12 @@ Python [#systempython]_.
 Experimenting with code
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-`virtualenv` and `zc.buildout` are tools which install ZCA to an
+``virtualenv`` and ``zc.buildout`` are tools which install ZCA to an
 isolated working environment.  This is a good practice for
 experimenting with code, and familiarity with these tools will be
 beneficial when developing and deploying applications.
 
-You can install `virtualenv` using `easy_install`::
+You can install ``virtualenv`` using ``easy_install``::
 
   $ easy_install virtualenv
 
@@ -174,8 +174,8 @@ Then create a new environment like this::
 
   $ virtualenv myve
 
-This will create a new virtual environment in the `myve` directory.
-Now, from inside the `myve` directory, you can install
+This will create a new virtual environment in the ``myve`` directory.
+Now, from inside the ``myve`` directory, you can install
 ``zope.component`` and dependencies using ``easy_install`` inside
 ``myve/bin`` directory::
 
@@ -183,25 +183,25 @@ Now, from inside the `myve` directory, you can install
   $ ./bin/easy_install zope.component
 
 Now you can import ``zope.interface`` and ``zope.component`` from the
-new `python` interpreter inside ``myve/bin`` directory.
+new ``python`` interpreter inside ``myve/bin`` directory.
 
   $ ./bin/python
 
 This command will give you a Python prompt from where you can use the
 code in this book.
 
-Using `zc.buildout` with `zc.recipe.egg` recipe you can create Python
-interpreter with specified Python eggs.  First, install `zc.buildout`
-using `easy_install` command.  (You may also do it inside virtual
-environment).  To create new buildout to experiment with Python eggs,
-first create a directory and initialize it using ``buildout init``
-command::
+Using ``zc.buildout`` with ``zc.recipe.egg`` recipe you can create
+Python interpreter with specified Python eggs.  First, install
+``zc.buildout`` using ``easy_install`` command.  (You may also do it
+inside virtual environment).  To create new buildout to experiment
+with Python eggs, first create a directory and initialize it using
+``buildout init`` command::
 
   $ mkdir mybuildout
   $ cd mybuildout
   $ buildout init
 
-Now the new `mybuildout` directory is a buildout.  The default
+Now the new ``mybuildout`` directory is a buildout.  The default
 configuration file for buildout is `buildout.cfg` .  After
 initializing, it will be having this content::
 
@@ -215,15 +215,15 @@ You can change it like this::
 
   [py]
   recipe = zc.recipe.egg
-  interpreter = py
+  interpreter = python
   eggs = zope.component
 
-Now run `buildout` command available inside `mybuildout/bin` directory
-without any argument.  This will create a new Python interpreter
-inside `mybuildout/bin` directory::
+Now run ``buildout`` command available inside ``mybuildout/bin``
+directory without any argument.  This will create a new Python
+interpreter inside ``mybuildout/bin`` directory::
 
   $ ./bin/buildout
-  $ ./bin/py
+  $ ./bin/python
 
 This command will give you a Python prompt from where you can use the
 code in this book.
@@ -536,12 +536,12 @@ will return `Good morning, ...!` ::
   >>> host.goodmorning('Jack')
   'Good morning, Jack!'
 
-Here `host` is the actual object.  The implementation details of this
-object is the class `Host` .  Now, how to find how the object looks
-like, that is, what are the methods and attributes of the object.  For
-this, either you have go through the implementation details (`Host`
-class) of the object or a separate API documentation [#api]_ will be
-required.
+Here ``host`` is the actual object.  The implementation details of
+this object is the class ``Host``.  Now, how to find how the object
+looks like, that is, what are the methods and attributes of the
+object.  For this, either you have go through the implementation
+details (``Host`` class) of the object or a separate API documentation
+[#api]_ will be required.
 
 You can use the ``zope.interface`` package to define the interace of
 objects.  For the class given above you can specify the interface like
@@ -557,8 +557,8 @@ this::
 As you can see, the interface is defined using Python class statement.
 We use (abuse?) Python's class statement to define interfaces.  To
 make a class an interface, it must be inherited from
-``zope.interface.Interface`` .  The `I` prefix for interface name is a
-convention.
+``zope.interface.Interface`` .  The ``I`` prefix for interface name is
+a convention.
 
 
 Declaring interface
@@ -581,26 +581,27 @@ Consider this example interface::
   ...     def goodmorning(guest):
   ...         """Say good morning to guest"""
 
-The interface, `IHost` has two attributes, `name` and `goodmorning`.
-Recall that, at least in Python, methods are also attributes of
-classes.  The `name` attribute is defined using
-``zope.interface.Attribute`` class.  When you add the attribute `name`
-to the `IHost` interface, you don't set an initial value.  The purpose
-of defining the attribute `name` here is merely to indicate that any
-implementation of this interface will feature an attribute named
-`name` .  In this case, you don't even say what `type` of attribute it
-has to be!.  You can pass a documentation string as a first argument
-to `Attribute` .
+The interface, ``IHost`` has two attributes, ``name`` and
+``goodmorning``.  Recall that, at least in Python, methods are also
+attributes of classes.  The ``name`` attribute is defined using
+``zope.interface.Attribute`` class.  When you add the attribute
+``name`` to the ``IHost`` interface, you don't set an initial value.
+The purpose of defining the attribute ``name`` here is merely to
+indicate that any implementation of this interface will feature an
+attribute named ``name``.  In this case, you don't even say what type
+of attribute it has to be!.  You can pass a documentation string as a
+first argument to ``Attribute``.
 
-The other attribute, `goodmorning` is a method defined using a
+The other attribute, ``goodmorning`` is a method defined using a
 function definition.  Note that `self` is not required in interfaces,
 because `self` is an implementation detail of class.  For example, a
 module can implement this interface.  If a module implement this
-interface, there will be a `name` attribute and `goodmorning` function
-defined.  And the `goodmorning` function will accept one argument.
+interface, there will be a ``name`` attribute and ``goodmorning``
+function defined.  And the ``goodmorning`` function will accept one
+argument.
 
-Now you will see how to connect interface-class-object.  So object is
-the real living thing, objects are instances of classes.  And
+Now you will see how to connect `interface-class-object`.  So object
+is the real living thing, objects are instances of classes.  And
 interface is the actuall definition of the object, so classes are just
 the implementation details.  This is why you should program to an
 interface and not to an implementation.
@@ -609,11 +610,11 @@ Now you should familiarise two more terms to understand other
 concepts.  First one is `provide` and the other one is `implement`.
 Object provides interfaces and classes implement interfaces.  In other
 words, objects provide interfaces that their classes implement.  In
-the above example `host` (object) provides `IHost` (interface) and
-`Host` (class) implement `IHost` (interface).  One object can provide
-more than one interface also one class can implement more than one
-interface.  Objects can also provide interfaces directly, in addition
-to what their classes implement.
+the above example ``host`` (object) provides ``IHost`` (interface) and
+``Host`` (class) implement ``IHost`` (interface).  One object can
+provide more than one interface also one class can implement more than
+one interface.  Objects can also provide interfaces directly, in
+addition to what their classes implement.
 
 .. note::
 
@@ -633,7 +634,7 @@ Implementing interface
 To declare a class implements a particular interface, use the function
 ``zope.interface.implements`` in the class statement.
 
-Consider this example, here `Host` implements `IHost`::
+Consider this example, here ``Host`` implements ``IHost``::
 
   >>> from zope.interface import implements
 
@@ -650,17 +651,17 @@ Consider this example, here `Host` implements `IHost`::
 
 .. note::
 
-  If you wonder how `implements` function works, refer the blog post
+  If you wonder how ``implements`` function works, refer the blog post
   by James Henstridge
   (http://blogs.gnome.org/jamesh/2005/09/08/python-class-advisors/) .
-  In the adapter section, you will see an `adapts` function, it is
+  In the adapter section, you will see an ``adapts`` function, it is
   also working similarly.
 
-Since `Host` implements `IHost`, instances of `Host` provides `IHost`.
-There are some utility methods to introspect the declarations.  The
-declaration can write outside the class also.  If you don't write
-`interface.implements(IHost)` in the above example, then after
-defining the class statement, you can write like this::
+Since ``Host`` implements ``IHost``, instances of ``Host`` provides
+``IHost``.  There are some utility methods to introspect the
+declarations.  The declaration can write outside the class also.  If
+you don't write ``interface.implements(IHost)`` in the above example,
+then after defining the class statement, you can write like this::
 
   >>> from zope.interface import classImplements
   >>> classImplements(Host, IHost)
@@ -687,7 +688,7 @@ be an interface from Zope component architecture point of view.  An
 interface can be implemented, as you already noted, in a class or any
 other callable object.
 
-The registrar interface defined here is `IRegistrar`.  The
+The registrar interface defined here is ``IRegistrar``.  The
 documentation string for interface gives an idea about the object.  By
 defining a method in the interface, you made a contract for the
 component, that there will be a method with same name available.  For
