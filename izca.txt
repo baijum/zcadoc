@@ -997,6 +997,43 @@ adapter adapts more that one adaptee, then it is called multi
 apdapter.
 
 
+Retrieving adapter using interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Adapters can be directly retrieved using interfaces, but it will only
+work for non-named single adapters.  The first argument is the adaptee
+and the second argument is a keyword argument.  If adapter lookup
+fails, second argument will be returned.
+
+  >>> IRegistrar(jack, alternate='default-output')
+  'default-output'
+
+  Keyword name can be omited:
+
+  >>> IRegistrar(jack, 'default-output')
+  'default-output'
+
+  If second argument is not given, it will raise `TypeError`:
+
+  >>> IRegistrar(jack) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+  Traceback (most recent call last):
+  ...
+  TypeError: ('Could not adapt',
+    <Guest object at ...>,
+    <InterfaceClass __builtin__.IRegistrar>)
+
+  Here `GuestRegistrarNG` is registerd without name:
+
+  >>> gsm.registerAdapter(GuestRegistrarNG)
+
+  Now the adapter lookup should succeed:
+
+  >>> IRegistrar(jack, 'default-output') #doctest: +ELLIPSIS
+  <GuestRegistrarNG object at ...>
+
+For simple cases, you may use interface to get adapter components.
+
+
 Adapter pattern
 ~~~~~~~~~~~~~~~
 
@@ -1240,7 +1277,6 @@ objects, it is called as multi-adapter.
   <One object at ...>
   >>> myfunctionality.two #doctest: +ELLIPSIS
   <Two object at ...>
-
 
 
 Subscription adapter
@@ -1599,8 +1635,8 @@ Adapter
 
      Location: `zope.app.container.contained.NameChooser`
 
-     This is an adapter for choosing a unique identical name for an
-     object inside a container.
+     This is an adapter for choosing a unique name for an object
+     inside a container.
 
      The registration of adapter is like this::
 
@@ -1618,8 +1654,9 @@ Adapter
      Zope 3 are ``zope.app.container.BTreeContainer`` and
      ``zope.app.folder.Folder``.  Normally you will be inheriting from
      these implementations for creating your own container classes.
-     Suppose there is no interface called ``INameChooser``, then you
-     will be required to implement this funcionality.
+     Suppose there is no interface called ``INameChooser`` and
+     adapter, then you will be required to implement this funcionality
+     for every implementations separately.
 
   2. LocationPhysicallyLocatable
 
