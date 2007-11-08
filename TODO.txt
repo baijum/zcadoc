@@ -1,0 +1,26 @@
+TODO List
+=========
+
+ - Chapters planned for future (priority wise):
+
+    1. A case study: desktop application
+    2. A chapter on testing ZCA based application
+    3. A chapter on implementation of ZCA
+
+ - Change "Adapter pattern" section to a sidebar ?
+
+ - Add "See also" to reference
+
+ - Include reference for interfaces in ``zope.interface.interfaces``
+   and ``zope.component.interfaces``
+
+ - Include reference for utility functions in
+   ``zope.component.interface``
+
+ - Document ``zope.component.event``
+
+ - Document ``zope.interface.adapter``
+
+ - Document ``zope.interface.advice``
+
+ - Document ``zope.interface.verify``
