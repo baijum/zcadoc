@@ -1640,11 +1640,11 @@ Adapter
 
      The registration of adapter is like this::
 
-        <adapter
-            provides=".interfaces.INameChooser"
-            for="zope.app.container.interfaces.IWriteContainer"
-            factory=".contained.NameChooser"
-            />
+       <adapter
+           provides=".interfaces.INameChooser"
+           for="zope.app.container.interfaces.IWriteContainer"
+           factory=".contained.NameChooser"
+           />
 
      From the registration, you can see that the adapeee is a
      ``IWriteContainer`` and the adapter provides ``INameChooser``.
@@ -1662,6 +1662,54 @@ Adapter
 
      Location:
      ``zope.location.traversing.LocationPhysicallyLocatable``
+
+     This adapter is frequently used in Zope 3 applications, but
+     normally it is called through an API in ``zope.traversing.api``.
+     (Some old code even use ``zope.app.zapi`` functions, which is
+     again one more indirection)
+
+     The registration of adapter is like this::
+
+       <adapter
+           factory="zope.location.traversing.LocationPhysicallyLocatable"
+           />
+
+     The interface provided and adatee interface is given in the
+     implementation.
+
+     Here is the beginning of implementation::
+
+       class LocationPhysicallyLocatable(object):
+           """Provide location information for location objects
+           """
+           zope.component.adapts(ILocation)
+           zope.interface.implements(IPhysicallyLocatable)
+           ...
+
+     Normally, almost all persistent objects in Zope 3 application
+     will be providing the ``ILocation`` interface.  This interface
+     has only two attribute, ``__parent__`` and ``__name__``.  The
+     ``__parent__`` is the parent in the location hierarchy.  And
+     ``__name__`` is the name within the parent.
+
+     The ``IPhysicallyLocatable`` interface has four methods:
+     ``getRoot``, ``getPath``, ``getName``, and ``getNearestSite``.
+
+       - ``getRoot`` function will return the physical root object.
+
+       - ``getPath`` return the physical path to the object as a
+         string.
+
+       - ``getName`` return the last segment of the physical path.
+
+       - ``getNearestSite`` return the site the object is contained
+         in.  If the object is a site, the object itself is returned.
+
+     If you learn Zope 3, you can see that these are the important
+     things which you required very often.  To understand the beauty
+     of this system, you must see how Zope 2 actually get the physical
+     root object and how it is implemented.  There is a method called
+     ``getPhysicalRoot`` virtually for all container objects.
 
 
  - zope.size.DefaultSized
