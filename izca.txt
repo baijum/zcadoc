@@ -1456,7 +1456,7 @@ To register an adapter::
   <adapter
       factory=".company.EmployeeSalary"
       provides=".interfaces.ISalary"
-      for=".interfaces.IEmployee" 
+      for=".interfaces.IEmployee"
       />
 
 The `provides` and `for` attributes are optional, provided you have
@@ -1521,11 +1521,112 @@ Instead of directly using the component, you can also give a factory::
 TODO: Registration of subscription adapter & handler
 
 
+Overrides
++++++++++
+
+When you register components using Python API (``register*`` methods),
+the last registered component will replace previously registered
+component, if both are registered with same type of arguments.  For
+example, consider this example::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+
+  >>> class IA(Interface):
+  ...     pass
+
+  >>> class IP(Interface):
+  ...     pass
+
+  >>> from zope.interface import implements
+  >>> from zope.component import adapts
+
+  >>> from zope.component import getGlobalSiteManager
+  >>> gsm = getGlobalSiteManager()
+
+  >>> class AP(object):
+  ...
+  ...     implements(IP)
+  ...     adapts(IA)
+  ...
+  ...     def __init__(self, context):
+  ...         self.context = context
+
+  >>> class AP2(object):
+  ...
+  ...     implements(IP)
+  ...     adapts(IA)
+  ...
+  ...     def __init__(self, context):
+  ...         self.context = context
+
+  >>> class A(object):
+  ...
+  ...     implements(IA)
+
+  >>> a = A()
+  >>> ap = AP(a)
+
+  >>> gsm.registerAdapter(AP)
+
+  >>> getAdapter(a, IP) #doctest: +ELLIPSIS
+  <AP object at ...>
+
+  If you register another adapter, the existing one will be replaced:
+
+  >>> gsm.registerAdapter(AP2)
+
+  >>> getAdapter(a, IP) #doctest: +ELLIPSIS
+  <AP2 object at ...>
+
+But when registering components using ZCML, the second registration
+will raise a conflict error.  This is a hint for you, otherwise there
+is a chance for overriding registration by mistake.  This may lead to
+hard to track bugs in your system.  So, using ZCML is a win for the
+application.
+
+Sometimes you will be required to override existing registration.
+ZCML provides ``includeOverrides`` directive for this.  Using this,
+you can write your overrides in a separate file::
+
+  <includeOverrides file="overrides.zcml" />
+
+
 Adapter
 ~~~~~~~
 
- - zope.app.container.contained.NameChooser
- - zope.location.traversing.LocationPhysicallyLocatable
+  1. NameChooser
+
+     Location: `zope.app.container.contained.NameChooser`
+
+     This is an adapter for choosing a unique identical name for an
+     object inside a container.
+
+     The registration of adapter is like this::
+
+        <adapter
+            provides=".interfaces.INameChooser"
+            for="zope.app.container.interfaces.IWriteContainer"
+            factory=".contained.NameChooser"
+            />
+
+     From the registration, you can see that the adapeee is a
+     ``IWriteContainer`` and the adapter provides ``INameChooser``.
+
+     This adapter provides a very convenient funcionality for Zope
+     programmers.  The main implementations of ``IWriteContainer`` in
+     Zope 3 are ``zope.app.container.BTreeContainer`` and
+     ``zope.app.folder.Folder``.  Normally you will be inheriting from
+     these implementations for creating your own container classes.
+     Suppose there is no interface called ``INameChooser``, then you
+     will be required to implement this funcionality.
+
+  2. LocationPhysicallyLocatable
+
+     Location:
+     ``zope.location.traversing.LocationPhysicallyLocatable``
+
+
  - zope.size.DefaultSized
  - zope.app.zptpage.ZPTReadFile
    zope.app.zptpage.ZPTWriteFile
@@ -2599,9 +2700,9 @@ Example 2::
   >>> classImplements(Person, ISpecial)
 
   >>> from zope.interface import implementedBy
-  
+
   To get a list of all interfaces implemented by that class::
-  
+
   >>> [x.__name__ for x in implementedBy(Person)]
   ['IPerson', 'ISpecial']
 
@@ -2866,9 +2967,9 @@ Example 2::
   >>> from zope.interface import providedBy
   >>> jack = Person()
   >>> jack.name = "Jack"
-  
+
   To get a list of all interfaces provided by that object::
-  
+
   >>> [x.__name__ for x in providedBy(jack)]
   ['IPerson', 'ISpecial']
 
@@ -3922,12 +4023,3 @@ Example::
 
   >>> print queryUtility(IGreeter)
   None
-
-
-.. TODO List
-
-  - Chapters planned for future (priority wise):
-
-      1. A case study: desktop application
-      2. A chapter on testing ZCA based application
-      3. A chapter on implementation of ZCA
