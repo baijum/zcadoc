@@ -133,7 +133,7 @@ This command will download ``zope.component`` and it's dependencies
 from PyPI and install it in your Python path.
 
 Alternately, you can download ``zope.component`` and it's dependencies
-from PyPI and then install them. Install packages in the order given
+from PyPI and then install them.  Install packages in the order given
 below.  On Windows, you may need binary packages of ``zope.interface``
 and ``zope.proxy``.
 
