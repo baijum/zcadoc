@@ -1,10 +1,12 @@
+===========================
 Zope Component Architecture
 ===========================
 
-:Author: Baiju M
-:Version: 0.3.90
 
-Copyright (C) 2007 Baiju Muthukadan <baiju.m.mail AT gmail.com> .
+:Author: Baiju M
+:Version: 0.3.93
+
+Copyright (C) 2007 Baiju M <baiju.m.mail AT gmail.com>.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.2 or
@@ -46,8 +48,8 @@ Zope Component Architecture (ZCA) is a Python framework for supporting
 component based design and programming.  ZCA is very well suited to
 developing large Python software systems.  ZCA is not specific to the
 Zope web application server, it can be used for developing any Python
-application.  Maybe it should be called the ``Python Component
-Architecture``.
+application.  Maybe it should be called the `Python Component
+Architecture`.
 
 There are two core packages related to Zope component architecture:
 
@@ -66,8 +68,8 @@ complexity of systems over multiple cooperating components.  Zope
 component architecture helps you to create two basic kinds of
 components: `adapter` and `utility`.
 
-Remember, ZCA is not about the components themselves, rather it helps
-you create, register and retrieve components.  Also remember, an
+Remember, ZCA is not about the components themselves, rather it is 
+about creating, registering, and retrieving components.  Remember also, an
 `adapter` is a normal Python class (or a factory in general) and
 `utility` is a normal Python callable object.
 
@@ -90,9 +92,9 @@ but not limited to, Stephan Richter, Philipp von Weitershausen, Guido
 van Rossum (AKA *Python BDFL*), Tres Seaver, Phillip J Eby and Martijn
 Faassen.
 
-Initially ZCA had components like services and views as part of the
-system.  But later they realized that utility can replace service and
-multi-adapter can replace view components.  Now ZCA has a small number
+Initially ZCA defined additional components; `services` and `views`, 
+but the developers came to realize that utility can replace `service` and
+multi-adapter can replace `view`.  Now ZCA has a very small number
 of core component types: utilities, adapters, subscribers and
 handlers.  In fact, subscribers and handlers are two special types of
 adapters.
@@ -100,7 +102,7 @@ adapters.
 During the Zope 3.2 release cycle, Jim Fulton proposed a major
 simplification of ZCA [#proposal]_.  With this simplification, a new
 single interface (`IComponentRegistry`) for registration of both
-global and local component is created.
+global and local component was created.
 
 The ``zope.component`` package had a long list of dependencies, many
 of which were not required for a non Zope 3 application.  During PyCon
@@ -143,36 +145,28 @@ and ``zope.proxy``.
   6. ``zope.component``
 
 To install these packages, after downloading them, you can use
-`easy_install` command with argument as the eggs.  (You may also give
-all these eggs in the same line.)::
+``easy_install`` command with argument as the eggs.  (You may also
+give all these eggs in the same line.)::
 
   $ easy_install /path/to/zope.interface-3.4.x.tar.gz
   $ easy_install /path/to/zope.proxy-3.4.x.tar.gz
   ...
 
-These methods install ZCA to the ``system Python``, which Jim Fulton
-describes as "evil, evil, evil, evil".
+These methods install ZCA to the `system Python`, in the
+``site-packages`` directory, which can cause problems.  In a Zope3
+mailing list post, Jim Fulton recommends against using the system
+Python [#systempython]_.
+
 
 Experimenting with code
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There are many ways to experiment with code in this book.  First
-approach is to install ``zope.component`` using `easy_install` as
-described in the previous section.  This will install
-``zope.component``, ``zope.interface`` and other dependency packages in
-your Python's `site-packages` .  Now you can import ``zope.interface``
-and ``zope.component`` from your `python` .
+``virtualenv`` and ``zc.buildout`` are tools which install ZCA to an
+isolated working environment.  This is a good practice for
+experimenting with code, and familiarity with these tools will be
+beneficial when developing and deploying applications.
 
-A better approach will be using `virtualenv` or `zc.buildout` .
-You can also use these two tools together.
-
-With `virtualenv` and `zc.buildout` you are getting an isolated
-working environment for developing Python applications.  This is very
-good for learning and exploring new things in Python modules.  The
-`zc.buildout` gives you more advanced features for developing
-applications.
-
-You can install `virtualenv` using `easy_install`::
+You can install ``virtualenv`` using ``easy_install``::
 
   $ easy_install virtualenv
 
@@ -180,8 +174,8 @@ Then create a new environment like this::
 
   $ virtualenv myve
 
-This will create a new virtual environment in the `myve` directory.
-Now, from inside the `myve` directory, you can install
+This will create a new virtual environment in the ``myve`` directory.
+Now, from inside the ``myve`` directory, you can install
 ``zope.component`` and dependencies using ``easy_install`` inside
 ``myve/bin`` directory::
 
@@ -189,25 +183,25 @@ Now, from inside the `myve` directory, you can install
   $ ./bin/easy_install zope.component
 
 Now you can import ``zope.interface`` and ``zope.component`` from the
-new `python` interpreter inside ``myve/bin`` directory.
+new ``python`` interpreter inside ``myve/bin`` directory.
 
   $ ./bin/python
 
 This command will give you a Python prompt from where you can use the
 code in this book.
 
-Using `zc.buildout` with `zc.recipe.egg` recipe you can create Python
-interpreter with specified Python eggs.  First, install `zc.buildout`
-using `easy_install` command.  (You may also do it inside virtual
-environment) .  To create new buildout to experiment with Python eggs,
-first create a directory and initialize it using ``buildout init``
-command::
+Using ``zc.buildout`` with ``zc.recipe.egg`` recipe you can create
+Python interpreter with specified Python eggs.  First, install
+``zc.buildout`` using ``easy_install`` command.  (You may also do it
+inside virtual environment).  To create new buildout to experiment
+with Python eggs, first create a directory and initialize it using
+``buildout init`` command::
 
   $ mkdir mybuildout
   $ cd mybuildout
   $ buildout init
 
-Now the new `mybuildout` directory is a buildout.  The default
+Now the new ``mybuildout`` directory is a buildout.  The default
 configuration file for buildout is `buildout.cfg` .  After
 initializing, it will be having this content::
 
@@ -221,15 +215,15 @@ You can change it like this::
 
   [py]
   recipe = zc.recipe.egg
-  interpreter = py
+  interpreter = python
   eggs = zope.component
 
-Now run `buildout` command available inside `mybuildout/bin` directory
-without any argument.  This will create a new Python interpreter
-inside `mybuildout/bin` directory::
+Now run ``buildout`` command available inside ``mybuildout/bin``
+directory without any argument.  This will create a new Python
+interpreter inside ``mybuildout/bin`` directory::
 
   $ ./bin/buildout
-  $ ./bin/py
+  $ ./bin/python
 
 This command will give you a Python prompt from where you can use the
 code in this book.
@@ -241,6 +235,7 @@ code in this book.
 .. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
 .. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
 .. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
+.. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
 
 An example
@@ -487,8 +482,8 @@ Zope component architecture provides `adapter` components to solve
 these kinds of problems.  In fact, `GuestRegistrarNG` is an adapter
 without explicit interface declaration.  This tutorial will discuss
 adapters after introducing the concept of interfaces.  Interfaces are
-one of the foundations Zope components, so understanding the concept
-and usage of interfaces is very important.
+one of the foundations of Zope components, so understanding the
+concept and usage of interfaces is very important.
 
 
 Interface
@@ -499,13 +494,16 @@ Introduction
 ~~~~~~~~~~~~
 
 `Design Patterns` is a classic book in software engineering by the
-`Gang of Four` [#patternbook]_ .  In this book they recommend: Program
-to an interface, not to an implementation.  Interface define the
-behaviour and state of objects.  An interface describes how you work
-with the object.  If you like metaphor, think of interface as a
-`contract for object`.  Another metaphor which may help is `blueprint
-for objects`.  In the code, methods and attributes are forming the
-object's interface.
+`Gang of Four` [#patternbook]_ .  In this book they recommend:
+"Program to an interface, not an implementation".  Defining formal
+interfaces helps you better understand system.  Moreover interface
+brings you all the benefits of ZCA.
+
+Interface define the behaviour and state of objects.  An interface
+describes how you work with the object.  If you like metaphor, think
+of interface as a `contract for object`.  Another metaphor which may
+help is `blueprint for objects`.  In the code, methods and attributes
+are forming the object's interface.
 
 The notion of interface is very explicit in mordern languages like
 Java, C#, VB.NET etc.  Also these languages provide some syntax for
@@ -538,12 +536,12 @@ will return `Good morning, ...!` ::
   >>> host.goodmorning('Jack')
   'Good morning, Jack!'
 
-Here `host` is the actual object.  The implementation details of this
-object is the class `Host` .  Now, how to find how the object looks
-like, that is, what are the methods and attributes of the object.  For
-this, either you have go through the implementation details (`Host`
-class) of the object or a separate API documentation [#api]_ will be
-required.
+Here ``host`` is the actual object.  The implementation details of
+this object is the class ``Host``.  Now, how to find how the object
+looks like, that is, what are the methods and attributes of the
+object.  For this, either you have go through the implementation
+details (``Host`` class) of the object or a separate API documentation
+[#api]_ will be required.
 
 You can use the ``zope.interface`` package to define the interace of
 objects.  For the class given above you can specify the interface like
@@ -559,8 +557,8 @@ this::
 As you can see, the interface is defined using Python class statement.
 We use (abuse?) Python's class statement to define interfaces.  To
 make a class an interface, it must be inherited from
-``zope.interface.Interface`` .  The `I` prefix for interface name is a
-convention.
+``zope.interface.Interface`` .  The ``I`` prefix for interface name is
+a convention.
 
 
 Declaring interface
@@ -583,26 +581,27 @@ Consider this example interface::
   ...     def goodmorning(guest):
   ...         """Say good morning to guest"""
 
-The interface, `IHost` has two attributes, `name` and `goodmorning`.
-Recall that, at least in Python, methods are also attributes of
-classes.  The `name` attribute is defined using
-``zope.interface.Attribute`` class.  When you add the attribute `name`
-to the `IHost` interface, you don't set an initial value.  The purpose
-of defining the attribute `name` here is merely to indicate that any
-implementation of this interface will feature an attribute named
-`name` .  In this case, you don't even say what `type` of attribute it
-has to be!.  You can pass a documentation string as a first argument
-to `Attribute` .
+The interface, ``IHost`` has two attributes, ``name`` and
+``goodmorning``.  Recall that, at least in Python, methods are also
+attributes of classes.  The ``name`` attribute is defined using
+``zope.interface.Attribute`` class.  When you add the attribute
+``name`` to the ``IHost`` interface, you don't set an initial value.
+The purpose of defining the attribute ``name`` here is merely to
+indicate that any implementation of this interface will feature an
+attribute named ``name``.  In this case, you don't even say what type
+of attribute it has to be!.  You can pass a documentation string as a
+first argument to ``Attribute``.
 
-The other attribute, `goodmorning` is a method defined using a
+The other attribute, ``goodmorning`` is a method defined using a
 function definition.  Note that `self` is not required in interfaces,
 because `self` is an implementation detail of class.  For example, a
 module can implement this interface.  If a module implement this
-interface, there will be a `name` attribute and `goodmorning` function
-defined.  And the `goodmorning` function will accept one argument.
+interface, there will be a ``name`` attribute and ``goodmorning``
+function defined.  And the ``goodmorning`` function will accept one
+argument.
 
-Now you will see how to connect interface-class-object.  So object is
-the real living thing, objects are instances of classes.  And
+Now you will see how to connect `interface-class-object`.  So object
+is the real living thing, objects are instances of classes.  And
 interface is the actuall definition of the object, so classes are just
 the implementation details.  This is why you should program to an
 interface and not to an implementation.
@@ -611,11 +610,11 @@ Now you should familiarise two more terms to understand other
 concepts.  First one is `provide` and the other one is `implement`.
 Object provides interfaces and classes implement interfaces.  In other
 words, objects provide interfaces that their classes implement.  In
-the above example `host` (object) provides `IHost` (interface) and
-`Host` (class) implement `IHost` (interface).  One object can provide
-more than one interface also one class can implement more than one
-interface.  Objects can also provide interfaces directly, in addition
-to what their classes implement.
+the above example ``host`` (object) provides ``IHost`` (interface) and
+``Host`` (class) implement ``IHost`` (interface).  One object can
+provide more than one interface also one class can implement more than
+one interface.  Objects can also provide interfaces directly, in
+addition to what their classes implement.
 
 .. note::
 
@@ -635,7 +634,7 @@ Implementing interface
 To declare a class implements a particular interface, use the function
 ``zope.interface.implements`` in the class statement.
 
-Consider this example, here `Host` implements `IHost`::
+Consider this example, here ``Host`` implements ``IHost``::
 
   >>> from zope.interface import implements
 
@@ -652,17 +651,17 @@ Consider this example, here `Host` implements `IHost`::
 
 .. note::
 
-  If you wonder how `implements` function works, refer the blog post
+  If you wonder how ``implements`` function works, refer the blog post
   by James Henstridge
   (http://blogs.gnome.org/jamesh/2005/09/08/python-class-advisors/) .
-  In the adapter section, you will see an `adapts` function, it is
+  In the adapter section, you will see an ``adapts`` function, it is
   also working similarly.
 
-Since `Host` implements `IHost`, instances of `Host` provides `IHost`.
-There are some utility methods to introspect the declarations.  The
-declaration can write outside the class also.  If you don't write
-`interface.implements(IHost)` in the above example, then after
-defining the class statement, you can write like this::
+Since ``Host`` implements ``IHost``, instances of ``Host`` provides
+``IHost``.  There are some utility methods to introspect the
+declarations.  The declaration can write outside the class also.  If
+you don't write ``interface.implements(IHost)`` in the above example,
+then after defining the class statement, you can write like this::
 
   >>> from zope.interface import classImplements
   >>> classImplements(Host, IHost)
@@ -689,7 +688,7 @@ be an interface from Zope component architecture point of view.  An
 interface can be implemented, as you already noted, in a class or any
 other callable object.
 
-The registrar interface defined here is `IRegistrar` .  The
+The registrar interface defined here is ``IRegistrar``.  The
 documentation string for interface gives an idea about the object.  By
 defining a method in the interface, you made a contract for the
 component, that there will be a method with same name available.  For
@@ -998,6 +997,43 @@ adapter adapts more that one adaptee, then it is called multi
 apdapter.
 
 
+Retrieving adapter using interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Adapters can be directly retrieved using interfaces, but it will only
+work for non-named single adapters.  The first argument is the adaptee
+and the second argument is a keyword argument.  If adapter lookup
+fails, second argument will be returned.
+
+  >>> IRegistrar(jack, alternate='default-output')
+  'default-output'
+
+  Keyword name can be omited:
+
+  >>> IRegistrar(jack, 'default-output')
+  'default-output'
+
+  If second argument is not given, it will raise `TypeError`:
+
+  >>> IRegistrar(jack) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+  Traceback (most recent call last):
+  ...
+  TypeError: ('Could not adapt',
+    <Guest object at ...>,
+    <InterfaceClass __builtin__.IRegistrar>)
+
+  Here `GuestRegistrarNG` is registerd without name:
+
+  >>> gsm.registerAdapter(GuestRegistrarNG)
+
+  Now the adapter lookup should succeed:
+
+  >>> IRegistrar(jack, 'default-output') #doctest: +ELLIPSIS
+  <GuestRegistrarNG object at ...>
+
+For simple cases, you may use interface to get adapter components.
+
+
 Adapter pattern
 ~~~~~~~~~~~~~~~
 
@@ -1243,7 +1279,6 @@ objects, it is called as multi-adapter.
   <Two object at ...>
 
 
-
 Subscription adapter
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -1424,6 +1459,278 @@ handlers registered for the event::
   >>> handle(DocumentCreated(doc))
   >>> doc.created.__class__.__name__
   'datetime'
+
+
+ZCA usage in Zope
+-----------------
+
+.. note::
+
+  This chapter is not yet completed.  I welcome your suggestions :)
+
+Zope Component Architecture is used in both Zope 3 and Zope 2.  This
+chapter go through ZCA usage in Zope.
+
+
+ZCML
+~~~~
+
+The Zope Configuration Markup Language (ZCML) is an XML based
+configuration system for registration of components.  So, instead of
+using Python API for registration, you can use ZCML.  But to use ZCML,
+unfortunately, you will be required to install more dependency
+packages.
+
+To install these packages::
+
+  $ easy_install "zope.component [zcml]"
+
+To register an adapter::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      factory=".company.EmployeeSalary"
+      provides=".interfaces.ISalary"
+      for=".interfaces.IEmployee"
+      />
+
+The `provides` and `for` attributes are optional, provided you have
+declared it in the implementation::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      factory=".company.EmployeeSalary"
+      />
+
+If you want to register the component as named adapter, you can give a
+`name` attribute::
+
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      factory=".company.EmployeeSalary"
+      name="salary"
+      />
+
+Utilities are also registered similarly.
+
+To register an utility::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      component=".database.connection"
+      provides=".interfaces.IConnection"
+      />
+
+The `provides` attribute is optional, provided you have declared it in
+the implementation::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      component=".database.connection"
+      />
+
+If you want to register the component as named adapter, you can give a
+`name` attribute::
+
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      component=".database.connection"
+      name="Database Connection"
+      />
+
+Instead of directly using the component, you can also give a factory::
+
+  <configure xmlns="http://namespaces.zope.org/zope">
+
+  <utility
+      factory=".database.Connection"
+      />
+
+TODO: Registration of subscription adapter & handler
+
+
+Overrides
++++++++++
+
+When you register components using Python API (``register*`` methods),
+the last registered component will replace previously registered
+component, if both are registered with same type of arguments.  For
+example, consider this example::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+
+  >>> class IA(Interface):
+  ...     pass
+
+  >>> class IP(Interface):
+  ...     pass
+
+  >>> from zope.interface import implements
+  >>> from zope.component import adapts
+
+  >>> from zope.component import getGlobalSiteManager
+  >>> gsm = getGlobalSiteManager()
+
+  >>> class AP(object):
+  ...
+  ...     implements(IP)
+  ...     adapts(IA)
+  ...
+  ...     def __init__(self, context):
+  ...         self.context = context
+
+  >>> class AP2(object):
+  ...
+  ...     implements(IP)
+  ...     adapts(IA)
+  ...
+  ...     def __init__(self, context):
+  ...         self.context = context
+
+  >>> class A(object):
+  ...
+  ...     implements(IA)
+
+  >>> a = A()
+  >>> ap = AP(a)
+
+  >>> gsm.registerAdapter(AP)
+
+  >>> getAdapter(a, IP) #doctest: +ELLIPSIS
+  <AP object at ...>
+
+  If you register another adapter, the existing one will be replaced:
+
+  >>> gsm.registerAdapter(AP2)
+
+  >>> getAdapter(a, IP) #doctest: +ELLIPSIS
+  <AP2 object at ...>
+
+But when registering components using ZCML, the second registration
+will raise a conflict error.  This is a hint for you, otherwise there
+is a chance for overriding registration by mistake.  This may lead to
+hard to track bugs in your system.  So, using ZCML is a win for the
+application.
+
+Sometimes you will be required to override existing registration.
+ZCML provides ``includeOverrides`` directive for this.  Using this,
+you can write your overrides in a separate file::
+
+  <includeOverrides file="overrides.zcml" />
+
+
+Adapter
+~~~~~~~
+
+  1. NameChooser
+
+     Location: `zope.app.container.contained.NameChooser`
+
+     This is an adapter for choosing a unique name for an object
+     inside a container.
+
+     The registration of adapter is like this::
+
+       <adapter
+           provides=".interfaces.INameChooser"
+           for="zope.app.container.interfaces.IWriteContainer"
+           factory=".contained.NameChooser"
+           />
+
+     From the registration, you can see that the adapeee is a
+     ``IWriteContainer`` and the adapter provides ``INameChooser``.
+
+     This adapter provides a very convenient funcionality for Zope
+     programmers.  The main implementations of ``IWriteContainer`` in
+     Zope 3 are ``zope.app.container.BTreeContainer`` and
+     ``zope.app.folder.Folder``.  Normally you will be inheriting from
+     these implementations for creating your own container classes.
+     Suppose there is no interface called ``INameChooser`` and
+     adapter, then you will be required to implement this funcionality
+     for every implementations separately.
+
+  2. LocationPhysicallyLocatable
+
+     Location:
+     ``zope.location.traversing.LocationPhysicallyLocatable``
+
+     This adapter is frequently used in Zope 3 applications, but
+     normally it is called through an API in ``zope.traversing.api``.
+     (Some old code even use ``zope.app.zapi`` functions, which is
+     again one more indirection)
+
+     The registration of adapter is like this::
+
+       <adapter
+           factory="zope.location.traversing.LocationPhysicallyLocatable"
+           />
+
+     The interface provided and adatee interface is given in the
+     implementation.
+
+     Here is the beginning of implementation::
+
+       class LocationPhysicallyLocatable(object):
+           """Provide location information for location objects
+           """
+           zope.component.adapts(ILocation)
+           zope.interface.implements(IPhysicallyLocatable)
+           ...
+
+     Normally, almost all persistent objects in Zope 3 application
+     will be providing the ``ILocation`` interface.  This interface
+     has only two attribute, ``__parent__`` and ``__name__``.  The
+     ``__parent__`` is the parent in the location hierarchy.  And
+     ``__name__`` is the name within the parent.
+
+     The ``IPhysicallyLocatable`` interface has four methods:
+     ``getRoot``, ``getPath``, ``getName``, and ``getNearestSite``.
+
+       - ``getRoot`` function will return the physical root object.
+
+       - ``getPath`` return the physical path to the object as a
+         string.
+
+       - ``getName`` return the last segment of the physical path.
+
+       - ``getNearestSite`` return the site the object is contained
+         in.  If the object is a site, the object itself is returned.
+
+     If you learn Zope 3, you can see that these are the important
+     things which you required very often.  To understand the beauty
+     of this system, you must see how Zope 2 actually get the physical
+     root object and how it is implemented.  There is a method called
+     ``getPhysicalRoot`` virtually for all container objects.
+
+
+ - zope.size.DefaultSized
+ - zope.app.zptpage.ZPTReadFile
+   zope.app.zptpage.ZPTWriteFile
+   zope.app.zptpage.Sized
+ - zope.app.publication.traversers.NoTraverser
+ - zope.app.file.FileReadFile
+   zope.app.file.FileWriteFile
+ - zope.app.principalannotation.annotations
+ - zope.app.keyreference.persistent.KeyReferenceToPersistent
+ - zope.app.folder.filerepresentation.ReadDirectory
+ - zope.securitypolicy.rolepermission.AnnotationRolePermissionManager
+ - zope.annotation.attribute.AttributeAnnotations
+ - zope.traversing.adapters.Traverser
+ - zope.traversing.adapters.DefaultTraversable
+ - zope.traversing.adapters.RootPhysicallyLocatable
+
+
+Utility
+~~~~~~~
 
 
 Reference
@@ -2438,7 +2745,7 @@ Return the interfaces implemented for a class' instances.
 
  - Signature: `implementedBy(class_)`
 
-Example::
+Example 1::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -2457,6 +2764,32 @@ Example::
   >>> from zope.interface import implementedBy
   >>> implementedBy(Greeter)
   <implementedBy __builtin__.Greeter>
+
+Example 2::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+  >>> from zope.interface import implements
+
+  >>> class IPerson(Interface):
+  ...     name = Attribute("Name of person")
+
+  >>> class ISpecial(Interface):
+  ...     pass
+
+  >>> class Person(object):
+  ...     implements(IPerson)
+  ...     name = u""
+
+  >>> from zope.interface import classImplements
+  >>> classImplements(Person, ISpecial)
+
+  >>> from zope.interface import implementedBy
+
+  To get a list of all interfaces implemented by that class::
+
+  >>> [x.__name__ for x in implementedBy(Person)]
+  ['IPerson', 'ISpecial']
 
 
 implementer
@@ -2674,7 +3007,7 @@ asserting that it implements an extended interface.
 
  - Signature: `providedBy(object)`
 
-Example::
+Example 1::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2697,6 +3030,33 @@ Example::
   >>> from zope.interface import providedBy
   >>> IPerson in providedBy(jack)
   True
+
+Example 2::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+  >>> from zope.interface import implements
+
+  >>> class IPerson(Interface):
+  ...     name = Attribute("Name of person")
+
+  >>> class ISpecial(Interface):
+  ...     pass
+
+  >>> class Person(object):
+  ...     implements(IPerson)
+  ...     name = u""
+
+  >>> from zope.interface import classImplements
+  >>> classImplements(Person, ISpecial)
+  >>> from zope.interface import providedBy
+  >>> jack = Person()
+  >>> jack.name = "Jack"
+
+  To get a list of all interfaces provided by that object::
+
+  >>> [x.__name__ for x in providedBy(jack)]
+  ['IPerson', 'ISpecial']
 
 
 queryAdapter
@@ -3748,19 +4108,3 @@ Example::
 
   >>> print queryUtility(IGreeter)
   None
-
-
-.. TODO List
-
-  - Chapters planned for future (priority wise):
-
-      1. A case study: desktop application
-      2. A chapter on testing ZCA based application
-      3. A chapter on usage of ZCA in Zope 3
-      4. A chapter on implementation of ZCA
-
-  - A note about adapter pattern and adapter in Zope 3.
-  - Introduction should elaborate why objects should have formal interfaces.
-  - In adapter chapter describe why it is beneficial to register the adapter.
-  - A note about registration of components using ZCML in Zope 3
-  - Add `See also` note in reference
