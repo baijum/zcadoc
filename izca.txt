@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.92
+:Version: 0.3.93
 
 Copyright (C) 2007 Baiju M <baiju.m.mail AT gmail.com>.
 
