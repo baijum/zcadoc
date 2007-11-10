@@ -5,7 +5,9 @@ TODO List
 
     1. A case study: desktop application
     2. A chapter on testing ZCA based application
-    3. A chapter on implementation of ZCA
+    3. A chapter on schema
+    4. A chapter on events
+    5. A chapter on implementation of ZCA
 
  - Change "Adapter pattern" section to a sidebar ?
 

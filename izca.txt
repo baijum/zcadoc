@@ -68,8 +68,8 @@ complexity of systems over multiple cooperating components.  Zope
 component architecture helps you to create two basic kinds of
 components: `adapter` and `utility`.
 
-Remember, ZCA is not about the components themselves, rather it helps
-you create, register and retrieve components.  Also remember, an
+Remember, ZCA is not about the components themselves, rather it is 
+about creating, registering, and retrieving components.  Remember also, an
 `adapter` is a normal Python class (or a factory in general) and
 `utility` is a normal Python callable object.
 
@@ -92,9 +92,9 @@ but not limited to, Stephan Richter, Philipp von Weitershausen, Guido
 van Rossum (AKA *Python BDFL*), Tres Seaver, Phillip J Eby and Martijn
 Faassen.
 
-Initially ZCA had components like services and views as part of the
-system.  But later they realized that utility can replace service and
-multi-adapter can replace view components.  Now ZCA has a small number
+Initially ZCA defined additional components; `services` and `views`, 
+but the developers came to realize that utility can replace `service` and
+multi-adapter can replace `view`.  Now ZCA has a very small number
 of core component types: utilities, adapters, subscribers and
 handlers.  In fact, subscribers and handlers are two special types of
 adapters.
@@ -102,7 +102,7 @@ adapters.
 During the Zope 3.2 release cycle, Jim Fulton proposed a major
 simplification of ZCA [#proposal]_.  With this simplification, a new
 single interface (`IComponentRegistry`) for registration of both
-global and local component is created.
+global and local component was created.
 
 The ``zope.component`` package had a long list of dependencies, many
 of which were not required for a non Zope 3 application.  During PyCon
