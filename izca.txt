@@ -1717,6 +1717,41 @@ DefaultSized
 
 Location: ``zope.size.DefaultSized``
 
+This adapter is just a default implementation of ``ISized`` interface.
+This adapter is registered for all kind of objects.  If you want to
+register this adapter for a particular interface, then you have to
+override this registration for your implementation.
+
+The registration of adapter is like this::
+
+  <adapter
+      for="*"
+      factory="zope.size.DefaultSized"
+      provides="zope.size.interfaces.ISized"
+      permission="zope.View"
+      />
+
+As you can see, the adaptee interface is `*`, so it can adapt any kind
+of objects.
+
+The ``ISized`` is a simple interface with two method contracts::
+
+  class ISized(Interface):
+
+      def sizeForSorting():
+          """Returns a tuple (basic_unit, amount)
+
+          Used for sorting among different kinds of sized objects.
+          'amount' need only be sortable among things that share the
+          same basic unit."""
+
+      def sizeForDisplay():
+          """Returns a string giving the size.
+          """
+
+You can see another ``ISized`` adapter registered for ``IZPTPage`` in
+``zope.app.zptpage`` package.
+
 
 Utility
 ~~~~~~~
