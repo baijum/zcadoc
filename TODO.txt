@@ -5,7 +5,9 @@ TODO List
 
     1. A case study: desktop application
     2. A chapter on testing ZCA based application
-    3. A chapter on implementation of ZCA
+    3. A chapter on schema
+    4. A chapter on events
+    5. A chapter on implementation of ZCA
 
  - Change "Adapter pattern" section to a sidebar ?
 
@@ -24,3 +26,21 @@ TODO List
  - Document ``zope.interface.advice``
 
  - Document ``zope.interface.verify``
+
+ - Some of these adapters can be documented:
+
+   - zope.app.zptpage.ZPTReadFile
+     zope.app.zptpage.ZPTWriteFile
+     zope.app.zptpage.Sized
+   - zope.app.publication.traversers.NoTraverser
+   - zope.app.file.FileReadFile
+     zope.app.file.FileWriteFile
+   - zope.app.principalannotation.annotations
+   - zope.app.keyreference.persistent.KeyReferenceToPersistent
+   - zope.app.folder.filerepresentation.ReadDirectory
+   - zope.securitypolicy.rolepermission.AnnotationRolePermissionManager
+   - zope.annotation.attribute.AttributeAnnotations
+   - zope.traversing.adapters.Traverser
+   - zope.traversing.adapters.DefaultTraversable
+   - zope.traversing.adapters.RootPhysicallyLocatable
+

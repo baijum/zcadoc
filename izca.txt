@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.93
+:Version: 0.3.94
 
 Copyright (C) 2007 Baiju M <baiju.m.mail AT gmail.com>.
 
@@ -68,7 +68,7 @@ complexity of systems over multiple cooperating components.  Zope
 component architecture helps you to create two basic kinds of
 components: `adapter` and `utility`.
 
-Remember, ZCA is not about the components themselves, rather it is 
+Remember, ZCA is not about the components themselves, rather it is
 about creating, registering, and retrieving components.  Remember also, an
 `adapter` is a normal Python class (or a factory in general) and
 `utility` is a normal Python callable object.
@@ -92,7 +92,7 @@ but not limited to, Stephan Richter, Philipp von Weitershausen, Guido
 van Rossum (AKA *Python BDFL*), Tres Seaver, Phillip J Eby and Martijn
 Faassen.
 
-Initially ZCA defined additional components; `services` and `views`, 
+Initially ZCA defined additional components; `services` and `views`,
 but the developers came to realize that utility can replace `service` and
 multi-adapter can replace `view`.  Now ZCA has a very small number
 of core component types: utilities, adapters, subscribers and
@@ -133,7 +133,7 @@ This command will download ``zope.component`` and it's dependencies
 from PyPI and install it in your Python path.
 
 Alternately, you can download ``zope.component`` and it's dependencies
-from PyPI and then install them. Install packages in the order given
+from PyPI and then install them.  Install packages in the order given
 below.  On Windows, you may need binary packages of ``zope.interface``
 and ``zope.proxy``.
 
@@ -183,7 +183,7 @@ Now, from inside the ``myve`` directory, you can install
   $ ./bin/easy_install zope.component
 
 Now you can import ``zope.interface`` and ``zope.component`` from the
-new ``python`` interpreter inside ``myve/bin`` directory.
+new ``python`` interpreter inside ``myve/bin`` directory::
 
   $ ./bin/python
 
@@ -392,10 +392,10 @@ Adapter
 
 In a real application, as you noted earlier, the registrar object may
 have cancellation and/or updation functionalities.  Suppose there are
-two more methods like, `cancel_registration` and `update_registration`
-.  In the new design you will be required to pass the guest object for
-each methods.  You can solve this problem by setting guest object as
-an attribute of registrar object.
+two more methods like, `cancel_registration` and
+`update_registration`.  In the new design you will be required to pass
+the guest object for each methods.  You can solve this problem by
+setting guest object as an attribute of registrar object.
 
 Here is the new implementation of registrar object which set guest
 object as an attribute::
@@ -494,10 +494,10 @@ Introduction
 ~~~~~~~~~~~~
 
 `Design Patterns` is a classic book in software engineering by the
-`Gang of Four` [#patternbook]_ .  In this book they recommend:
-"Program to an interface, not an implementation".  Defining formal
-interfaces helps you better understand system.  Moreover interface
-brings you all the benefits of ZCA.
+`Gang of Four` [#patternbook]_.  In this book they recommend: "Program
+to an interface, not an implementation".  Defining formal interfaces
+helps you better understand system.  Moreover interface brings you all
+the benefits of ZCA.
 
 Interface define the behaviour and state of objects.  An interface
 describes how you work with the object.  If you like metaphor, think
@@ -1051,8 +1051,8 @@ lets adapter classes extend functionality by adding methods.
 
 The major attraction of ZCA adapter are the explicit interface for
 components and the component registry.  ZCA adapter components are
-registered in component registry and looked up by client objects when
-required.
+registered in component registry and looked up by client objects using
+interface and name when required.
 
 
 Utility
@@ -1558,7 +1558,7 @@ TODO: Registration of subscription adapter & handler
 
 
 Overrides
-+++++++++
+~~~~~~~~~
 
 When you register components using Python API (``register*`` methods),
 the last registered component will replace previously registered
@@ -1628,105 +1628,129 @@ you can write your overrides in a separate file::
   <includeOverrides file="overrides.zcml" />
 
 
-Adapter
-~~~~~~~
+NameChooser
+~~~~~~~~~~~
 
-  1. NameChooser
+Location: `zope.app.container.contained.NameChooser`
 
-     Location: `zope.app.container.contained.NameChooser`
+This is an adapter for choosing a unique name for an object inside a
+container.
 
-     This is an adapter for choosing a unique name for an object
-     inside a container.
+The registration of adapter is like this::
 
-     The registration of adapter is like this::
+  <adapter
+      provides=".interfaces.INameChooser"
+      for="zope.app.container.interfaces.IWriteContainer"
+      factory=".contained.NameChooser"
+      />
 
-       <adapter
-           provides=".interfaces.INameChooser"
-           for="zope.app.container.interfaces.IWriteContainer"
-           factory=".contained.NameChooser"
-           />
+From the registration, you can see that the adapeee is a
+``IWriteContainer`` and the adapter provides ``INameChooser``.
 
-     From the registration, you can see that the adapeee is a
-     ``IWriteContainer`` and the adapter provides ``INameChooser``.
-
-     This adapter provides a very convenient funcionality for Zope
-     programmers.  The main implementations of ``IWriteContainer`` in
-     Zope 3 are ``zope.app.container.BTreeContainer`` and
-     ``zope.app.folder.Folder``.  Normally you will be inheriting from
-     these implementations for creating your own container classes.
-     Suppose there is no interface called ``INameChooser`` and
-     adapter, then you will be required to implement this funcionality
-     for every implementations separately.
-
-  2. LocationPhysicallyLocatable
-
-     Location:
-     ``zope.location.traversing.LocationPhysicallyLocatable``
-
-     This adapter is frequently used in Zope 3 applications, but
-     normally it is called through an API in ``zope.traversing.api``.
-     (Some old code even use ``zope.app.zapi`` functions, which is
-     again one more indirection)
-
-     The registration of adapter is like this::
-
-       <adapter
-           factory="zope.location.traversing.LocationPhysicallyLocatable"
-           />
-
-     The interface provided and adatee interface is given in the
-     implementation.
-
-     Here is the beginning of implementation::
-
-       class LocationPhysicallyLocatable(object):
-           """Provide location information for location objects
-           """
-           zope.component.adapts(ILocation)
-           zope.interface.implements(IPhysicallyLocatable)
-           ...
-
-     Normally, almost all persistent objects in Zope 3 application
-     will be providing the ``ILocation`` interface.  This interface
-     has only two attribute, ``__parent__`` and ``__name__``.  The
-     ``__parent__`` is the parent in the location hierarchy.  And
-     ``__name__`` is the name within the parent.
-
-     The ``IPhysicallyLocatable`` interface has four methods:
-     ``getRoot``, ``getPath``, ``getName``, and ``getNearestSite``.
-
-       - ``getRoot`` function will return the physical root object.
-
-       - ``getPath`` return the physical path to the object as a
-         string.
-
-       - ``getName`` return the last segment of the physical path.
-
-       - ``getNearestSite`` return the site the object is contained
-         in.  If the object is a site, the object itself is returned.
-
-     If you learn Zope 3, you can see that these are the important
-     things which you required very often.  To understand the beauty
-     of this system, you must see how Zope 2 actually get the physical
-     root object and how it is implemented.  There is a method called
-     ``getPhysicalRoot`` virtually for all container objects.
+This adapter provides a very convenient funcionality for Zope
+programmers.  The main implementations of ``IWriteContainer`` in
+Zope 3 are ``zope.app.container.BTreeContainer`` and
+``zope.app.folder.Folder``.  Normally you will be inheriting from
+these implementations for creating your own container classes.
+Suppose there is no interface called ``INameChooser`` and
+adapter, then you will be required to implement this funcionality
+for every implementations separately.
 
 
- - zope.size.DefaultSized
- - zope.app.zptpage.ZPTReadFile
-   zope.app.zptpage.ZPTWriteFile
-   zope.app.zptpage.Sized
- - zope.app.publication.traversers.NoTraverser
- - zope.app.file.FileReadFile
-   zope.app.file.FileWriteFile
- - zope.app.principalannotation.annotations
- - zope.app.keyreference.persistent.KeyReferenceToPersistent
- - zope.app.folder.filerepresentation.ReadDirectory
- - zope.securitypolicy.rolepermission.AnnotationRolePermissionManager
- - zope.annotation.attribute.AttributeAnnotations
- - zope.traversing.adapters.Traverser
- - zope.traversing.adapters.DefaultTraversable
- - zope.traversing.adapters.RootPhysicallyLocatable
+LocationPhysicallyLocatable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Location:
+``zope.location.traversing.LocationPhysicallyLocatable``
+
+This adapter is frequently used in Zope 3 applications, but
+normally it is called through an API in ``zope.traversing.api``.
+(Some old code even use ``zope.app.zapi`` functions, which is
+again one more indirection)
+
+The registration of adapter is like this::
+
+  <adapter
+      factory="zope.location.traversing.LocationPhysicallyLocatable"
+      />
+
+The interface provided and adatee interface is given in the
+implementation.
+
+Here is the beginning of implementation::
+
+  class LocationPhysicallyLocatable(object):
+      """Provide location information for location objects
+      """
+      zope.component.adapts(ILocation)
+      zope.interface.implements(IPhysicallyLocatable)
+      ...
+
+Normally, almost all persistent objects in Zope 3 application
+will be providing the ``ILocation`` interface.  This interface
+has only two attribute, ``__parent__`` and ``__name__``.  The
+``__parent__`` is the parent in the location hierarchy.  And
+``__name__`` is the name within the parent.
+
+The ``IPhysicallyLocatable`` interface has four methods:
+``getRoot``, ``getPath``, ``getName``, and ``getNearestSite``.
+
+  - ``getRoot`` function will return the physical root object.
+
+  - ``getPath`` return the physical path to the object as a
+    string.
+
+  - ``getName`` return the last segment of the physical path.
+
+  - ``getNearestSite`` return the site the object is contained
+    in.  If the object is a site, the object itself is returned.
+
+If you learn Zope 3, you can see that these are the important
+things which you required very often.  To understand the beauty
+of this system, you must see how Zope 2 actually get the physical
+root object and how it is implemented.  There is a method called
+``getPhysicalRoot`` virtually for all container objects.
+
+
+DefaultSized
+~~~~~~~~~~~~
+
+Location: ``zope.size.DefaultSized``
+
+This adapter is just a default implementation of ``ISized`` interface.
+This adapter is registered for all kind of objects.  If you want to
+register this adapter for a particular interface, then you have to
+override this registration for your implementation.
+
+The registration of adapter is like this::
+
+  <adapter
+      for="*"
+      factory="zope.size.DefaultSized"
+      provides="zope.size.interfaces.ISized"
+      permission="zope.View"
+      />
+
+As you can see, the adaptee interface is `*`, so it can adapt any kind
+of objects.
+
+The ``ISized`` is a simple interface with two method contracts::
+
+  class ISized(Interface):
+
+      def sizeForSorting():
+          """Returns a tuple (basic_unit, amount)
+
+          Used for sorting among different kinds of sized objects.
+          'amount' need only be sortable among things that share the
+          same basic unit."""
+
+      def sizeForDisplay():
+          """Returns a string giving the size.
+          """
+
+You can see another ``ISized`` adapter registered for ``IZPTPage`` in
+``zope.app.zptpage`` package.
 
 
 Utility
