@@ -833,6 +833,7 @@ with explicit interface declaration::
   ...         self.guest = guest
   ...
   ...     def register(self):
+  ...         guest = self.guest
   ...         next_id = get_next_id()
   ...         guests_db[next_id] = {
   ...         'name': guest.name,
