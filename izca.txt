@@ -255,7 +255,7 @@ approach, we will see how we can benefit from the classic design
 patterns, `adapter` and `interface`.  This will bring us into the
 world of the Zope Component Architecture.
 
-Procedural Approach
+Procedural approach
 ~~~~~~~~~~~~~~~~~~~
 
 In any business application, data storage is very critical.  For
@@ -395,7 +395,7 @@ easy to understand.  The better understanding leads to better
 restructuring and hence maintainable code.
 
 
-The Adapter Pattern
+The adapter pattern
 ~~~~~~~~~~~~~~~~~~~
 
 In a real application, as you noted earlier, the registrar object may
