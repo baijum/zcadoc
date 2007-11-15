@@ -189,7 +189,7 @@ new ``python`` interpreter inside ``myve/bin`` directory::
 
   $ ./bin/python
 
-This command will give you a Python prompt from where you can use the
+This command will give you a Python prompt which you can use to run the
 code in this book.
 
 Using ``zc.buildout`` with ``zc.recipe.egg`` recipe you can create
@@ -227,7 +227,7 @@ interpreter inside ``mybuildout/bin`` directory::
   $ ./bin/buildout
   $ ./bin/python
 
-This command will give you a Python prompt from where you can use the
+This command will give you a Python prompt which you can use to run the
 code in this book.
 
 .. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
@@ -248,9 +248,15 @@ Introduction
 ~~~~~~~~~~~~
 
 Consider a business application for registering guests staying in a
-hotel.  From methodological point of view, there are many ways to
-implement this in Python.  You can do this in a procedural way, for
-instance.  Though, an object oriented approach would be better.
+hotel.  Python can implement this in a number of ways.  We will start with
+a brief look at a procedural implementation, and then move to a basic 
+object oriented approach.  As we examine the object oriented approach,
+we will see how we can benefit from the classic design patterns,
+`adapter` and `interface`.  This will bring us into the world of the
+Zope Component Architecture. 
+
+Procedural Approach
+~~~~~~~~~~~~~~~~~~~
 
 In any business application, data storage is very critical.  For
 simplicity, this example use a Python dictionary as the storage.  Key
@@ -383,14 +389,14 @@ changes and make it maintainable.
   this subject, you can read the book called `Extreme Programming
   Explained` by Kent Beck.
 
-By intrducing the guest object, you saved some typing.  More than
+By introducing the guest object, you saved some typing.  More than
 that, the abstraction of guest object made the system much simpler and
 easy to understand.  The better understanding leads to better
 restructuring and hence maintainable code.
 
 
-Adapter
-~~~~~~~
+The Adapter Pattern
+~~~~~~~~~~~~~~~~~~~
 
 In a real application, as you noted earlier, the registrar object may
 have cancellation and/or updation functionalities.  Suppose there are
@@ -488,8 +494,8 @@ one of the foundations of Zope components, so understanding the
 concept and usage of interfaces is very important.
 
 
-Interface
----------
+Interfaces
+----------
 
 
 Introduction
@@ -563,8 +569,8 @@ make a class an interface, it must be inherited from
 a convention.
 
 
-Declaring interface
-~~~~~~~~~~~~~~~~~~~
+Declaring interfaces
+~~~~~~~~~~~~~~~~~~~~
 
 You have alread seen how to declare an interface using
 ``zope.interface`` in previous section.  This section will explain the
@@ -630,8 +636,8 @@ addition to what their classes implement.
   be an `implementer` of an interface.
 
 
-Implementing interface
-~~~~~~~~~~~~~~~~~~~~~~
+Implementing interfaces
+~~~~~~~~~~~~~~~~~~~~~~~
 
 To declare a class implements a particular interface, use the function
 ``zope.interface.implements`` in the class statement.
@@ -723,8 +729,8 @@ the next chapter you can see how an interface is used to define an
 adapter component.
 
 
-Marker interface
-~~~~~~~~~~~~~~~~
+Marker interfaces
+~~~~~~~~~~~~~~~~~
 
 An interface can be used to declare that a particular object belongs
 to a special type.  An interface without any attribue or method is
@@ -806,8 +812,8 @@ constraint, so it raised exception.
 .. [#api] http://en.wikipedia.org/wiki/Application_programming_interface
 
 
-Adapter
--------
+Adapters
+--------
 
 
 Implementation
