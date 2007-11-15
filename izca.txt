@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.96
+:Version: 0.3.97
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 
@@ -71,9 +71,9 @@ component architecture helps you to create two basic kinds of
 components: `adapter` and `utility`.
 
 Remember, ZCA is not about the components themselves, rather it is
-about creating, registering, and retrieving components.  Remember also, an
-`adapter` is a normal Python class (or a factory in general) and
-`utility` is a normal Python callable object.
+about creating, registering, and retrieving components.  Remember
+also, an `adapter` is a normal Python class (or a factory in general)
+and `utility` is a normal Python callable object.
 
 The ZCA framework is developed as part of the Zope 3 project.  ZCA, as
 noted earlier, is a pure Python framework, so it can be used in any
@@ -95,8 +95,8 @@ van Rossum (AKA *Python BDFL*), Tres Seaver, Phillip J Eby and Martijn
 Faassen.
 
 Initially ZCA defined additional components; `services` and `views`,
-but the developers came to realize that utility can replace `service` and
-multi-adapter can replace `view`.  Now ZCA has a very small number
+but the developers came to realize that utility can replace `service`
+and multi-adapter can replace `view`.  Now ZCA has a very small number
 of core component types: utilities, adapters, subscribers and
 handlers.  In fact, subscribers and handlers are two special types of
 adapters.
@@ -189,8 +189,8 @@ new ``python`` interpreter inside ``myve/bin`` directory::
 
   $ ./bin/python
 
-This command will give you a Python prompt which you can use to run the
-code in this book.
+This command will give you a Python prompt which you can use to run
+the code in this book.
 
 Using ``zc.buildout`` with ``zc.recipe.egg`` recipe you can create
 Python interpreter with specified Python eggs.  First, install
@@ -227,8 +227,8 @@ interpreter inside ``mybuildout/bin`` directory::
   $ ./bin/buildout
   $ ./bin/python
 
-This command will give you a Python prompt which you can use to run the
-code in this book.
+This command will give you a Python prompt which you can use to run
+the code in this book.
 
 .. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
 .. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
@@ -248,12 +248,12 @@ Introduction
 ~~~~~~~~~~~~
 
 Consider a business application for registering guests staying in a
-hotel.  Python can implement this in a number of ways.  We will start with
-a brief look at a procedural implementation, and then move to a basic 
-object oriented approach.  As we examine the object oriented approach,
-we will see how we can benefit from the classic design patterns,
-`adapter` and `interface`.  This will bring us into the world of the
-Zope Component Architecture. 
+hotel.  Python can implement this in a number of ways.  We will start
+with a brief look at a procedural implementation, and then move to a
+basic object oriented approach.  As we examine the object oriented
+approach, we will see how we can benefit from the classic design
+patterns, `adapter` and `interface`.  This will bring us into the
+world of the Zope Component Architecture.
 
 Procedural Approach
 ~~~~~~~~~~~~~~~~~~~
@@ -1473,10 +1473,6 @@ handlers registered for the event::
 ZCA usage in Zope
 -----------------
 
-.. note::
-
-  This chapter is not yet completed.  I welcome your suggestions :)
-
 Zope Component Architecture is used in both Zope 3 and Zope 2.  This
 chapter go through ZCA usage in Zope.
 
@@ -1562,8 +1558,6 @@ Instead of directly using the component, you can also give a factory::
   <utility
       factory=".database.Connection"
       />
-
-TODO: Registration of subscription adapter & handler
 
 
 Overrides
@@ -1762,8 +1756,28 @@ You can see another ``ISized`` adapter registered for ``IZPTPage`` in
 ``zope.app.zptpage`` package.
 
 
-Utility
-~~~~~~~
+ZopeVersionUtility
+~~~~~~~~~~~~~~~~~~
+
+Location: ``zope.app.applicationcontrol.ZopeVersionUtility``
+
+This utility gives version of the running Zope.
+
+The registration goes like this::
+
+  <utility
+      component=".zopeversion.ZopeVersionUtility"
+      provides=".interfaces.IZopeVersion" />
+
+The interface provided, ``IZopeVersion``, has only one method named
+``getZopeVersion``.  This method return a string containing the Zope
+version (possibly including SVN information).
+
+The default implementation, ``ZopeVersionUtility``, get version info
+from a file ``version.txt`` in `zope/app` directory.  If Zope is
+running from subversion checkout, it will show the latest revision
+number.  If none of the above works it will set it to:
+`Development/Unknown`.
 
 
 Reference
