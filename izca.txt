@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.97
+:Version: 0.3.98
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 
@@ -255,6 +255,7 @@ approach, we will see how we can benefit from the classic design
 patterns, `adapter` and `interface`.  This will bring us into the
 world of the Zope Component Architecture.
 
+
 Procedural approach
 ~~~~~~~~~~~~~~~~~~~
 
@@ -302,7 +303,7 @@ database::
 
 This tutorial is not going to further implementation details of
 procedural approach.  A big missing feature of this example storage is
-persistency, now all stored data will be lost when closing the
+persistence, now all stored data will be lost when closing the
 application.
 
 
@@ -311,12 +312,12 @@ Object oriented approach
 
 In object oriented methodology, you can think of a registrar object
 handling the registration.  There are many advantages for creating an
-object for handling registration.  The most importand is that you are
+object for handling registration.  The most important is that you are
 getting more abstraction about registration process, so you can better
 understand your code.  You can put related logics together, may be
 inherit some abstract base class.  Registration process may also
 involve cancellation and/or updation of registration.  The same object
-may do all these functionalities or deligate to other components.
+may do all these functionalities or delegate to other components.
 Anyway, here are the implementation details (here, a class) of
 registrar object::
 
@@ -432,7 +433,7 @@ required to create separate instances of `GuestRegistrarNG` for each
 guest object.
 
 Now just step back and think differently.  Suppose you are the creator
-of this software and selling it to many hotel custmers.  Consider a
+of this software and selling it to many hotel customers.  Consider a
 case where your different clients requires different storages.  For
 example, one registrar might store the details in a relational
 database and another one might store them in Zope Object Database
@@ -482,8 +483,8 @@ other common scenarios:
    approach would be to create reusable components and configure them
    based on client-specific requirements.
 
-All these examples points to situaltions where you want to make
-applications extensibile or pluggable.  Do not use `adapter`
+All these examples points to situations where you want to make
+applications extensible or pluggable.  Do not use `adapter`
 components where you do not want extensibility or pluggability.
 
 Zope component architecture provides `adapter` components to solve
@@ -507,13 +508,13 @@ to an interface, not an implementation".  Defining formal interfaces
 helps you better understand system.  Moreover interface brings you all
 the benefits of ZCA.
 
-Interface define the behaviour and state of objects.  An interface
+Interface define the behavior and state of objects.  An interface
 describes how you work with the object.  If you like metaphor, think
 of interface as a `contract for object`.  Another metaphor which may
 help is `blueprint for objects`.  In the code, methods and attributes
 are forming the object's interface.
 
-The notion of interface is very explicit in mordern languages like
+The notion of interface is very explicit in modern languages like
 Java, C#, VB.NET etc.  Also these languages provide some syntax for
 defining interfaces.  Python has the notion interfaces, but it is not
 very explicit.  To simulate a formal definition of interfaces in C++,
@@ -524,7 +525,7 @@ interface.
 
 The base of object-orientation is the communication between objects.
 Messages are used for the communication between objects.  In Python,
-functions, methods or any other callables can be used to handle
+functions, methods or any other callable can be used to handle
 messages.
 
 For example, consider this class::
@@ -551,7 +552,7 @@ object.  For this, either you have go through the implementation
 details (``Host`` class) of the object or a separate API documentation
 [#api]_ will be required.
 
-You can use the ``zope.interface`` package to define the interace of
+You can use the ``zope.interface`` package to define the interface of
 objects.  For the class given above you can specify the interface like
 this::
 
@@ -572,7 +573,7 @@ a convention.
 Declaring interfaces
 ~~~~~~~~~~~~~~~~~~~~
 
-You have alread seen how to declare an interface using
+You have already seen how to declare an interface using
 ``zope.interface`` in previous section.  This section will explain the
 concepts in detail.
 
@@ -610,11 +611,11 @@ argument.
 
 Now you will see how to connect `interface-class-object`.  So object
 is the real living thing, objects are instances of classes.  And
-interface is the actuall definition of the object, so classes are just
+interface is the actual definition of the object, so classes are just
 the implementation details.  This is why you should program to an
 interface and not to an implementation.
 
-Now you should familiarise two more terms to understand other
+Now you should familiarize two more terms to understand other
 concepts.  First one is `provide` and the other one is `implement`.
 Object provides interfaces and classes implement interfaces.  In other
 words, objects provide interfaces that their classes implement.  In
@@ -733,7 +734,7 @@ Marker interfaces
 ~~~~~~~~~~~~~~~~~
 
 An interface can be used to declare that a particular object belongs
-to a special type.  An interface without any attribue or method is
+to a special type.  An interface without any attribute or method is
 called `marker interface`.
 
 Here is a `marker interface`::
@@ -987,7 +988,7 @@ exception, but ``queryAdapter`` returned `None` when lookup failed.
 
 The third argument, the name of registration, is optional.  If the
 third argument is not given it will default to empty string ('').
-Since there is no component registerd with an empty string,
+Since there is no component registered with an empty string,
 ``getAdapter`` will raise ``ComponentLookupError`` .  Similarly
 ``queryAdapter`` will return `None`, see yourself how it works::
 
@@ -1000,10 +1001,10 @@ Since there is no component registerd with an empty string,
   True
 
 In this section you have learned how to register a simple adapter and
-how to retrieve it from component registry.  These kind of adpaters is
-called single adapter, because it adpats only one adaptee.  If an
+how to retrieve it from component registry.  These kind of adapters is
+called single adapter, because it adapts only one adaptee.  If an
 adapter adapts more that one adaptee, then it is called multi
-apdapter.
+adapter.
 
 
 Retrieving adapter using interface
@@ -1017,7 +1018,7 @@ fails, second argument will be returned.
   >>> IRegistrar(jack, alternate='default-output')
   'default-output'
 
-  Keyword name can be omited:
+  Keyword name can be omitted:
 
   >>> IRegistrar(jack, 'default-output')
   'default-output'
@@ -1031,7 +1032,7 @@ fails, second argument will be returned.
     <Guest object at ...>,
     <InterfaceClass __builtin__.IRegistrar>)
 
-  Here `GuestRegistrarNG` is registerd without name:
+  Here `GuestRegistrarNG` is registered without name:
 
   >>> gsm.registerAdapter(GuestRegistrarNG)
 
@@ -1046,7 +1047,7 @@ For simple cases, you may use interface to get adapter components.
 Adapter pattern
 ~~~~~~~~~~~~~~~
 
-The adapter concept in Zope Compenent Architecture and the classic
+The adapter concept in Zope Component Architecture and the classic
 `Adapter` pattern as described in Design Patterns book is very
 similar.  But the intent of ZCA adapter is more wider than `Adapter`
 pattern.  The intent of `Adapter` pattern is to convert the interface
@@ -1055,7 +1056,7 @@ work together that couldn't otherwise because of incompatible
 interfaces.  But in the `Motivation` section, GoF says: "Often the
 adapter is responsible for functionality the adapter class doesn't
 provide".  ZCA adapter has more focus on adding functionalities than
-new inteface for existing functionality of adaptee.  So, ZCA adapter
+new interface for existing functionality of adaptee.  So, ZCA adapter
 lets adapter classes extend functionality by adding methods.
 
 The major attraction of ZCA adapter are the explicit interface for
@@ -1072,7 +1073,7 @@ Introduction
 ~~~~~~~~~~~~
 
 Now you know the concept of interface, adapter and component registry.
-Sometimes it would be useful to regiter an object which is not
+Sometimes it would be useful to register an object which is not
 adapting anything.  Database connection, XML parser, object returning
 unique Ids etc. are examples of these kinds of objects.  These kind of
 components provided by Zope component architecture are called
@@ -1091,7 +1092,7 @@ register components which you want to make replaceable.
 Simple utility
 ~~~~~~~~~~~~~~
 
-Before implementing the utility, as usaul, difine its interface.  Here
+Before implementing the utility, as usual, define its interface.  Here
 is a `greeter` interface::
 
   >>> from zope.interface import Interface
@@ -1139,7 +1140,7 @@ normally instances of classes.
 Named utility
 ~~~~~~~~~~~~~
 
-When registering a uitility component, like adapter, you can use a
+When registering a utility component, like adapter, you can use a
 name.
 
 For example consider this:
@@ -1171,7 +1172,7 @@ second argument.
   string.  Then, component lookup mechanism will try to find the
   component with name as empty string (''), and it will fail.  When
   component lookup fails it will raise `ComponentLookupError`
-  exception.  Rememer, it will not return some random component
+  exception.  Remember, it will not return some random component
   registered with some other name.
 
 
@@ -1647,16 +1648,16 @@ The registration of adapter is like this::
       factory=".contained.NameChooser"
       />
 
-From the registration, you can see that the adapeee is a
+From the registration, you can see that the adaptee is a
 ``IWriteContainer`` and the adapter provides ``INameChooser``.
 
-This adapter provides a very convenient funcionality for Zope
+This adapter provides a very convenient functionality for Zope
 programmers.  The main implementations of ``IWriteContainer`` in
 Zope 3 are ``zope.app.container.BTreeContainer`` and
 ``zope.app.folder.Folder``.  Normally you will be inheriting from
 these implementations for creating your own container classes.
 Suppose there is no interface called ``INameChooser`` and
-adapter, then you will be required to implement this funcionality
+adapter, then you will be required to implement this functionality
 for every implementations separately.
 
 
@@ -1677,7 +1678,7 @@ The registration of adapter is like this::
       factory="zope.location.traversing.LocationPhysicallyLocatable"
       />
 
-The interface provided and adatee interface is given in the
+The interface provided and adaptee interface is given in the
 implementation.
 
 Here is the beginning of implementation::
@@ -2842,7 +2843,7 @@ Example 2::
 implementer
 ~~~~~~~~~~~
 
-Create a decorator for declaring interfaces implemented by a facory.
+Create a decorator for declaring interfaces implemented by a factory.
 A callable is returned that makes an implements declaration on objects
 passed to it.
 
