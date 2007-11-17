@@ -123,7 +123,7 @@ Installation
 The ``zope.component``, package together with the ``zope.interface``
 package are the core of Zope component architecture.  They provide
 facilities for defining, registering and looking up components.  The
-``zope.component`` package and it's dependencies are available in egg
+``zope.component`` package and its dependencies are available in egg
 format from the Python Package Index (PyPI) [#pypi]_.
 
 You can install ``zope.component`` and it's dependencies using
@@ -131,10 +131,10 @@ You can install ``zope.component`` and it's dependencies using
 
   $ easy_install zope.component
 
-This command will download ``zope.component`` and it's dependencies
+This command will download ``zope.component`` and its dependencies
 from PyPI and install it in your Python path.
 
-Alternately, you can download ``zope.component`` and it's dependencies
+Alternately, you can download ``zope.component`` and its dependencies
 from PyPI and then install them.  Install packages in the order given
 below.  On Windows, you may need binary packages of ``zope.interface``
 and ``zope.proxy``.
