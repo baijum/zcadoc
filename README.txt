@@ -84,6 +84,8 @@ Guidelines
 
  - Use two spaces after every sentence
 
+ - Use maximum 70 characters per line
+
 Regards,
 Baiju M
 http://www.muthukadan.net
