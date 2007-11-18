@@ -528,72 +528,72 @@ Interfaces
 Introducción
 ~~~~~~~~~~~~
 
-`Design Patterns` is a classic book in software engineering by the
-`Gang of Four` [#patternbook]_.  In this book they recommend: "Program
-to an interface, not an implementation".  Defining formal interfaces
-helps you better understand system.  Moreover interface brings you all
-the benefits of ZCA.
+`Patrones de Diseño` es un libro clásico de ingeniería del software
+escrito por la `Banda de los Cuatro` [#patternbook]_. En este libro
+se recomienda: "Programa contra un interfaz, no contra una
+implementación". Definir interfaces formales te ayuda a entender mejor
+el sistema. Además, las interfaces traen consigo todos los beneficios
+de la ZCA.
 
-Interface define the behavior and state of objects.  An interface
-describes how you work with the object.  If you like metaphor, think
-of interface as a `contract for object`.  Another metaphor which may
-help is `blueprint for objects`.  In the code, methods and attributes
-are forming the object's interface.
+Las interfaces definen el comportamiento y el estado de objetos. Una
+interfaz describe como se trabaja con el objeto. Si te gustan las
+metaforas, piensa en la interfaz como un `contrato del objeto`. Otra
+métoda que ayuda es `molde de objetos`. En el código, los métodos
+y los atributos forman la interfaz del objeto.
 
-The notion of interface is very explicit in modern languages like
-Java, C#, VB.NET etc.  Also these languages provide some syntax for
-defining interfaces.  Python has the notion interfaces, but it is not
-very explicit.  To simulate a formal definition of interfaces in C++,
-`Gang of Four` used classes with virtual functions in `Design
-Patterns` book.  In a similar fashion, Zope component architecture use
-``zope.interface.Interface`` inherited meta-class for defining an
-interface.
+La noción de interfaz es muy explícita en lenguajes modernos como
+Java, C#, VB.NET etc. Estos lenguajes también ofrecen una sintaxis
+para definir interfaces. Python tiene la noción de interfaces, per
+no es muy explícita. Para simular una definición formal de interfaces
+en C++, la `Banda de los Cuatro` utiliza clases con funciones
+virtuales en el libro `Patrones de Diseño`. De forma similar, la
+arquitectura de componentes de Zope utiliza la meta-clase heredada de
+``zope.interface.Interface`` para definir una interfaz.
 
-The base of object-orientation is the communication between objects.
-Messages are used for the communication between objects.  In Python,
-functions, methods or any other callable can be used to handle
-messages.
+La base de la orientación a objetos es la comunicación entre los
+objetos. Se utilizan mensajes para comunicación entre objetos. En
+Python, funciones, métodos o cualquier otro llamable, puede usarse
+para manipular mensajes.
 
-For example, consider this class::
+Por ejemplo, considera esta clase::
 
-  >>> class Host(object):
+  >>> class Anfitrion(object):
   ...
-  ...     def goodmorning(self, name):
-  ...         """Say good morning to guests"""
+  ...     def buenodias(self, nombre):
+  ...         """Le dice buenos dias a los huespedes"""
   ...
-  ...         return "Good morning, %s!" % name
+  ...         return "¡Buenos días, %s!" % nombre
 
-In the above class, you defined a `goodmorning` method.  If you call
-the `goodmorning` method from an object created using this class, it
-will return `Good morning, ...!` ::
+En la clase anterior, has definido un método `buenosdias`. Si llamas
+al método `buenosdias` desde un objeto creado con esta clase, devolverá
+`¡Buenos días, ...!`::
 
-  >>> host = Host()
-  >>> host.goodmorning('Jack')
-  'Good morning, Jack!'
+  >>> anfitrion = Anfitrion()
+  >>> anfitrion.buenosdias('Pepe')
+  '¡Buenos días, Pepe!'
 
-Here ``host`` is the actual object.  The implementation details of
-this object is the class ``Host``.  Now, how to find how the object
-looks like, that is, what are the methods and attributes of the
-object.  For this, either you have go through the implementation
-details (``Host`` class) of the object or a separate API documentation
-[#api]_ will be required.
+Aquí ``anfitrion`` es el objeto real. Los detalles de implementación de
+este objeto es la clase ``Anfitrion``. Ahora, cómo se sabe cómo es el
+objeto, es decir, cuáles son los métodos y los atributos del objeto.
+Para responder a esto, tienes que ir a los detalles de implementación
+(la clase ``Anfitrion``) del objeto o bien necesitas una documentación
+externa de la API [#api]_.
 
-You can use the ``zope.interface`` package to define the interface of
-objects.  For the class given above you can specify the interface like
-this::
+Puedes usar el paquete ``zope.interface`` para definir la interfaz de
+objetos. Para la clase anterior puedes especificar la interfaz así::
 
   >>> from zope.interface import Interface
 
-  >>> class IHost(Interface):
+  >>> class IAnfitrion(Interface):
   ...
-  ...     def goodmorning(guest):
-  ...         """Say good morning to guest"""
+  ...     def buenosdias(huesped):
+  ...         """Le dice buenos dias al huesped"""
 
-As you can see, the interface is defined using Python class statement.
-We use (abuse?) Python's class statement to define interfaces.  To
-make a class an interface, it must be inherited from
-``zope.interface.Interface`` .  The ``I`` prefix for interface name is
-a convention.
+Como puedes ver, la interfaz se define usando la sentencia class de
+Python. Usamos (¿abusamos de?) la sentencia class de Python para
+definir interfaces. Para hacer que una clase sea una interfaz, debe
+heredar de ``zope.interface.Interface``. El prefijo ``I`` de la
+interfaz es una convención.
 
 
 Declarando interfaces
