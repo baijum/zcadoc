@@ -264,252 +264,261 @@ Un ejemlo
 Introducción
 ~~~~~~~~~~~~
 
-Consider a business application for registering guests staying in a
-hotel.  Python can implement this in a number of ways.  We will start
-with a brief look at a procedural implementation, and then move to a
-basic object oriented approach.  As we examine the object oriented
-approach, we will see how we can benefit from the classic design
-patterns, `adapter` and `interface`.  This will bring us into the
-world of the Zope Component Architecture.
+Considera una aplicación de gestión para registrar los huéspedes que se
+hospedan en un hotel. Python puede implementar esto de varias formas
+distintas. Empezaremos con un mirada breve a un enfoque procedural, y
+después cambiaremos a un enfoque orientado a objetos básico. Mientras
+examinamos el enfoque orientado a objetos, veremos como como podemos
+beneficiarnos de los patrones de diseño clásicos, `adaptador` e
+`interface`. Esto nos llevará al mundo de la Arquitectura de Componentes
+de Zope.
 
 
 Enfoque procedural
 ~~~~~~~~~~~~~~~~~~
 
-In any business application, data storage is very critical.  For
-simplicity, this example use a Python dictionary as the storage.  Key
-of the dictionary will be the unique Id for a particular guest.  And
-value will be another dictionary with key as the property name::
+En una aplicación de gestión, el almacenamiento de los datos es muy
+importante. Por simplicidad, este ejemplo utilizará un diccionario
+Python como almacenamiento. Las claves del diccionario serán
+identificadores únicos para un huesped en particular. Y el valor
+será otro diccionario cuyas claves son los nombres de las propiedades::
 
-  >>> guests_db = {} #key: unique Id, value: details in a dictionary
+  >>> huespedes_db = {} #clave: id único, valor: detalles en un diccionario
 
-In a simplistic method, a function which accepts details as arguments
-is enough to do the registration.  You also required a supporting
-function to get the next Id for your data storage.
+En un método simplista, una función que acepte detalles como argumentos
+es suficiente para hacer el registro. También necesitas una función
+auxiliar para obtener el próximo identificador de tu almacenamiento de
+datos.
 
-The supporting function, for getting the next Id can be implemented
-like this::
+Esta función auxiliar, para obtener el próximo identificador se puede
+implementar así::
 
-  >>> def get_next_id():
-  ...     db_keys = guests_db.keys()
-  ...     if db_keys == []:
-  ...         next_id = 1
+  >>> def proximo_id():
+  ...     claves = huespedes_db.keys()
+  ...     if claves == []:
+  ...         proximo = 1
   ...     else:
-  ...         next_id = max(db_keys) + 1
-  ...     return next_id
+  ...         proximo = max(claves) + 1
+  ...     return proximo
 
-As you can see, the `get_next_id` function implementation is very
-simple.  Well, this is not the ideal way, but it is sufficient to
-explain concepts.  The function first get all keys of storage as list
-and check whether it is empty or not.  If the list is empty, so no
-item is stored, it return `1` as the next Id.  And if the list is not
-empty, the next Id is calculated by adding `1` to the maximum value of
-list.
+Como puedes ver, la implementación de la función `proximo_id` es muy
+simple. Bueno, no es la forma ideal, pero es suficiente para explicar
+conceptos. La función primero obtiene todas las claves del
+almacenamiento en una lista y comprueba si está vacía o no. Si está
+vacía, por tanto ningún elemento esta almacenado, devuelve `1` como
+el próximo identificador. Y si la lista no está vacía, el próximo
+identificador se calcula sumando `1` al valor máximo de la lista.
 
-The function to register guest can get next unique Id using
-`get_next_id` function, then assign the details of guest using a
-dictionary.  Here is the function to get details and store in the
-database::
+La función para registrar un huesped puede obtener el próximo
+identificador usando la función `proximo_id`, y luego asignando
+los detalles de un huesped usando un diccionario. Aquí está la función
+para obtener los detalles y almacenar en la base de datos::
 
-  >>> def register_guest(name, place):
-  ...     next_id = get_next_id()
-  ...     guests_db[next_id] = {
-  ...     'name': name,
-  ...     'place': place
+  >>> def registrar_huesped(nombre, lugar):
+  ...     huesped_id = proximo_id()
+  ...     huespedes_db[huesped_id] = {
+  ...     'nombre': nombre,
+  ...     'lugar': lugar
   ...     }
 
-This tutorial is not going to further implementation details of
-procedural approach.  A big missing feature of this example storage is
-persistence, now all stored data will be lost when closing the
-application.
+Este tutorial no va a ir más allá en los detalles de implementación del
+enfoque procedural. Una funcionalidad importante ausente en este
+ejemplo es la persistencia de los datos. Todos los datos almacenados se
+perderán cuando se cierre la aplicación.
 
 
 Enfoque orientado a objetos
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In object oriented methodology, you can think of a registrar object
-handling the registration.  There are many advantages for creating an
-object for handling registration.  The most important is that you are
-getting more abstraction about registration process, so you can better
-understand your code.  You can put related logics together, may be
-inherit some abstract base class.  Registration process may also
-involve cancellation and/or updation of registration.  The same object
-may do all these functionalities or delegate to other components.
-Anyway, here are the implementation details (here, a class) of
-registrar object::
+En una metodología orientada a objetos, puedes pensar en un objeto
+registrador que se encargue del registro. Hay muchas ventajas para
+crear un objeto que se encargue del registro. La más importante es que
+estas consiguiendo más abstracción en el proceso de registro, por lo
+que puedes entender mejor tu código. Puedes poner lógicas relacionadas
+juntas, quizá heredando de una clase base abstracta. El proceso de
+registro puede incluir también cancelación y/o actualización del
+registro. El mismo objeto puede hacer todo esto o delegarlo a otros
+componentes. En cualquier caso, aqui tenemos los detalles de 
+implementación (aquí, una clase) del objeto registrador::
 
-  >>> class GuestRegistrar(object):
+  >>> class RegistradorHuesped(object):
   ...
-  ...     def register(self, name, place):
-  ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
-  ...         'name': name,
-  ...         'place': place
+  ...     def registrar(self, nombre, lugar):
+  ...         huesped_id = proximo_id()
+  ...         huespedes_db[huesped_id] = {
+  ...         'nombre': nombre,
+  ...         'lugar': lugar
   ...         }
 
-In this implementation, the registrar object (an instance of
-`GuestRegistrar` class) is handling the registration.  With this
-design, a particular registrar object can perform multiple
-registrations.
+En esta implementación, el objeto registrador (una instancia de
+la clase RegistradorHuesped) se encarga del registro. Con este
+diseño, un objeto registrador en concreto puede realizar numerosos
+registros.
 
-This is how you can use the current registrar implementation::
+Así es como puedes usar la implementación actual::
 
-  >>> registrar = GuestRegistrar()
-  >>> registrar.register("Jack", "Bangalore")
+  >>> registrador = RegistradorHuesped()
+  >>> registrador.registrar("Pepito", "Pérez")
 
-Requirement changes are unavoidable in any real world project.
-Consider this case, after some time, a new requirement is arising: the
-guests also required to provide phone number to admit them.  You will
-be required to change the implementation of registrar object to
-support it.
+Los cambios de requisitos son inevitables en un proyecto real. Considera
+este caso, después de algún tiempo, un nuevo requisito se presenta:
+los huespedes también deben dar el número de teléfono para que se les
+admita. Necesitarás cambiar la implementación del objeto registrador
+para ofrecer esto.
 
-You can achieve this requirement by adding one argument to `registrar`
-method and use that argument in the dictionary of values.  Here is the
-new implementation for this requirement::
+Puedes cumplir este requisito añadiendo un argumento al método
+`registrar` y usar ese argumento en el diccionario de valores. Aquí
+está la nueva implementación para este requisito::
 
-  >>> class GuestRegistrar(object):
+  >>> class RegistradorHuesped(object):
   ...
-  ...     def register(self, name, place, phone):
-  ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
-  ...         'name': name,
-  ...         'place': place,
-  ...         'phone': phone
+  ...     def registrar(self, nombre, lugar, telefono):
+  ...         huesped_id = proximo_id()
+  ...         huespedes_db[huesped_id] = {
+  ...         'nombre': nombre,
+  ...         'lugar': lugar,
+  ...         'telefono': telefono
   ...         }
 
-Other than migrating the data to new schema, now you have to change
-the usage of `GuestRegistrar` in all places.  If you can abstract the
-details of guest into an object and use it for registration, the code
-changes can be minimized.  If you follow this design, you have to pass
-that guest object instead of more arguments to the function.  The new
-implementation with guest object will look like this::
+Además de migrar los datos al nuevo esquema, ahora tienes que cambiar
+la forma de usar `RegistradorHuesped` en todos sitios. Si puedes
+abstraer los detalles de un huesped en un objeto y usarlo en el
+registro, los cambios en el código se pueden minimizar. Si sigues este
+diseño, tienes que pasarle el objeto huesped a la función en lugar de
+más argumentos. La nueva implementación con el objeto huesped quedaría
+así::
 
-  >>> class GuestRegistrar(object):
+  >>> class RegistradorHuesped(object):
   ...
-  ...     def register(self, guest):
-  ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
-  ...         'name': guest.name,
-  ...         'place': guest.place,
-  ...         'phone': guest.phone
+  ...     def registrar(self, huesped):
+  ...         huesped_id = proximo_id()
+  ...         huespedes_db[huesped_id] = {
+  ...         'nombre': huesped.nombre,
+  ...         'lugar': huesped.lugar,
+  ...         'telefono': huesped.telefono
   ...         }
 
-Well, even in this implementation you have to change code.  Code
-change for requirement is unavoidable, your goal should be to minimize
-changes and make it maintainable.
+Bien, incluso con esta implementación tienes que cambiar código. El
+cambio de código con nuevos requisitos es inevitable, tu objetivo es
+poder minimizar los cambios y hacerlo mantenible.
 
 .. note::
 
-  You should have the courage to make any change, major or minor, at
-  any time.  Immediate feedback is the only way you can get the
-  courage.  Using automated testing, you can get the immediate
-  feedback and so the courage to make changes.  For more details about
-  this subject, you can read the book called `Extreme Programming
-  Explained` by Kent Beck.
+  Debes tener el coraje de hacer cualquier cambio, grande o pequeño,
+  en cualquier momento. Retroalimentación inmediata es la única forma
+  de que tengas el coraje. El uso de los tests automáticos te dan la
+  retroalimentación inmediata y por tanto el coraje para hacer cambios.
+  Para más información sobre el tema, puedes leer el libro llamado
+  `Extreme Programming Explained` de Kent Beck.
 
-By introducing the guest object, you saved some typing.  More than
-that, the abstraction of guest object made the system much simpler and
-easy to understand.  The better understanding leads to better
-restructuring and hence maintainable code.
+Al introducir el objeto huesped, te has ahorrado un poco de escritura.
+Más que eso, la abstracción del objeto invitado ha hecho tu sistema
+mucho más simple y fácil de entender. Cuanto mejor se entienda mejor
+se puede restructurar y por tanto mejor se mantiene el código.
 
 
 El patrón adaptador
 ~~~~~~~~~~~~~~~~~~~
 
-In a real application, as you noted earlier, the registrar object may
-have cancellation and/or updation functionalities.  Suppose there are
-two more methods like, `cancel_registration` and
-`update_registration`.  In the new design you will be required to pass
-the guest object for each methods.  You can solve this problem by
-setting guest object as an attribute of registrar object.
+Como se ha dicho antes, en una aplicación real, el objeto registrador
+puede tener funcionalidades de cancelación y/o actualización. Supón
+que hay dos método más como, `cancelar_registro` y
+`actualizar_registro`. En el nuevo diseño deberás pasar el objeto
+huesped a ambos métodos. Puedes solucionar este problema guardando
+el objeto huesped como un atributo del objeto registrador.
 
-Here is the new implementation of registrar object which set guest
-object as an attribute::
+Aquí tenemos la nueva implementación del objeto registrador que
+guarda el objeto huesped como un atributo::
 
-  >>> class GuestRegistrarNG(object):
+  >>> class RegistradorHuespedNG(object):
   ...
-  ...     def __init__(self, guest):
-  ...         self.guest = guest
+  ...     def __init__(self, huesped):
+  ...         self.huesped = huesped
   ...
-  ...     def register(self):
-  ...         guest = self.guest
-  ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
-  ...         'name': guest.name,
-  ...         'place': guest.place,
-  ...         'phone': guest.phone
+  ...     def registrar(self):
+  ...         huesped= self.huesped
+  ...         huesped_id = proximo_id()
+  ...         huespedes_db[huesped_id] = {
+  ...         'nombre': huesped.nombre,
+  ...         'lugar': huesped.lugar,
+  ...         'telefono': huesped.telefono
   ...         }
 
-The solution you reached is a common design pattern called, `Adapter`.
-With this design, now you can add more methods, so more functionality,
-if required.
+La solución a la que has llegado es un patrón de diseño común llamado,
+`Adaptador`. Con este diseño, ahora puedes añadir más métodos, es decir
+más funcionalidad, si se necesita.
 
-In this implementation, while creating the instance you have to pass
-the guest object which has the values as attributes.  Now you also
-required to create separate instances of `GuestRegistrarNG` for each
-guest object.
+En esta implementación, al crear la instancia tienes que pasarle el
+objeto invitado que tiene los valores como atributos. Ahora es
+necesario crear instancias separadas de `RegistradorHuespedNG` para
+cada objeto huesped.
 
-Now just step back and think differently.  Suppose you are the creator
-of this software and selling it to many hotel customers.  Consider a
-case where your different clients requires different storages.  For
-example, one registrar might store the details in a relational
-database and another one might store them in Zope Object Database
-(ZODB).  It would be better if you can replace the registrar object
-with another one which store guest details in a different way.  So, a
-mechanism to change implementation based on some configuration would
-be useful.
+Ahora retrocedamos y pensemos de otra forma. Supón que eres el creador
+de este software y se lo vendes a muchos hoteles. Considera el caso en
+el que tus clientes necesitan distintos almacenamientos. Por ejemplo,
+un registrador puede almacenar los detalles en una base de datos
+relacional y otro puede almacenarlos en la Base de datos orientada a
+Objetos de Zope (ZODB). Sería mejor si puedes sustituir el objeto
+registrador por otro que almacena los detalles de los huespedes de
+otra forma distinta. Por tanto, un mecanismo para cambiar la
+implementación basado en alguna configuración será útil.
 
-Zope component architecture provides a mechanism to replace components
-based on configuration.  Using Zope component architecture you can
-register components in a registry called component registry.  Later,
-retrieve component based on the configuration.
+La arquitectura de componentes Zope ofrece un mecanismo para sustituir
+componentes basado en configuración. Utilizando la arquitectura de
+componentes de Zope puedes registrar componentes en un registro llamado
+registro de componentes. Después, puede recuperar componentes basandose
+en la configuración.
 
-The `GuestRegistrarNG` class follows, as you noted, a pattern called
-`Adapter`.  The `GuestRegistrarNG` is the adapter which adapts the
-guest object (adaptee).  As you can see, the adapter should contain
-the component it adapts (adaptee).  This is a typical implementation
-of adapter::
+La clase `RegistradorHuespedNG` sigue, como ya has visto, un patrón
+llamado `Adaptador`. El `RegistradorHuespedNG` es el adaptador que
+adapta el objeto huesped (adaptado). Como puedes ver, el adaptador
+debe contener el objeto que adapta (adaptado). Esta es una
+implementación típica de un adaptador::
 
-  >>> class Adapter(object):
+  >>> class Adaptador(object):
   ...
-  ...     def __init__(self, adaptee):
-  ...         self.adaptee = adaptee
+  ...     def __init__(self, adaptado):
+  ...         self.adaptado = adaptado
 
-Now the adapter can make use adaptee (call its methods or access
-attributes).  An adapter may adapt more than one component.  Zope
-component architecture provides a mechanism to effectively use these
-kind of objects.  So, which component should be used will become a
-matter of configuration.
+Ahora el adaptador puede usar el adaptado (llamar a sus métodos o
+acceder a sus atributos). Un adaptador puede adaptar más de un
+componente. La arquitectura de componentes zope ofrece un mecanismo
+para utilizar de forma efectiva este tipo de objetos. Así, qué
+componente se use se convierte en un problema de configuración.
 
-This is a common scenario where you want to use different objects
-doing same things, but the details may change.  There are many
-situations in programming where you want to use different
-implementations for same type of objects.  Here is a small list of
-other common scenarios:
+Este es un escenario común donde quieres usar objetos diferentes
+para hacer las mismas cosas, pero los detalles varían. Hay muchas
+situaciones en programación donde quieres usar diferentes
+implementaciones para el mismo tipo de objetos. Te ofrecemos una
+pequeña lista de otros escenarios comunes:
 
- - A wiki engine with support for multiple markups (STX, reST, Plain
-   text, etc.)
+ - Un motor wiki que soporte múltiples marcados (STX, reST, Texto
+   plano, etc.)
 
- - An object browser which shows size of different types of objects.
+ - Un objeto navegador que muestre el tamaño de distintos tipos
+   de objetos.
 
- - Different types of output formats for text data (PDF, HTML etc.)
+ - Diferentes tipos de formatos de salida para datos de texto
+   (PDF, HTML etc.)
 
- - When developing an application for multiple clients, their
-   requirements may change.  Maintaining separate code bases of the
-   same application for different clients is difficult.  A better
-   approach would be to create reusable components and configure them
-   based on client-specific requirements.
+ - Cuando se desarrolla una aplicación para múltiples clientes, sus
+   requisitos pueden cambiar. Mantener distintas versiones del código
+   de la misma aplicación para distintos clientes es difícil. Un
+   enfoque mejor sería crear distintos componentes reutilizables y
+   configurarlos basandose en los requisitos específicos de cada
+   cliente.
 
-All these examples points to situations where you want to make
-applications extensible or pluggable.  Do not use `adapter`
-components where you do not want extensibility or pluggability.
+Todos estos ejemplos señalan situaciones donde quieres hacer
+aplicaciones extensibles o enchufables. No utilices componentes
+`adaptadores` cuando no quieras extensibilidad o enchufabilidad.
 
-Zope component architecture provides `adapter` components to solve
-these kinds of problems.  In fact, `GuestRegistrarNG` is an adapter
-without explicit interface declaration.  This tutorial will discuss
-adapters after introducing the concept of interfaces.  Interfaces are
-one of the foundations of Zope components, so understanding the
-concept and usage of interfaces is very important.
+La arquitectura de componentes de Zope ofrece componentes `adaptadores`
+para solucionar este tipo de problemas. De hecho,
+`RegistradorHuespedNG` es un adaptador sin declaración de interfaz
+explícita. Este tutorial tratará los adaptadores después de introducir
+el concepto de interfaces. Las interfaces son una de las bases de los
+componentes de Zope, por tanto entender el concepto y uso de interfaces
+es muy importante.
 
 
 Interfaces
