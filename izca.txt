@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.98
+:Version: 0.3.99
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 
@@ -32,8 +32,10 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 .. contents::
 .. .. sectnum::
 
+
 Getting started
 ---------------
+
 
 Introduction
 ~~~~~~~~~~~~
@@ -303,7 +305,8 @@ database::
 
 We will end our discussion of the procedural approach here.
 It will be much easier to add required features such as data
-storage, design flexibility, and code testability using objects.
+persistence, design flexibility, and code testability using objects.
+
 
 Object oriented approach
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -319,7 +322,7 @@ may do all these functionalities or delegate to other components.
 Anyway, here are the implementation details (here, a class) of
 registrar object::
 
-  >>> class GuestRegistrar(object):
+  >>> class guestRegistrar(object):
   ...
   ...     def register(self, name, place):
   ...         next_id = get_next_id()
