@@ -86,6 +86,8 @@ Guidelines
 
  - Use maximum 70 characters per line
 
+ - Skip two lines before chapters and sections
+
 Regards,
 Baiju M
 http://www.muthukadan.net
