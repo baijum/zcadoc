@@ -301,11 +301,9 @@ database::
   ...     'place': place
   ...     }
 
-This tutorial is not going to further implementation details of
-procedural approach.  A big missing feature of this example storage is
-persistence, now all stored data will be lost when closing the
-application.
-
+We will end our discussion of the procedural approach here.
+It will be much easier to add required features such as data
+storage, design flexibility, and code testability using objects.
 
 Object oriented approach
 ~~~~~~~~~~~~~~~~~~~~~~~~
