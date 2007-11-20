@@ -8,8 +8,8 @@ Arquitectura de Componentes de Zope
 :URL original: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 :Traductor: Lorenzo Gil Sanchez <lgs@sicem.biz>
-:URL en español: `http://www.lorenzogil.com/docs/zca-es.pdf
-                  <http://www.lorenzogil.com/docs/zca-es.pdf>`_
+:URL en español: `http://www.muthukadan.net/docs/zca-es.pdf
+                  <http://www.muthukadan.net/docs/zca-es.pdf>`_
 
 Copyright (C) 2007 Baiju M <baiju.m.mail AT gmail.com>.
 
