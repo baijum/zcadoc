@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.98
+:Version: 0.3.99
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 
@@ -32,8 +32,10 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 .. contents::
 .. .. sectnum::
 
+
 Getting started
 ---------------
+
 
 Introduction
 ~~~~~~~~~~~~
@@ -301,10 +303,9 @@ database::
   ...     'place': place
   ...     }
 
-This tutorial is not going to further implementation details of
-procedural approach.  A big missing feature of this example storage is
-persistence, now all stored data will be lost when closing the
-application.
+We will end our discussion of the procedural approach here.
+It will be much easier to add required features such as data
+storage, design flexibility, and code testability using objects.
 
 
 Object oriented approach
