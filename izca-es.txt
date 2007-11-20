@@ -4,7 +4,7 @@ Arquitectura de Componentes de Zope
 
 
 :Autor: Baiju M
-:Version: 0.3.98
+:Version: 0.3.99
 :URL original: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 :Traductor: Lorenzo Gil Sanchez <lgs@sicem.biz>
@@ -37,8 +37,10 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 .. contents::
 .. .. sectnum::
 
+
 Primeros pasos
 --------------
+
 
 Introducción
 ~~~~~~~~~~~~
@@ -321,10 +323,9 @@ para obtener los detalles y almacenar en la base de datos::
   ...     'lugar': lugar
   ...     }
 
-Este tutorial no va a ir más allá en los detalles de implementación del
-enfoque procedural. Una funcionalidad importante ausente en este
-ejemplo es la persistencia de los datos. Todos los datos almacenados se
-perderán cuando se cierre la aplicación.
+Aqui termina nuestro enfoque procedural. Sería mucho más fácil añadir 
+añadir funcionalidades necesarias como almacenamiento de datos,
+diseño flexible y código testeable usando objetos.
 
 
 Enfoque orientado a objetos
@@ -559,7 +560,7 @@ Por ejemplo, considera esta clase::
 
   >>> class Anfitrion(object):
   ...
-  ...     def buenodias(self, nombre):
+  ...     def buenosdias(self, nombre):
   ...         """Le dice buenos dias a los huespedes"""
   ...
   ...         return "¡Buenos días, %s!" % nombre
@@ -599,241 +600,252 @@ interfaz es una convención.
 Declarando interfaces
 ~~~~~~~~~~~~~~~~~~~~~
 
-You have already seen how to declare an interface using
-``zope.interface`` in previous section.  This section will explain the
-concepts in detail.
+Ya has visto como declarar una interfaz usando ``zope.interfaz`` en
+la sección anterior. En esta sección se explicarán los conceptos en
+detalle.
 
-Consider this example interface::
+Considera esta interfaz de ejemplo::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
 
-  >>> class IHost(Interface):
-  ...     """A host object"""
+  >>> class IAnfitrion(Interface):
+  ...     """Un objeto anfitrion"""
   ...
-  ...     name = Attribute("""Name of host""")
+  ...     nombre = Attribute("""Nombre del anfitrion""")
   ...
-  ...     def goodmorning(guest):
-  ...         """Say good morning to guest"""
+  ...     def buenosdias(huesped):
+  ...         """Le dice buenos dias al huesped"""
 
-The interface, ``IHost`` has two attributes, ``name`` and
-``goodmorning``.  Recall that, at least in Python, methods are also
-attributes of classes.  The ``name`` attribute is defined using
-``zope.interface.Attribute`` class.  When you add the attribute
-``name`` to the ``IHost`` interface, you don't set an initial value.
-The purpose of defining the attribute ``name`` here is merely to
-indicate that any implementation of this interface will feature an
-attribute named ``name``.  In this case, you don't even say what type
-of attribute it has to be!.  You can pass a documentation string as a
-first argument to ``Attribute``.
+La interfaz, ``IAnfitrion`` tiene dos atributos, ``nombre`` y
+``buenosdias``. Recuerda que, al menos en Python, los métodos
+también son atributos de clases. El atributo ``nombre`` se define
+utilizando la clase ``zope.interface.Attribute``. Cuando añades
+el atributo ``nombre`` a la interfaz ``IAnfitrion``, no especificas
+ningún valor inicial. El propósito de definir el atributo ``nombre``
+aquí es meramente para indicar que cualquier implementación de
+esta interfaz tendrá una atributo llamado ``nombre``. En este
+caso, ¡ni siquiera dices el tipo que el atributo tiene que tener!
+Puedes pasar una cadena de documentación como primer argumento a
+``Attribute``.
 
-The other attribute, ``goodmorning`` is a method defined using a
-function definition.  Note that `self` is not required in interfaces,
-because `self` is an implementation detail of class.  For example, a
-module can implement this interface.  If a module implement this
-interface, there will be a ``name`` attribute and ``goodmorning``
-function defined.  And the ``goodmorning`` function will accept one
-argument.
+El otro atributo, ``buenosdias`` es un método definido usando
+una definición de función. Nótese que no hace falta ``self``
+en las interfaces, porque ``self`` es un detalle de implementación
+de la clase. Por ejemplo, un módulo puede implementar esta
+interfaz. Si un módulo implementa esta interfaz, habrá un atributo
+``nombre`` y una función ``buenosdias`` definida. Y la función
+``buenosdias`` aceptará un argumento.
 
-Now you will see how to connect `interface-class-object`.  So object
-is the real living thing, objects are instances of classes.  And
-interface is the actual definition of the object, so classes are just
-the implementation details.  This is why you should program to an
-interface and not to an implementation.
+Ahora verás como conectar `interfaz-clase-objeto`. Así objeto
+es la cosa viva y coleante, objetos son instancias de clases. Y
+la interfaz es la definición real del objeto, por tanto las
+clases son sólo detalles de implementación. Es por esto por lo
+que debes programar contra una interfaz y no contra una
+implementación.
 
-Now you should familiarize two more terms to understand other
-concepts.  First one is `provide` and the other one is `implement`.
-Object provides interfaces and classes implement interfaces.  In other
-words, objects provide interfaces that their classes implement.  In
-the above example ``host`` (object) provides ``IHost`` (interface) and
-``Host`` (class) implement ``IHost`` (interface).  One object can
-provide more than one interface also one class can implement more than
-one interface.  Objects can also provide interfaces directly, in
-addition to what their classes implement.
+Ahora deberías familiarizarte con dos términos más para entender
+otros conceptos. El primero es `proveer`y el otro es `implementar`-
+Los objetos proveen interfaces y las clases implementan interfaces.
+En otras palabras, objetos proveen las interfaces que sus clases
+implementan. En el ejemplo anterior ``anfitrion`` (objeto) provee
+``IAnfitrion`` (interfaz) y ``Anfitrion`` (clase) implementa 
+``IAnfitrion`` (interfaz). Un objeto puede proveer más de una
+interfaz y tambíen una clase puede implementar más de una interfaz.
+Los objetos también pueden proveer intefaces directamente, además
+de lo que sus clases implementen.
 
 .. note::
 
-  Classes are the implementation details of objects.  In Python,
-  classes are callable objects, so why other callable objects can't
-  implement an interface.  Yes, it is possible.  For any `callable
-  object` you can declare that it produces objects that provide some
-  interfaces by saying that the `callable object` implements the
-  interfaces.  The `callable objects` are generally called as
-  `factories`.  Since functions are callable objects, a function can
-  be an `implementer` of an interface.
+  Las clases son los detalles de implementación de los objetos.
+  En Python, las clases son objetos llamables, asi que por qué
+  otros objetos llamables no pueden implementar una intefaz?
+  Sí, es posible. Para cualquier `objeto llamable` puedes declarar
+  que produce objetos que proveen algunas interfaces diciendo que
+  el `objeto llamable` implementa las interfaces. Generalmente
+  los `objetos llamables` son llamados `fábricas`. Como las
+  funciones son objetos llamables, una función puede ser la
+  `implementadora` de una intefaz.
 
 
 Implementando interfaces
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-To declare a class implements a particular interface, use the function
-``zope.interface.implements`` in the class statement.
+Para declarar que una clase implementa una intefaz en particular,
+utiliza la función ``zope.interface.implements`` dentro de la
+sentencia class.
 
-Consider this example, here ``Host`` implements ``IHost``::
+Considera este ejemplo, aquí ``Anfitrion`` implementa ``IAnfitrion``::
 
   >>> from zope.interface import implements
 
-  >>> class Host(object):
+  >>> class Anfitrion(object):
   ...
-  ...     implements(IHost)
+  ...     implements(IAnfitrion)
   ...
-  ...     name = u''
+  ...     nombre = u''
   ...
-  ...     def goodmorning(self, guest):
-  ...         """Say good morning to guest"""
+  ...     def buenosdias(self, huesped):
+  ...         """Le dice buenos dias al huesped"""
   ...
-  ...         return "Good morning, %s!" % guest
+  ...         return "¡Buenos dias, %s!" % huesped
 
 .. note::
 
-  If you wonder how ``implements`` function works, refer the blog post
-  by James Henstridge
+  Si te preguntas como funciona la función ``implements``, consulta
+  el mensaje del blog de James Henstridge
   (http://blogs.gnome.org/jamesh/2005/09/08/python-class-advisors/) .
-  In the adapter section, you will see an ``adapts`` function, it is
-  also working similarly.
+  En la sección del adaptador, verás una función ``adapts``, que
+  funciona de forma similar.
 
-Since ``Host`` implements ``IHost``, instances of ``Host`` provides
-``IHost``.  There are some utility methods to introspect the
-declarations.  The declaration can write outside the class also.  If
-you don't write ``interface.implements(IHost)`` in the above example,
-then after defining the class statement, you can write like this::
+Como ``Anfitrion`` implementa ``IAnfitrion``, instancias de
+``Anfitrion`` proveen ``IAnfitrion``. Hay unos cuantos métodos
+de utilidad que introspeccionan las declaraciones. La declaración
+se puede escribir fuera de la clase también. Si no escribes
+``interface.implements(IAnfitrion)`` en el ejemplo anterior,
+entonces después de la sentencia class, puedes escribir algo como::
 
   >>> from zope.interface import classImplements
-  >>> classImplements(Host, IHost)
+  >>> classImplements(Anfitrion, IAnfitrion)
 
 
 Ejemplo revisado
 ~~~~~~~~~~~~~~~~
 
-Now, return to the example application.  Here you will see how to
-define the interface of the registrar object::
+Ahora volvemos a la aplicación de ejemplo. Ahora veremos como
+definir la interfaz del objeto registrador::
 
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IRegistrador(Interface):
+  ...     """Un registrador registrará los detalles de un objeto"""
   ...
-  ...     def register():
-  ...         """Register object's details"""
+  ...     def registrar():
+  ...         """Registrar detalles de un objeto"""
   ...
 
-Here, first you imported ``Interface`` class from ``zope.interface``
-module.  If you define a subclass of this ``Interface`` class, it will
-be an interface from Zope component architecture point of view.  An
-interface can be implemented, as you already noted, in a class or any
-other callable object.
+Aquí primero has importado la clase ``Interface`` del módulo
+``zope.interface``. Si defines una subclase de esta clase ``Interface``,
+será una interface desde el punto de vista de la arquitectura de
+componentes de Zope. Una interfaz puede ser implementada, como ya
+has visto, en una clase o cualquier otro objeto llamable.
 
-The registrar interface defined here is ``IRegistrar``.  The
-documentation string for interface gives an idea about the object.  By
-defining a method in the interface, you made a contract for the
-component, that there will be a method with same name available.  For
-the method definition interface, the first argument should not be
-`self`, because an interface will never be instantiated nor will its
-methods ever be called.  Instead, the interface class merely documents
-what methods and attributes should appear in any normal class that
-claims to implement it, and the `self` parameter is an implementation
-detail which doesn't need to be documented.
+La interfaz registrador definida aquí es ``IRegistrador``. La cadena
+de documentación del interfaz da una idea del objeto. Al definir un
+método en la interfaz, has creado un contrato para el componente, en
+el que dice que habrá un método con el mismo nombre disponible. En
+la definición del método en la interfaz, el primer argumento no debe
+ser `self`, porque una intefaz nunca será instanciada ni sus métodos
+serán llamados jamás. En vez de eso, la sentencia class de la interfaz
+meramente documenta qué métodos y atributos deben aparecer en
+cualquier clase normal que diga que la implementa, y el parámetro
+`self` es un detalle de implementación que no necesita ser
+documentado.
 
-As you know, an interface can also specify normal attributes::
+Como sabes, una interfaz puede también especificar atributos
+normales::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
 
-  >>> class IGuest(Interface):
+  >>> class IHuesped(Interface):
   ...
-  ...     name = Attribute("Name of guest")
-  ...     place = Attribute("Place of guest")
+  ...     nombre = Attribute("Nombre del huesped")
+  ...     lugar = Attribute("Lugar del huesped")
 
-In this interface, guest object has two attributes specified with
-documentation.  An interface can also specify both attributes and
-methods together.  An interface can be implemented in a class, module
-or any other objects.  For example a function can dynamically create
-the component and return, in this case the function is an implementer
-for the interface.
+En esta interfaz, el objeto huesped tiene dos atributos que se
+especifican con documentación. Una interfaz también puede especificar
+atributos y métodos juntos. Una interfaz puede ser implementada por
+una clase, un módulo o cualquier otro objeto. Por ejemplo una
+función puede crear dinámicamente el componente y devolverlo, en
+este caso la función es una implementadora de la interfaz.
 
-Now you know what is an interface and how to define and use it.  In
-the next chapter you can see how an interface is used to define an
-adapter component.
+Ahora ya sabes lo que es una interfaz y como definirla y usarla. En
+el próximo capítulo podrás ver como se usa una interfaz para definir
+un componente adaptador.
 
 
 Interfaces de marcado
 ~~~~~~~~~~~~~~~~~~~~~
 
-An interface can be used to declare that a particular object belongs
-to a special type.  An interface without any attribute or method is
-called `marker interface`.
+Una interfaz se puede usar para declarar que un objeto en particular
+pertenece a un tipo especial. Un interfaz sin ningún atributo o método
+se llama `interfaz de marcado`.
 
-Here is a `marker interface`::
+Aquí tenemos una `interfaz de marcado`::
 
   >>> from zope.interface import Interface
 
-  >>> class ISpecialGuest(Interface):
-  ...     """A special guest"""
+  >>> class IHuespedEspecial(Interface):
+  ...     """Un huesped especial"""
 
 
-This interface can be used to declare an object is a special guest.
+Esta interfaz se puede usar para declarar que un objeto es un huesped
+especial.
 
 
 Invariantes
 ~~~~~~~~~~~
 
-Sometimes you will be required to use some rule for your component
-which involve one or more normal attributes.  These kind of rule is
-called `invariants`.  You can use ``zope.interface.invariant`` for
-setting `invariants` for your objects in their interface.
+A veces te piden usar alguna regla para tu componente que implica
+a uno o más atributos normales. A este tipo de reglas se les llama
+`invariantes`. Puedes usar ``zope.interface.invariant`` para
+establecer `invariantes` para tus objetos en sus interfaces.
 
-Consider a simple example, there is a `person` object.  A person
-object has `name`, `email` and `phone` attributes.  How do you
-implement a validation rule that says either email or phone have to
-exist, but not necessarily both.
+Considera un ejemplo sencillo, hay un objeto `persona`. Una persona
+tiene los atributos `nombre`, `email` y `telefono`. ¿Cómo implementas
+una regla de validación que diga que o bien el email o bien el
+teléfono tienen que existir, pero no necesariamente los dos?
 
-First you have to make a callable object, either a simple function or
-callable instance of a class like this::
+Lo primero es hacer un objeto llamable, bien una simple función o
+bien una instancia llamable de una clase como esto::
 
-  >>> def contacts_invariant(obj):
+  >>> def invariante_contactos(obj):
   ...
-  ...     if not (obj.email or obj.phone):
+  ...     if not (obj.email or obj.telefono):
   ...         raise Exception(
-  ...             "At least one contact info is required")
+  ...             "Al menos una información de contacto es obligatoria")
 
-Then define the `person` object's interface like this.  Use the
-``zope.interface.invariant`` function to set the invariant::
+Ahora defines la interfaz del objeto `persona` de esta manera.
+Utiliza la función ``zope.interface.invariant`` para establecer la
+invariante::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
   >>> from zope.interface import invariant
 
-  >>> class IPerson(Interface):
+  >>> class IPersona(Interface):
   ...
-  ...     name = Attribute("Name")
-  ...     email = Attribute("Email Address")
-  ...     phone = Attribute("Phone Number")
+  ...     nombre = Attribute("Nombre")
+  ...     email = Attribute("Direccion de email")
+  ...     telefono = Attribute("Numero de telefono")
   ...
-  ...     invariant(contacts_invariant)
+  ...     invariant(invariante_contactos)
 
-Now use `validateInvariants` method of the interface to validate::
+Ahora usas el método `validateInvariants` de la interfaz para
+validar::
 
   >>> from zope.interface import implements
 
-  >>> class Person(object):
-  ...     implements(IPerson)
+  >>> class Persona(object):
+  ...     implements(IPersona)
   ...
-  ...     name = None
+  ...     nombre = None
   ...     email = None
-  ...     phone = None
+  ...     telefono = None
 
-  >>> jack = Person()
-  >>> jack.email = u"jack@some.address.com"
-  >>> IPerson.validateInvariants(jack)
-  >>> jill = Person()
-  >>> IPerson.validateInvariants(jill)
+  >>> pepe = Persona()
+  >>> pepe.email = u"pepe@algun.sitio.com"
+  >>> IPersona.validateInvariants(pepe)
+  >>> maria = Persona()
+  >>> IPersona.validateInvariants(maria)
   Traceback (most recent call last):
   ...
-  Exception: At least one contact info is required
+  Exception: Al menos una información de contacto es obligatoria
 
-As you can see `jack` object validated without raising any
-exception. But `jill` object didn't validated the invariant
-constraint, so it raised exception.
+Como puedes ver el objeto `pepe` validó sin lanzar ninguna
+excepción. Pero el objeto `maria` no validó la restricción de
+la invariante, por lo que se lanzó la excepción.
 
 .. [#patternbook] http://en.wikipedia.org/wiki/Design_Patterns
 .. [#api] http://en.wikipedia.org/wiki/Application_programming_interface
