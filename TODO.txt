@@ -1,6 +1,9 @@
 TODO List
 =========
 
+ - Document ``zope.component.adapter`` and
+   ``zope.component.adaptedBy``
+
  - Chapters planned for future (priority wise):
 
     1. A case study: desktop application
