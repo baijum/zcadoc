@@ -311,16 +311,20 @@ persistence, design flexibility, and code testability using objects.
 Object oriented approach
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. ??? should this paragraph talk about "creating an object for
+ handling registration" or "creating a class to handle registration"?
+
 In object oriented methodology, you can think of a registrar object
 handling the registration.  There are many advantages for creating an
-object for handling registration.  The most important is that you are
-getting more abstraction about registration process, so you can better
-understand your code.  You can put related logics together, may be
-inherit some abstract base class.  Registration process may also
-involve cancellation and/or updation of registration.  The same object
-may do all these functionalities or delegate to other components.
-Anyway, here are the implementation details (here, a class) of
-registrar object::
+object for handling registration.  Most importantly, the abstraction
+provided by the registrar object makes the code easier to understand. 
+It offers a way to group related functionality, and can be extended
+via inheritance. As features are added, such as canceling and updating
+registration, the registrar object can grow to provide them, or
+delegate them to another object.
+
+Lets look at the implementation details of a registrar object
+implemented as a class::
 
   >>> class guestRegistrar(object):
   ...
