@@ -1,7 +1,7 @@
 *.html
-zca.aux
-zca.log
-zca.out
-zca.pdf
-zca.tex
-zca.toc
+zca*.aux
+zca*.log
+zca*.out
+zca*.pdf
+zca*.tex
+zca*.toc
