@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.4
+:Version: 0.4.1
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 
