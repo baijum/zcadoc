@@ -4,12 +4,13 @@ from zope.component import adapts
 
 from components import Member
 
-from interfaces import IDatabase
+from interfaces import IRelationalDatabase
+from interfaces import IObjectDatabase
 from interfaces import IMember
 from interfaces import IDbOperation
 
 
-class MemberDbOperation(object):
+class MemberRDbOperation(object):
 
     implements(IDbOperation)
     adapts(IMember)
@@ -18,7 +19,7 @@ class MemberDbOperation(object):
         self.member = member
 
     def get(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         number = self.member.number
         if number:
@@ -50,7 +51,7 @@ class MemberDbOperation(object):
         return members
 
     def add(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         next_id = db.get_next_id("members")
         number = self.member.number
@@ -64,7 +65,7 @@ class MemberDbOperation(object):
         self.member.id = next_id
 
     def update(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         number = self.member.number 
         name = self.member.name
@@ -79,11 +80,55 @@ class MemberDbOperation(object):
         db.commit()
 
     def delete(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         id = self.member.id
         cr.execute("""DELETE FROM members
                       WHERE id = ?""",
                    (id,))
         cr.close()
+        db.commit()
+
+
+class MemberODbOperation(object):
+
+    implements(IDbOperation)
+    adapts(IMember)
+
+    def __init__(self, member):
+        self.member = member
+
+    def get(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        members = zcalibdb['members']
+        return members.values()
+
+    def add(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        members = zcalibdb['members']
+        number = self.member.number
+        if number in [x.number for x in members.values()]:
+            db.rollback()
+            raise Exception("Duplicate key")
+        next_id = db.get_next_id('members')
+        self.member.id = next_id
+        members[next_id] = self.member
+        db.commit()
+
+    def update(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        members = zcalibdb['members']
+        id = self.member.id
+        members[id] = self.member
+        db.commit()
+
+    def delete(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        members = zcalibdb['members']
+        id = self.member.id
+        del members[id]
         db.commit()

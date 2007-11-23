@@ -4,12 +4,13 @@ from zope.component import adapts
 
 from components import Circulation
 
-from interfaces import IDatabase
+from interfaces import IRelationalDatabase
+from interfaces import IObjectDatabase
 from interfaces import ICirculation
 from interfaces import IDbOperation
 
 
-class CirculationDbOperation(object):
+class CirculationRDbOperation(object):
 
     implements(IDbOperation)
     adapts(ICirculation)
@@ -18,7 +19,7 @@ class CirculationDbOperation(object):
         self.circulation = circulation
 
     def get(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         id = self.circulation.id
         if id:
@@ -50,7 +51,7 @@ class CirculationDbOperation(object):
         return circulations
 
     def add(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         next_id = db.get_next_id("circulations")
         member_id = self.circulation.member.id
@@ -67,11 +68,49 @@ class CirculationDbOperation(object):
         pass
 
     def delete(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         book_id = self.circulation.book.id
         cr.execute("""DELETE FROM circulations
                       WHERE book_id = ?""",
                    (book_id,))
         cr.close()
+        db.commit()
+
+
+class CirculationODbOperation(object):
+
+    implements(IDbOperation)
+    adapts(ICirculation)
+
+    def __init__(self, circulation):
+        self.circulation = circulation
+
+    def get(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        circulations = zcalibdb['circulations']
+        return circulations.values()
+
+    def add(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        circulations = zcalibdb['circulations']
+        barcode = self.circulation.book.barcode
+        if barcode in [x.book.barcode for x in circulations.values()]:
+            db.rollback()
+            raise Exception("Duplicate key")
+        book_id = self.circulation.book.id
+        circulations[book_id] = self.circulation
+        db.commit()
+
+    def update(self):
+        pass
+
+    def delete(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        circulations = zcalibdb['circulations']
+        id = self.circulation.book.id
+        del circulations[id]
         db.commit()

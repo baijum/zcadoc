@@ -4,12 +4,13 @@ from zope.component import adapts
 
 from components import Book
 
-from interfaces import IDatabase
+from interfaces import IRelationalDatabase
+from interfaces import IObjectDatabase
 from interfaces import IBook
 from interfaces import IDbOperation
 
 
-class BookDbOperation(object):
+class BookRDbOperation(object):
 
     implements(IDbOperation)
     adapts(IBook)
@@ -18,7 +19,7 @@ class BookDbOperation(object):
         self.book = book
 
     def get(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         barcode = self.book.barcode
         if barcode:
@@ -54,7 +55,7 @@ class BookDbOperation(object):
         return books
 
     def add(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         next_id = db.get_next_id("books")
         barcode = self.book.barcode
@@ -69,7 +70,7 @@ class BookDbOperation(object):
         self.book.id = next_id
 
     def update(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         barcode = self.book.barcode
         author = self.book.author
@@ -86,11 +87,55 @@ class BookDbOperation(object):
         db.commit()
 
     def delete(self):
-        db = getUtility(IDatabase)
+        db = getUtility(IRelationalDatabase)
         cr = db.cursor()
         id = self.book.id
         cr.execute("""DELETE FROM books
                       WHERE id = ?""",
                    (id,))
         cr.close()
+        db.commit()
+
+
+class BookODbOperation(object):
+
+    implements(IDbOperation)
+    adapts(IBook)
+
+    def __init__(self, book):
+        self.book = book
+
+    def get(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        books = zcalibdb['books']
+        return books.values()
+
+    def add(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        books = zcalibdb['books']
+        barcode = self.book.barcode
+        if barcode in [x.barcode for x in books.values()]:
+            db.rollback()
+            raise Exception("Duplicate key")
+        next_id = db.get_next_id('books')
+        self.book.id = next_id
+        books[next_id] = self.book
+        db.commit()
+
+    def update(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        books = zcalibdb['books']
+        id = self.book.id
+        books[id] = self.book
+        db.commit()
+
+    def delete(self):
+        db = getUtility(IObjectDatabase)
+        zcalibdb = db.get_zcalibdb()
+        books = zcalibdb['books']
+        id = self.book.id
+        del books[id]
         db.commit()

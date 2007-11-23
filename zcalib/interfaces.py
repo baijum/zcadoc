@@ -1,23 +1,27 @@
 from zope.interface import Interface
 from zope.interface import Attribute
 
+
 class IBook(Interface):
 
     barcode = Attribute("Barcode")
     author = Attribute("Author of book")
     title = Attribute("Title of book")
 
+
 class IMember(Interface):
 
     number = Attribute("ID number")
     name = Attribute("Name of member")
+
 
 class ICirculation(Interface):
 
     book = Attribute("A book")
     member = Attribute("A member")
 
-class IDatabase(Interface):
+
+class IRelationalDatabase(Interface):
 
     def commit():
         pass
@@ -27,6 +31,15 @@ class IDatabase(Interface):
 
     def cursor():
         pass
+
+    def get_next_id():
+        pass
+
+
+class IObjectDatabase(Interface):
+
+    pass
+
 
 class IDbOperation(Interface):
 
