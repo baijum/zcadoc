@@ -8,11 +8,6 @@ from zope.interface import implements
 
 from interfaces import IDatabase
 
-from components import Book
-from components import Member
-
-USE_DEMO_DAT = True
-
 class Database(object):
 
     implements(IDatabase)
