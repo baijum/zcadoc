@@ -4,7 +4,7 @@ Arquitectura de Componentes de Zope
 
 
 :Autor: Baiju M
-:Version: 0.3.99
+:Version: 0.4.1
 :URL original: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 :Traductor: Lorenzo Gil Sanchez <lgs@sicem.biz>
@@ -259,7 +259,7 @@ para ejecutar el código de este libro.
 .. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
 
-Un ejemlo
+Un ejemplo
 ---------
 
 
@@ -323,7 +323,7 @@ para obtener los detalles y almacenar en la base de datos::
   ...     'lugar': lugar
   ...     }
 
-Aqui termina nuestro enfoque procedural. Sería mucho más fácil añadir 
+Aqui termina nuestro enfoque procedural. Será mucho más fácil
 añadir funcionalidades necesarias como almacenamiento de datos,
 diseño flexible y código testeable usando objetos.
 
@@ -333,14 +333,13 @@ Enfoque orientado a objetos
 
 En una metodología orientada a objetos, puedes pensar en un objeto
 registrador que se encargue del registro. Hay muchas ventajas para
-crear un objeto que se encargue del registro. La más importante es que
-estas consiguiendo más abstracción en el proceso de registro, por lo
-que puedes entender mejor tu código. Puedes poner lógicas relacionadas
-juntas, quizá heredando de una clase base abstracta. El proceso de
-registro puede incluir también cancelación y/o actualización del
-registro. El mismo objeto puede hacer todo esto o delegarlo a otros
-componentes. En cualquier caso, aqui tenemos los detalles de 
-implementación (aquí, una clase) del objeto registrador::
+crear un objeto que se encargue del registro. La más importante es
+que la abstracción que ofrece el objeto registrador hace el código
+más fácil de entender. Ofrece una forma de agrupar funcionalidad
+relacionada, y puede ser ampliada con herencia. Cuando se añadan
+mejoras, como cancelación y actualización de reservas, el objeto
+registrador puede crecer para tenerlas, o puede delegarselas a
+otro objeto::
 
   >>> class RegistradorHuesped(object):
   ...
@@ -858,249 +857,289 @@ Adaptadores
 Implementación
 ~~~~~~~~~~~~~~
 
-This section will describe adapters in detail.  Zope component
-architecture, as you noted, helps to effectively use Python objects.
-Adapter components are one of the basic components used by Zope
-component architecture for effectively using Python objects.  Adapter
-components are Python objects, but with well defined interface.
+Esta sección describirá los adaptadores en detalle. La arquitectura
+de componentes de Zope, como has notado, ayuda a usar objetos
+Python de forma efectiva. Los adaptadores son uno de los componentes
+básicos usados por la arquitectura de componentes de Zope para usar
+los objetos Python de forma efectiva. Los adaptadores son objetos
+Python, pero con una interfaz bien definida.
 
-To declare a class is an adapter use `adapts` function defined in
-``zope.component`` package.  Here is a new `GuestRegistrarNG` adapter
-with explicit interface declaration::
+Para decir que una clase es un adaptador utiliza la función
+`adapts'  definida en el paquete ``zope.component``. Aquí tenemos
+un nuevo adaptador `RegistradorHuespedNG` con una declaración de
+interfaz explícita::
 
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class RegistradorHuespedNG(object):
   ...
-  ...     implements(IRegistrar)
-  ...     adapts(IGuest)
+  ...     implements(IRegistrador)
+  ...     adapts(IHuesped)
   ...
-  ...     def __init__(self, guest):
-  ...         self.guest = guest
+  ...     def __init__(self, huesped):
+  ...         self.huesped = huesped
   ...
-  ...     def register(self):
-  ...         guest = self.guest
-  ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
-  ...         'name': guest.name,
-  ...         'place': guest.place,
-  ...         'phone': guest.phone
+  ...     def registar(self):
+  ...         huesped = self.huesped
+  ...         huesped_id = proximo_id()
+  ...         huespedes_db[huesped_id] = {
+  ...         'nombre': huesped.nombre,
+  ...         'lugar': huesped.lugar,
+  ...         'telefono': huesped.telefono
   ...         }
 
-
-What you defined here is an `adapter` for `IRegistrar`, which adapts
-`IGuest` object.  The `IRegistrar` interface is implemented by
-`GuestRegistrarNG` class.  So, an instance of this class will provide
-`IRegistrar` interface.
+Lo que has definido aquí es un `adaptador` para `IRegistrador`, que
+adapta el objeto `IHuesped`. La interfaz `IRegistrador` es
+implementada por la clase `RegistradorHuespedNG`. Así, una instancia
+de esta clase proveerá la interfaz `IRegistrador`.
 
 ::
 
-  >>> class Guest(object):
+  >>> class Huesped(object):
   ...
-  ...     implements(IGuest)
+  ...     implements(IHuesped)
   ...
-  ...     def __init__(self, name, place):
-  ...         self.name = name
-  ...         self.place = place
+  ...     def __init__(self, nombre, lugar, telefono):
+  ...         self.nombre = nombre
+  ...         self.lugar = lugar
+  ...         self.telefono = telefono
 
-  >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> pepe = Huesped("Pepito", "Perez")
+  >>> registrador_pepe = RegistradorHuespedNG(pepe)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IRegistrador.providedBy(registrador_pepe)
   True
 
-The `GuestRegistrarNG` is just one adapter you created, you can also
-create other adapters which handles guest registration differently.
+'RegistradorHuespedNG` es simplemente un adaptador que has creado,
+puedes crear otros adaptadores que se encarguen del registro de
+huespedes de forma diferente.
 
 
 Registro
 ~~~~~~~~
 
-To use this adapter component, you have to register this in a
-component registry also known as site manager.  A site manager
-normally resides in a site.  A site and site manager will be more
-important when developing a Zope 3 application.  For now you only
-required to bother about global site and global site manager ( or
-component registry).  A global site manager will be in memory, but a
-local site manager is persistent.
+Para usar este componente adaptador, tienes que registrarlo en
+un registro de componentes también conocido como administrador
+de sitios (site manager). Un administrador de sitios normalmente
+reside en un sitio. Un sitio y un administrador de sitios
+cobrarán más importancia al desarrollar una aplicación Zope 3.
+Por ahora sólo necesitas molestarte con el sitio global y el
+administrador de sitios global (o registro de componentes).
+Un administrador de sitios globales permanecerá en memoria,
+mientras que un administrador de sitios locales es persistente.
 
-To register your component, first get the global site manager::
+Para registrar tu componente, primero obtienes el administrador
+de sitios global::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(RegistradorHuespedNG,
+  ...                     (IHuesped,), IRegistrador, 'ng')
 
-To get the global site manager, you have to call
-``getGlobalSiteManager`` function available in ``zope.component``
-package.  In fact, the global site manager is available as an
-attribute (``globalSiteManager``) of ``zope.component`` package.  So,
-you can directly use ``zope.component.globalSiteManager`` attribute.
-To register the adapter in component, as you can see above, use
-``registerAdapter`` method of component registry.  The first argument
-should be your adapter class/factory.  The second argument is a tuple
-of `adaptee` objects, i.e, the object which you are adapting.  In this
-example, you are adapting only `IGuest` object.  The third argument is
-the interface provided by the adapter component.  The fourth argument
-is optional, that is the name of the particular adapter.  Since you
-gave a name for this adapter, this is a `named adapter`.  If name is
-not given, it will default to an empty string ('').
+Para obtener el administrador de sitios global, tienes que llamar
+a la función ``getGlobalSiteManager`` disponible en el paquete 
+``zope.component``. En realidad, el administrador de sitios global
+está disponible como un atributo (``globalSiteManager``) del
+paquete ``zope.component``. Asi que puedes usar directamente el
+atributo ``zope.component.globalSiteManager``. Para registrar
+el adaptador, como ves más arriba, utiliza el método
+``registerAdapter`` del registro de componentes. El primer
+argumento debe ser la clase/fábrica de tu adaptador. El segundo
+argumento es una tupla de objetos `adaptados`, i.e. el objeto
+que estás adaptando. En este ejemplo, estás adaptando sólo el
+objeto `IHuesped`. El tercer argumento es la interfaz que provista
+por el componente adaptador. El cuarto argumento es opcional, es
+el nombre de este adaptador en particular. Al darle un nombre a
+este adaptador, es un `adaptador con nombre`. Si no se le da un
+nombre, de forma predeterminada será la cadena vacía ('').
 
-In the above registration, you have given the adaptee interface and
-interface to be provided by the adapter.  Since you have already given
-these details in adapter implementation, it is not required to specify
-again.  In fact, you could have done the registration like this::
+En el registro anterior, le has dicho la interfaz adaptada y la
+interfaz a proveer por el adaptador. Como ya le habías dicho estos
+detalles en la implementación del adaptador, no es necesario que
+se especifique de nuevo. De hecho, podrías haber hecho el registro
+así::
 
-  >>> gsm.registerAdapter(GuestRegistrarNG, name='ng')
+  >>> gsm.registerAdapter(RegistradorHuespedNG, name='ng')
 
-There are some old API to do the registration, which you should avoid.
-The old API functions starts with `provide`, eg: ``provideAdapter``,
-``provideUtility`` etc.  While developing a Zope 3 application you can
-use Zope configuration markup language (ZCML) for registration of
-components.  In Zope 3, local components (persistent components) can
-be registered from Zope Management Interface (ZMI) or you can do it
-programmatically also.
+Hay unas API antiguas para hacer el registro, que debes evitar. Las
+funciones antiguas empiezan por `provide`, por ejemplo, 
+``provideAdapter``, ``provideUtility``, etc. Cuando desarrollas
+una aplicación Zope 3 puedes usar el lenguaje de marcas de
+configuración de Zope (ZCML) para registrar componentes. En Zope 3,
+los componentes locales (componente persistentes) pueden registrarse
+desde la Interfaz de Administración de Zope (ZMI) o también pueden
+registrarse programáticamente.
 
-You registered `GuestRegistrarNG` with a name `ng`.  Similarly you can
-register other adapters with different names.  If a component is
-registered without name, it will default to an empty string.
+Has registrado `RegistradorHuespedNG` con el nombre `ng`. De forma
+similar puedes registrar otros adaptadores con nombres distintos. Si
+un componente se registra sin nombre, de forma predeterminada será
+la cadena vacía.
 
 .. note::
 
-  Local components are persistent components but global components are
-  in memory.  Global components will be registered based on the
-  configuration of application.  Local components are taken to memory
-  from database while starting the application.
+  Los componentes locales son componentes persistentes pero los
+  componentes globales están en memoria. Los componentes globales
+  serán  registrados basandose en la configuración de la aplicación.
+  Los componentes locales se llevan a memoria desde la base de datos
+  en el inicio de la aplicación.
 
 
 Patrón de consulta
 ~~~~~~~~~~~~~~~~~~
 
-Retrieving registered components from component registry is achieved
-through two functions available in ``zope.component`` package.  One of
-them is ``getAdapter`` and the other is ``queryAdapter`` .  Both
-functions accepts same arguments.  The ``getAdapter`` will raise
-``ComponentLookupError`` if component lookup fails on the other hand
-``queryAdapter`` will return `None`.
+Recuperar componentes registrados a partir del registro de componentes
+se consigue mediante dos funciones disponibles en el paquete
+``zope.component``. Una de estas es ``getAdapter`` y la otra es
+``queryAdapter``. Las dos funciones aceptan los mismos argumentos.
+``getAdapter`` lanzará ``ComponentLookupError`` si la búsqueda del
+componente falla mientras que ``queryAdapter`` devolverá `None`-
 
-You can import the methods like this::
+Puedes importar estos métodos así::
 
   >>> from zope.component import getAdapter
   >>> from zope.component import queryAdapter
 
-In the previous section you have registered a component for guest
-object (adaptee) which provides `IRegistrar` interface with name as
-'ng'.  In the first section of this chapter, you have created a guest
-object named `jack` .
+En la sección anterior has registrado un componente para el objeto
+huesped (adaptado) que provee la interfaz `IRegistrador` con el
+nombre 'ng'. En la primera sección de este capítulo, has creado
+un objeto huesped llamado `pepe`.
 
-This is how you can retrieve a component which adapts the interface of
-`jack` object (`IGuest`) and provides `IRegistrar` interface also with
-name as 'ng'.  Here both ``getAdapter`` and ``queryAdapter`` works
-similarly::
+Así es como puedes recuperar un compomente que adapta la interfaz
+del objeto `pepe` (`IHuesped`) y ofrece la interfaz `IRegistrador`
+con el nombre 'ng'. Aquí las dos funciones ``getAdapter`` y
+``queryAdapter`` funcionan similarmente::
 
-  >>> getAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
-  >>> queryAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> getAdapter(pepe, IRegistrador, 'ng') #doctest: +ELLIPSIS
+  <RegistradorHuespedNG object at ...>
+  >>> queryAdapter(pepe, IRegistrador, 'ng') #doctest: +ELLIPSIS
+  <RegistradorHuespedNG object at ...>
 
-As you can see, the first argument should be adaptee then, the
-interface which should be provided by component and last the name of
-adapter component.
+Como puedes ver, el primer argumento debe ser el adaptado, después
+la interfaz que debe ser ofrecida por el componente y por último
+el nombre del componente adaptador.
 
-If you try to lookup the component with an name not used for
-registration but for same adaptee and interface, the lookup will fail.
-Here is how the two methods works in such a case::
+Si intentas buscar el componente con un nombre distinto al usado
+en el regsitro pero para el mismo adaptado e interfaz, la búsqueda
+fallará. Así es como funcionan ambos métodos en este caso::
 
-  >>> getAdapter(jack, IRegistrar, 'not-exists') #doctest: +ELLIPSIS
+  >>> getAdapter(pepe, IRegistrador, 'no-existe') #doctest: +ELLIPSIS
   Traceback (most recent call last):
   ...
   ComponentLookupError: ...
-  >>> reg = queryAdapter(jack,
-  ...           IRegistrar, 'not-exists') #doctest: +ELLIPSIS
+  >>> reg = queryAdapter(pepe,
+  ...           IRegistrador, 'no-existe') #doctest: +ELLIPSIS
   >>> reg is None
   True
 
-As you can see above, ``getAdapter`` raised a ``ComponentLookupError``
-exception, but ``queryAdapter`` returned `None` when lookup failed.
+Como ves, ``getAdapter`` lanzó una excepción ``ComponentLookupError``,
+pero ``queryAdapter`` devolvió `None` cuando la búsqueda falló.
 
-The third argument, the name of registration, is optional.  If the
-third argument is not given it will default to empty string ('').
-Since there is no component registered with an empty string,
-``getAdapter`` will raise ``ComponentLookupError`` .  Similarly
-``queryAdapter`` will return `None`, see yourself how it works::
+El tercer argumento, el nombre del registro, es opcional. Si
+no le das el tercer argumento se usará el valor predeterminado que
+es la cadena vacía (''). Como no hay ningún componente registrado
+con una cadena vacía ``getAdapter`` lanzará ``ComponentLookupError``.
+De forma similar ``queryAdapter`` devolverá `None`. Mira tú mismo
+como funciona::
 
-  >>> getAdapter(jack, IRegistrar) #doctest: +ELLIPSIS
+  >>> getAdapter(pepe, IRegistrador) #doctest: +ELLIPSIS
   Traceback (most recent call last):
   ...
   ComponentLookupError: ...
-  >>> reg = queryAdapter(jack, IRegistrar) #doctest: +ELLIPSIS
+  >>> reg = queryAdapter(pepe, IRegistrador) #doctest: +ELLIPSIS
   >>> reg is None
   True
 
-In this section you have learned how to register a simple adapter and
-how to retrieve it from component registry.  These kind of adapters is
-called single adapter, because it adapts only one adaptee.  If an
-adapter adapts more that one adaptee, then it is called multi
-adapter.
+En esta sección has aprendido cómo registrar un adaptador sencillo
+y cómo recuperarlo del registro de componentes. Estos tipos de
+adaptador se llaman adaptadores simples, porque adaptan sólamente
+un adaptado. Si un adaptador adapta más de un adaptado, entonces
+se le llama multi adaptador.
 
 
 Recuperar un adaptador usando una interfaz
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Adapters can be directly retrieved using interfaces, but it will only
-work for non-named single adapters.  The first argument is the adaptee
-and the second argument is a keyword argument.  If adapter lookup
-fails, second argument will be returned.
+Los adaptadores se pueden recuperar directamente usando interfaces,
+pero sólo funcionará para adaptadores simples sin nombre. El primer
+argumento es el adaptado y el segundo argumento es un argumento de
+palabra clave. Si la búsqueda del adaptador falla, el segundo
+argumento es devuelto.
 
-  >>> IRegistrar(jack, alternate='default-output')
-  'default-output'
+  >>> IRegistrador(pepe, alternate='salida-predeterminada')
+  'salida-predeterminada'
 
-  Keyword name can be omitted:
+  La palabra clave se puede omitir:
 
-  >>> IRegistrar(jack, 'default-output')
-  'default-output'
+  >>> IRegistrador(pepe, 'salida-predeterminada')
+  'salida-predeterminada'
 
-  If second argument is not given, it will raise `TypeError`:
+  Si no le damos el segundo argumento, lanzará `TypeError`:
 
-  >>> IRegistrar(jack) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+  >>> IRegistrar(pepe) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
   Traceback (most recent call last):
   ...
   TypeError: ('Could not adapt',
-    <Guest object at ...>,
-    <InterfaceClass __builtin__.IRegistrar>)
+    <Huesped object at ...>,
+    <InterfaceClass __builtin__.IRegistrador>)
 
-  Here `GuestRegistrarNG` is registered without name:
+  Ahora registramos 'RegistradorHuespedNG' sin nombre:
 
-  >>> gsm.registerAdapter(GuestRegistrarNG)
+  >>> gsm.registerAdapter(RegistradorHuespedNG)
 
-  Now the adapter lookup should succeed:
+  Ahora la recuperación del adaptador debería funcionar:
 
-  >>> IRegistrar(jack, 'default-output') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> IRegistrador(pepe, 'salida-predeterminada') #doctest: +ELLIPSIS
+  <RegistradorHuespedNG object at ...>
 
-For simple cases, you may use interface to get adapter components.
+Para los casos simples, puedes usar la interfaz para obtener
+componentes adaptadores.
 
 
 Patrón de Adaptador
 ~~~~~~~~~~~~~~~~~~~
 
-The adapter concept in Zope Component Architecture and the classic
-`Adapter` pattern as described in Design Patterns book is very
-similar.  But the intent of ZCA adapter is more wider than `Adapter`
-pattern.  The intent of `Adapter` pattern is to convert the interface
-of a class into another interface clients expect.  This allows classes
-work together that couldn't otherwise because of incompatible
-interfaces.  But in the `Motivation` section, GoF says: "Often the
-adapter is responsible for functionality the adapter class doesn't
-provide".  ZCA adapter has more focus on adding functionalities than
-new interface for existing functionality of adaptee.  So, ZCA adapter
-lets adapter classes extend functionality by adding methods.
+El concepto de adaptador de la Arquitectura de Componentes de Zope
+y el clásico `patrón adaptador` descrito en el libro Patrones de
+Diseño son muy similares. Pero la intención del uso del adaptador
+de la ZCA es más amplio que el `patrón adaptador`. La intención
+del `patrón adaptador` es convertir la interfaz de una clase en
+otra interfaz que los clientes esperan. Esto permite que clases
+que no hubieran podido colaborar debido a interfaces incompatibles
+puedan hacerlo. Pero en la sección `motivación` del libro
+de Patrones de Diseño, la Banda de los Cuatro dice: "A veces
+el adaptador es responsable de funcionalidad que la clase adaptada
+no ofrece". Los adaptadores de la ZCA hacen más hincapie en añadir
+funcionalidades en vez de en crear un nuevo interfaz para el objeto
+adaptado.  Los adaptadores de la ZCA dejan que las clases
+adaptadoras aumenten la funcionalidad añadiendo métodos. (Es
+interesante notar que `Adaptador` se llamaba `Mejora` en una étapa
+inicial del diseño de la ZCA). [#feature]_
 
-The major attraction of ZCA adapter are the explicit interface for
-components and the component registry.  ZCA adapter components are
-registered in component registry and looked up by client objects using
-interface and name when required.
+El párrafo anterior tiene una cita del libro de la Banda de los Cuatro,
+que termina con algo como " ... la clase adaptada no ofrece". Pero
+en la siguiente frase yo utilizo "objeto adaptado" en vez de "clase
+adaptada", porque la Banda de los Cuatro describe dos variaciones
+de adaptadores basadas en la implementación. La primera se llama
+`clase adaptadora` y la otra se llama `objeto adaptador`. Una clase
+adaptadora utiliza herencia múltiple para adaptar una interfaz a otra,
+mientras que un objeto adaptador se basa en la composición de objetos.
+El adaptador de la ZCA sigue el patrón de objeto adaptador, que
+usa delegación como un mecanismo de composición. El segundo principio
+de orientación a objetos de la Banda de los Cuatro se algo como:
+"Favorece la composición de objetos sobre la herencia de clases".
+Para más detalles sobre el tema, por favor lee el libro de Patrones
+de Diseño.
+
+Los mayores atractivos del adaptador de la ZCA son la interfaz
+explícita para componentes y el registro de componentes. Los
+componentes adaptadores de la ZCA se registran en el registro de
+componentes y son recuperados, cuando son necesarios, por objetos
+clientes usando la interfaz y el nombre.
+
+.. [#feature] Discusión sobre el cambio de nombre de `Mejora` a
+   `Adaptador`:
+   http://mail.zope.org/pipermail/zope3-dev/2001-December/000008.html
 
 
 Utilidad
