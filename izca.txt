@@ -4,7 +4,7 @@ Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.3.99
+:Version: 0.4.1
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 
@@ -317,7 +317,7 @@ Object oriented approach
 In object oriented methodology, you can think of a registrar object
 handling the registration.  There are many advantages for creating an
 object for handling registration.  Most importantly, the abstraction
-provided by the registrar object makes the code easier to understand. 
+provided by the registrar object makes the code easier to understand.
 It offers a way to group related functionality, and can be extended
 via inheritance. As features are added, such as canceling and updating
 registration, the registrar object can grow to provide them, or
@@ -1053,21 +1053,40 @@ Adapter pattern
 ~~~~~~~~~~~~~~~
 
 The adapter concept in Zope Component Architecture and the classic
-`Adapter` pattern as described in Design Patterns book is very
-similar.  But the intent of ZCA adapter is more wider than `Adapter`
-pattern.  The intent of `Adapter` pattern is to convert the interface
-of a class into another interface clients expect.  This allows classes
-work together that couldn't otherwise because of incompatible
-interfaces.  But in the `Motivation` section, GoF says: "Often the
-adapter is responsible for functionality the adapter class doesn't
-provide".  ZCA adapter has more focus on adding functionalities than
-new interface for existing functionality of adaptee.  So, ZCA adapter
-lets adapter classes extend functionality by adding methods.
+`adapter pattern` as described in Design Patterns book are very
+similar.  But the intent of ZCA adapter usage is more wider than the
+`adapter pattern` itself.  The intent of `adapter pattern` is to
+convert the interface of a class into another interface clients
+expect.  This allows classes work together that couldn't otherwise
+because of incompatible interfaces.  But in the `motivation` section
+of Degisgn Patterns book, GoF says: "Often the adapter is responsible
+for functionality the adapted class doesn't provide".  ZCA adapter has
+more focus on adding functionalities than creating a new interface for
+an adapted object (adaptee).  ZCA adapter lets adapter classes extend
+functionality by adding methods.  (It would be interesting to note
+that `Adapter` was known as `Feature` in earlier stage of ZCA
+design. ) [#feature]_
+
+The above paragraph has a quote from Gang of Four book, it ends like
+this: " ...adapted class doesn't provide".  But in the next sentence I
+used "adapted object" instead of "adapted class", because GoF
+describes about two variants of adapters based on implementations.
+The first one is called `class adapter` and the other one is called
+`object adapter`.  A class adapter uses multiple inheritance to adapt
+one interface to another, on the other hand an object adapter relies
+on object composition.  ZCA adapter is following object adapter
+pattern, which use delegation as a mechanism for composition.  GoF's
+second principle of object-oriented design goes like this: "Favor
+object composition over class inheritance".  For more details about
+this subject please read Design Patterns book.
 
 The major attraction of ZCA adapter are the explicit interface for
 components and the component registry.  ZCA adapter components are
 registered in component registry and looked up by client objects using
 interface and name when required.
+
+.. [#feature] Thread discussing renaming of `Feature` to `Adapter`:
+   http://mail.zope.org/pipermail/zope3-dev/2001-December/000008.html
 
 
 Utility
