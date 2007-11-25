@@ -45,11 +45,11 @@ class ObjectDatabase(object):
     def rollback(self):
         transaction.abort()
 
-    def get_zcalibdb(self):
+    def container(self):
         return self.dbroot['zcalibdb']
 
     def get_next_id(self, container):
-        zcalibdb = self.get_zcalibdb()
+        zcalibdb = self.container()
         try:
             return max(zcalibdb[container].keys()) + 1
         except ValueError:

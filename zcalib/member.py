@@ -100,13 +100,13 @@ class MemberODbOperation(object):
 
     def get(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         members = zcalibdb['members']
         return members.values()
 
     def add(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         members = zcalibdb['members']
         number = self.member.number
         if number in [x.number for x in members.values()]:
@@ -119,7 +119,7 @@ class MemberODbOperation(object):
 
     def update(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         members = zcalibdb['members']
         id = self.member.id
         members[id] = self.member
@@ -127,7 +127,7 @@ class MemberODbOperation(object):
 
     def delete(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         members = zcalibdb['members']
         id = self.member.id
         del members[id]
