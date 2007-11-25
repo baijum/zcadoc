@@ -3,17 +3,6 @@ from ZODB import FileStorage, DB
 import transaction
 from BTrees.OOBTree import OOBTree
 from BTrees.IOBTree import IOBTree
-# storage = FileStorage.FileStorage('/tmp/test-filestorage.fs')
-# db = DB(storage)
-# conn = db.open()
-# from persistent import Persistent
-# class User(Persistent):
-#     pass
-
-# dbroot = conn.root()
-# from BTrees.OOBTree import OOBTree
-# dbroot['userdb'] = OOBTree()
-# userdb = dbroot['userdb']
 
 from zope.interface import implements
 
@@ -31,7 +20,6 @@ class ObjectDatabase(object):
         conn = db.open()
         self.dbroot = conn.root()
         if 'zcalibdb' not in self.dbroot:
-            print "New ODB"
             self.dbroot['zcalibdb'] = OOBTree()
             zcalibdb = self.dbroot['zcalibdb']
             zcalibdb['members'] = IOBTree()
@@ -48,9 +36,9 @@ class ObjectDatabase(object):
     def container(self):
         return self.dbroot['zcalibdb']
 
-    def get_next_id(self, container):
+    def get_next_id(self, container_name):
         zcalibdb = self.container()
         try:
-            return max(zcalibdb[container].keys()) + 1
+            return max(zcalibdb[container_name].keys()) + 1
         except ValueError:
             return 1
