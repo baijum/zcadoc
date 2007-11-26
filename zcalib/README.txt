@@ -12,7 +12,7 @@ To run:
 Default storage is ZODB, to use relational database use `-r` switch:
 
   python dbschema.py (To populate DB schema, run only once)
-  python zcalib.py
+  python zcalib.py -r
 
 --
 Baiju M
