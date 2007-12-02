@@ -6,16 +6,11 @@ except ImportError:
 
 from zope.interface import implements
 
-from interfaces import IDatabase
+from interfaces import IRelationalDatabase
 
-from components import Book
-from components import Member
+class RelationalDatabase(object):
 
-USE_DEMO_DAT = True
-
-class Database(object):
-
-    implements(IDatabase)
+    implements(IRelationalDatabase)
 
     def __init__(self):
         curdir = os.path.abspath(os.path.dirname(__file__))
