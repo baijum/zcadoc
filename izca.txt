@@ -262,21 +262,20 @@ Procedural approach
 ~~~~~~~~~~~~~~~~~~~
 
 In any business application, data storage is very critical.  For
-simplicity, this example use a Python dictionary as the storage.  Key
-of the dictionary will be the unique Id for a particular guest.  And
-value will be another dictionary with key as the property name::
+simplicity, this example use a Python dictionary as the storage.  We 
+will generate unique id's for the dictinary, the associated value
+will be a dictionary of details about the booking.
 
-  >>> guests_db = {} #key: unique Id, value: details in a dictionary
+  >>> booking_db = {} #key: unique Id, value: details in a dictionary
 
-In a simplistic method, a function which accepts details as arguments
-is enough to do the registration.  You also required a supporting
-function to get the next Id for your data storage.
+A minimal implementation of is a function which we pass the details 
+of the booking, and a supporting function which provides the the 
+unique id for the storage dictionary key.
 
-The supporting function, for getting the next Id can be implemented
-like this::
+We can get the unique id like this::
 
   >>> def get_next_id():
-  ...     db_keys = guests_db.keys()
+  ...     db_keys = bookings_db.keys()
   ...     if db_keys == []:
   ...         next_id = 1
   ...     else:
@@ -284,19 +283,15 @@ like this::
   ...     return next_id
 
 As you can see, the `get_next_id` function implementation is very
-simple.  Well, this is not the ideal way, but it is sufficient to
-explain concepts.  The function first get all keys of storage as list
-and check whether it is empty or not.  If the list is empty, so no
-item is stored, it return `1` as the next Id.  And if the list is not
-empty, the next Id is calculated by adding `1` to the maximum value of
-list.
+simple.  The function gets a list of keys and checks for an empty 
+list. If the list is empty this is our first booking, so we return
+`1`. If the list is not empty, we add `1` to the maximum value in the
+list and return it.
 
-The function to register guest can get next unique Id using
-`get_next_id` function, then assign the details of guest using a
-dictionary.  Here is the function to get details and store in the
-database::
+Here is the function which creates uses the above function to create
+entries in the bookings_db dictionary::
 
-  >>> def register_guest(name, place):
+  >>> def book_room(name, place):
   ...     next_id = get_next_id()
   ...     guests_db[next_id] = {
   ...     'name': name,
