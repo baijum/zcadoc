@@ -38,7 +38,17 @@ class IRelationalDatabase(Interface):
 
 class IObjectDatabase(Interface):
 
-    pass
+    def commit():
+        pass
+
+    def rollback():
+        pass
+
+    def container():
+        pass
+
+    def get_next_id():
+        pass
 
 
 class IDbOperation(Interface):

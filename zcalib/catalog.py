@@ -107,13 +107,13 @@ class BookODbOperation(object):
 
     def get(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         books = zcalibdb['books']
         return books.values()
 
     def add(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         books = zcalibdb['books']
         barcode = self.book.barcode
         if barcode in [x.barcode for x in books.values()]:
@@ -126,7 +126,7 @@ class BookODbOperation(object):
 
     def update(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         books = zcalibdb['books']
         id = self.book.id
         books[id] = self.book
@@ -134,7 +134,7 @@ class BookODbOperation(object):
 
     def delete(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         books = zcalibdb['books']
         id = self.book.id
         del books[id]
