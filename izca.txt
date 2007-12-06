@@ -263,7 +263,7 @@ Procedural approach
 
 In any business application, data storage is very critical.  For
 simplicity, this example use a Python dictionary as the storage.  We 
-will generate unique id's for the dictinary, the associated value
+will generate unique id's for the dictionary, the associated value
 will be a dictionary of details about the booking.
 
   >>> booking_db = {} #key: unique Id, value: details in a dictionary
@@ -288,19 +288,41 @@ list. If the list is empty this is our first booking, so we return
 `1`. If the list is not empty, we add `1` to the maximum value in the
 list and return it.
 
-Here is the function which creates uses the above function to create
-entries in the bookings_db dictionary::
+Now we will use the above function to create entries in the 
+bookings_db dictionary::
 
-  >>> def book_room(name, place):
+  >>> def book_room(name, room):
   ...     next_id = get_next_id()
   ...     guests_db[next_id] = {
   ...     'name': name,
-  ...     'place': place
+  ...     'room': room
   ...     }
 
-We will end our discussion of the procedural approach here.
-It will be much easier to add required features such as data
-persistence, design flexibility, and code testability using objects.
+The requirements of a hotel booking management application require
+considering additional data:
+
+- phone numbers
+- room options
+- payment methods
+- ...
+
+And code to manage the data:
+
+- reserve a room
+- cancel a reservation
+- pay for a room
+- persist the data
+- insure security of the data
+- ...
+
+Were we to continue with the procedural example, we would create many
+functions, passing data back and forth between them.  As requirements
+change and are added, the code becomes harder to maintain and bugs
+become harder to find and fix.  
+
+We will end our discussion of the procedural approach here. It will be
+much easier to provide data persistence, design flexibility and code
+testability using objects.
 
 
 Object oriented approach
