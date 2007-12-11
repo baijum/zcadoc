@@ -1147,161 +1147,163 @@ Utilidad
 Introducción
 ~~~~~~~~~~~~
 
-Now you know the concept of interface, adapter and component registry.
-Sometimes it would be useful to register an object which is not
-adapting anything.  Database connection, XML parser, object returning
-unique Ids etc. are examples of these kinds of objects.  These kind of
-components provided by Zope component architecture are called
-``utility`` components.
+Ahora ya conoces el concepto de interfaz, adaptador y registro de
+componentes. A veces es útil registrar un objeto que no adapta
+nada. Conexión a base de datos, analizador de XML, objetos que
+devuelven identificadores únicos, etc. son ejemplos de este tipo
+de objetos. Este tipo de componentes ofrecidos por la arquitectura
+de componentes de Zope se llaman componentes ``utilidad``.
 
-Utilities are just objects that provide an interface and that are
-looked up by an interface and a name.  This approach creates a global
-registry by which instances can be registered and accessed by
-different parts of your application, with no need to pass the
-instances around as parameters.
+Las utilidades son sólo objetos que ofrecen una interfaz y que
+son recuperados con una interfaz y un nombre. Este enfoque crea
+un registro global en el que las instancias se pueden registrar
+y recuperar desde distintas partes de tu aplicación, sin
+necesidad de pasar las instancias arriba y abajo como parámetros.
 
-You need not to register all component instances like this.  Only
-register components which you want to make replaceable.
+No necesitas registrar todas las instancias de componentes así.
+Registra sólo aquellos componentes que quieras hacer sustituibles.
 
 
 Utilidad simple
 ~~~~~~~~~~~~~~~
 
-Before implementing the utility, as usual, define its interface.  Here
-is a `greeter` interface::
+Antes de implementar la utilidad, como siempre, define su interfaz.
+Aqui tenemos una interfaz `saludador`::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
 
-  >>> class IGreeter(Interface):
+  >>> class ISaludador(Interface):
   ...
-  ...     def greet(name):
-  ...         "say hello"
+  ...     def saluda(nombre):
+  ...         "dice hola"
 
-Here is a possible implementation of the above interface::
+Aquí tenemos una posible implementación de la interfaz anterior::
 
-  >>> class Greeter(object):
+  >>> class Saludador(object):
   ...
-  ...     implements(IGreeter)
+  ...     implements(ISaludador)
   ...
-  ...     def greet(self, name):
-  ...         return "Hello " + name
+  ...     def saluda(self, nombre):
+  ...         return "Hola " + nombre
 
-You can register an instance of this class using ``registerUtility``::
+Puedes registrar una instancia de esta clase usando ``registerUtility``::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> greet = Greeter()
-  >>> gsm.registerUtility(greet, IGreeter)
+  >>> saludador = Saludador()
+  >>> gsm.registerUtility(saludador, ISaludador)
 
-In this example you registered the utility as providing the `IGreeter`
-interface.  You can look the interface up with either `queryUtility`
-or `getUtility`::
+En este ejemplo has registrado la utilidad como proveedora de la
+interfaz `ISaludador`. Puedes recuperar la utilidad con `queryUtility`
+o `getUtility`::
 
   >>> from zope.component import queryUtility
   >>> from zope.component import getUtility
 
-  >>> queryUtility(IGreeter).greet('Jack')
-  'Hello Jack'
+  >>> queryUtility(ISaludador).saluda('Antonio')
+  'Hola Antonio'
 
-  >>> getUtility(IGreeter).greet('Jack')
-  'Hello Jack'
+  >>> getUtility(ISaludador).greet('Susana')
+  'Hola Susana'
 
-As you can see, adapters are normally classes, but utilities are
-normally instances of classes.
+Como puedes ver, los adaptadores normalmente son clases, pero las
+utilidades normalmente son instancias de clases.
 
 
 Utilidad con nombre
 ~~~~~~~~~~~~~~~~~~~
 
-When registering a utility component, like adapter, you can use a
-name.
+Cuando registras un componente utilidad, como un adaptador, puedes
+usar un nombre.
 
-For example consider this:
+Por ejemplo, considera esto::
 
-  >>> greet = Greeter()
-  >>> gsm.registerUtility(greet, IGreeter, 'new')
+  >>> saludador = Saludador()
+  >>> gsm.registerUtility(saludador, ISaludador, 'nuevo')
 
-In this example you registered the utility with a name as providing
-the `IGreeter` interface.  You can look the interface up with either
-`queryUtility` or `getUtility`::
+En este ejemplo has registrado una utilidad que ofrece la interfaz
+`IGreeter` con un nombre. Puedes buscar la interfaz tanto con
+`queryUtility` como con `getUtility`::
 
   >>> from zope.component import queryUtility
   >>> from zope.component import getUtility
 
-  >>> queryUtility(IGreeter, 'new').greet('Jill')
-  'Hello Jill'
+  >>> queryUtility(ISaludador, 'nuevo').saluda('Antonio')
+  'Hola Antonio'
 
-  >>> getUtility(IGreeter, 'new').greet('Jill')
-  'Hello Jill'
+  >>> getUtility(ISaludador, 'nuevo').saluda('Antonio')
+  'Hola Antonio'
 
-As you can see here, while querying you have to use the `name` as
-second argument.
+Como puedes ver, cuando preguntas tienes que usar el `nombre`
+como segundo argumento.
 
 .. note::
 
-  Calling `getUtility` function without a name (second argument) is
-  equivalent to calling with an empty string ('') as the name.
-  Because, the default value for second (keyword) argument is an empty
-  string.  Then, component lookup mechanism will try to find the
-  component with name as empty string (''), and it will fail.  When
-  component lookup fails it will raise `ComponentLookupError`
-  exception.  Remember, it will not return some random component
-  registered with some other name.
+  LLamar a la función `getUtility` sin un nombre (segundo argumento)
+  es equivalente a llamarla con una cadena vacía ('') comos el nombre.
+  Porque, el valor predeterminado para el segundo argumento (nombrado)
+  es una cadena vacía. Entonces, el mecanismo de recuperación de
+  componentes intentará encontrar el componente con un nombre de
+  cadena vacía (''), y fallará. Cuando la recuperación de un componente
+  falla se lanza la excepción `ComponentLookupError`. Recuérdalo, no
+  devolverá algún componente aleatorio registrado con cualquier otro
+  nombre.
 
 
 Fábrica
 ~~~~~~~
 
-A ``Factory`` is a utility component which provides ``IFactory``
-interface.
+Una ``Fábrica`` es un componente utilidad que ofrece la intefaz
+``IFactory``.
 
-To create a factory, first define the interface of the object::
+Para crear una fábrica, primero tienes que definir el interfaz del
+objeto::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
 
-  >>> class IDatabase(Interface):
+  >>> class IBaseDatos(Interface):
   ...
-  ...     def getConnection():
-  ...         """Return connection object"""
+  ...     def getConexion():
+  ...         """Devuelve el objeto conexion"""
 
-Here is fake implementation of `IDatabase` interface::
+Aquí tenemos una implementación de mentira de la interfaz `IBaseDatos`::
 
-  >>> class FakeDb(object):
+  >>> class BDFalsa(object):
   ...
-  ...     implements(IDatabase)
+  ...     implements(IBaseDatos)
   ...
-  ...     def getConnection(self):
-  ...         return "connection"
+  ...     def getConexion(self):
+  ...         return "conexion"
 
-You can create a factory using ``zope.component.factory.Factory``::
+Puedes crear una fábrica usando ``zope.component.factory.Factory``::
 
   >>> from zope.component.factory import Factory
 
-  >>> factory = Factory(FakeDb, 'FakeDb')
+  >>> fabrica = Factory(BDFalsa, 'BDFalsa')
 
-Now you can register it like this::
+Ahora puedes registrarla así::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
   >>> from zope.component.interfaces import IFactory
-  >>> gsm.registerUtility(factory, IFactory, 'fakedb')
+  >>> gsm.registerUtility(fabrica, IFactory, 'bdfalsa')
 
-To use the factory, you may do it like this::
+Para usar la fábrica, puedes hacer lo siguiente::
 
   >>> from zope.component import queryUtility
-  >>> queryUtility(IFactory, 'fakedb')() #doctest: +ELLIPSIS
-  <FakeDb object at ...>
+  >>> queryUtility(IFactory, 'bdfalsa')() #doctest: +ELLIPSIS
+  <BDFalsa object at ...>
 
-There is a shortcut to use factory::
+Hay un atajo para usar la fábrica::
 
   >>> from zope.component import createObject
-  >>> createObject('fakedb') #doctest: +ELLIPSIS
-  <FakeDb object at ...>
+  >>> createObject('bdfalsa') #doctest: +ELLIPSIS
+  <BDFalsa object at ...>
 
 
 Adaptadores avanzados
