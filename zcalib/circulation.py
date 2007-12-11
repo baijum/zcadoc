@@ -88,13 +88,13 @@ class CirculationODbOperation(object):
 
     def get(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         circulations = zcalibdb['circulations']
         return circulations.values()
 
     def add(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         circulations = zcalibdb['circulations']
         barcode = self.circulation.book.barcode
         if barcode in [x.book.barcode for x in circulations.values()]:
@@ -109,7 +109,7 @@ class CirculationODbOperation(object):
 
     def delete(self):
         db = getUtility(IObjectDatabase)
-        zcalibdb = db.get_zcalibdb()
+        zcalibdb = db.container()
         circulations = zcalibdb['circulations']
         id = self.circulation.book.id
         del circulations[id]

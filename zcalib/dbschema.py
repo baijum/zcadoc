@@ -5,7 +5,7 @@ except ImportError:
     from pysqlite2 import dbapi2 as sqlite3
 
 curdir = os.path.abspath(os.path.dirname(__file__))
-db_file = os.path.join(curdir, 'Data.db')
+db_file = os.path.join(curdir, 'RData.db')
 conn = sqlite3.connect(db_file)
 
 cr = conn.cursor()

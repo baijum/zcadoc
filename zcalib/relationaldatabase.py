@@ -14,7 +14,7 @@ class RelationalDatabase(object):
 
     def __init__(self):
         curdir = os.path.abspath(os.path.dirname(__file__))
-        db_file = os.path.join(curdir, 'Data.db')
+        db_file = os.path.join(curdir, 'RData.db')
         self.conn = sqlite3.connect(db_file)
         self.conn.row_factory = sqlite3.Row
 
