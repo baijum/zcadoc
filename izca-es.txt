@@ -1313,9 +1313,9 @@ Adaptadores avanzados
 Multi adaptador
 ~~~~~~~~~~~~~~~
 
-A simple adapter normally adapts only one object, but an adapter can
-adapt more than one object.  If an adapter adapts more than one
-objects, it is called as multi-adapter.
+Un adaptador simple normalmente adapta sólo un objeto, pero un
+adaptador puede adaptar más de un objeto. Si un adaptador adapta
+más de un objeto, se le llama multi-adaptador.
 
 ::
 
@@ -1323,153 +1323,155 @@ objects, it is called as multi-adapter.
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class IAdapteeOne(Interface):
+  >>> class IAdaptadoUno(Interface):
   ...     pass
 
-  >>> class IAdapteeTwo(Interface):
+  >>> class IAdaptadoDos(Interface):
   ...     pass
 
-  >>> class IFunctionality(Interface):
+  >>> class IFuncionalidad(Interface):
   ...     pass
 
-  >>> class MyFunctionality(object):
-  ...     implements(IFunctionality)
-  ...     adapts(IAdapteeOne, IAdapteeTwo)
+  >>> class MiFuncionalidad(object):
+  ...     implements(IFuncionalidad)
+  ...     adapts(IAdaptadoUno, IAdaptadoDos)
   ...
-  ...     def __init__(self, one, two):
-  ...         self.one = one
-  ...         self.two = two
+  ...     def __init__(self, uno, dos):
+  ...         self.uno = uno
+  ...         self.dos = dos
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> gsm.registerAdapter(MyFunctionality)
+  >>> gsm.registerAdapter(MiFuncionalidad)
 
-  >>> class One(object):
-  ...     implements(IAdapteeOne)
+  >>> class Uno(object):
+  ...     implements(IAdaptadoUno)
 
-  >>> class Two(object):
-  ...     implements(IAdapteeTwo)
+  >>> class Dos(object):
+  ...     implements(IAdaptadoDos)
 
-  >>> one = One()
-  >>> two = Two()
+  >>> uno = Uno()
+  >>> dos = Dos()
 
   >>> from zope.component import getMultiAdapter
 
-  >>> getMultiAdapter((one,two), IFunctionality) #doctest: +ELLIPSIS
-  <MyFunctionality object at ...>
+  >>> getMultiAdapter((uno, dos), IFuncionalidad) #doctest: +ELLIPSIS
+  <MiFuncionalidad object at ...>
 
-  >>> myfunctionality = getMultiAdapter((one,two), IFunctionality)
-  >>> myfunctionality.one #doctest: +ELLIPSIS
-  <One object at ...>
-  >>> myfunctionality.two #doctest: +ELLIPSIS
-  <Two object at ...>
+  >>> mifuncionalidad = getMultiAdapter((uno, dos), IFuncionalidad)
+  >>> mifuncionalidad.uno #doctest: +ELLIPSIS
+  <Uno object at ...>
+  >>> mifuncionalidad.dos #doctest: +ELLIPSIS
+  <Dos object at ...>
 
 
 Adaptador de subscripción
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unlike regular adapters, subscription adapters are used when we want
-all of the adapters that adapt an object to a particular adapter.
-Subscription adapter is also known as `subscriber` .
+A diferencia de los adaptadores normales, los adaptadores de
+subscripción se usan cuando queremos todos los adaptadores que
+adaptan un objeto a una interfaz particular. El adaptador de
+subscripción también se conoce como `subscriptor`.
 
-Consider a validation problem.  We have objects and we want to assess
-whether they meet some sort of standards.  We define a validation
-interface::
+Imagina un problema de validación. Tenemos objetos y queremos
+comprobar si cumplen algún tipo de estándar. Definimos una interfaz
+de validación::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
   >>> from zope.interface import implements
 
-  >>> class IValidate(Interface):
+  >>> class IValidador(Interface):
   ...
-  ...     def validate(ob):
-  ...         """Determine whether the object is valid
+  ...     def valida(ob):
+  ...         """Determina si el objeto es válido
   ...
-  ...         Return a string describing a validation problem.
-  ...         An empty string is returned to indicate that the
-  ...         object is valid.
+  ...         Devuelve una cadena que describe un problema de validación.
+  ...         Se devuelve la cadena vacía para indicar que el objeto
+  ...         es válido.
   ...         """
 
-Perhaps we have documents::
+Quizá tengamos documentos::
 
-  >>> class IDocument(Interface):
+  >>> class IDocumento(Interface):
   ...
-  ...     summary = Attribute("Document summary")
-  ...     body = Attribute("Document text")
+  ...     resumen = Attribute("Resumen del documento")
+  ...     cuerpo = Attribute("Cuerpo del documento")
 
-  >>> class Document(object):
+  >>> class Documento(object):
   ...
-  ...     implements(IDocument)
+  ...     implements(IDocumento)
   ...
-  ...     def __init__(self, summary, body):
-  ...         self.summary, self.body = summary, body
+  ...     def __init__(self, resumen, cuerpo):
+  ...         self.resumen, self.cuerpo = resumen, cuerpo
 
-Now, we may want to specify various validation rules for
-documents. For example, we might require that the summary be a single
-line:
+Ahora puede que queramos especificar varias regalas de validación
+para los documentos. Por ejemplo, podemos requerir que el resumen
+sean una sola linea::
 
   >>> from zope.component import adapts
 
-  >>> class SingleLineSummary:
+  >>> class ResumenLineaUnica:
   ...
-  ...     adapts(IDocument)
-  ...     implements(IValidate)
-  ...
-  ...     def __init__(self, doc):
-  ...         self.doc = doc
-  ...
-  ...     def validate(self):
-  ...         if '\n' in self.doc.summary:
-  ...             return 'Summary should only have one line'
-  ...         else:
-  ...             return ''
-
-Or we might require the body to be at least 1000 characters in length:
-
-  >>> class AdequateLength(object):
-  ...
-  ...     adapts(IDocument)
-  ...     implements(IValidate)
+  ...     adapts(IDocumento)
+  ...     implements(IValidador)
   ...
   ...     def __init__(self, doc):
   ...         self.doc = doc
   ...
-  ...     def validate(self):
-  ...         if len(self.doc.body) < 1000:
-  ...             return 'too short'
+  ...     def valida(self):
+  ...         if '\n' in self.doc.resumen:
+  ...             return 'El resumen debe tener sólo una linea'
   ...         else:
   ...             return ''
 
-We can register these as subscription adapters:
+O podemos exigir que el cuerpo tenga al menos una longitud de 1000
+caracteres::
+
+  >>> class LongitudAdecuada(object):
+  ...
+  ...     adapts(IDocumento)
+  ...     implements(IValidador)
+  ...
+  ...     def __init__(self, doc):
+  ...         self.doc = doc
+  ...
+  ...     def valida(self):
+  ...         if len(self.doc.cuerpo) < 1000:
+  ...             return 'demasiado corto'
+  ...         else:
+  ...             return ''
+
+Podemos registrar estas reglas como adaptadores de subscripción::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> gsm.registerSubscriptionAdapter(SingleLineSummary)
-  >>> gsm.registerSubscriptionAdapter(AdequateLength)
+  >>> gsm.registerSubscriptionAdapter(ResumenLineaUnica)
+  >>> gsm.registerSubscriptionAdapter(LongitudAdecuada)
 
-We can then use the subscribers to validate objects:
+Podemos usar los subscriptores para validar objetos::
 
   >>> from zope.component import subscribers
 
-  >>> doc = Document("A\nDocument", "blah")
-  >>> [adapter.validate()
-  ...  for adapter in subscribers([doc], IValidate)
-  ...  if adapter.validate()]
-  ['Summary should only have one line', 'too short']
+  >>> doc = Documento("Un\nDocumento", "bla")
+  >>> [adaptador.valida()
+  ...  for adaptador in subscribers([doc], IValidador)
+  ...  if adaptador.valida()]
+  ['El resumen debe tener sólo una linea', 'demasiado corto']
 
-  >>> doc = Document("A\nDocument", "blah" * 1000)
-  >>> [adapter.validate()
-  ...  for adapter in subscribers([doc], IValidate)
-  ...  if adapter.validate()]
-  ['Summary should only have one line']
+  >>> doc = Documento("Un\nDocumento", "bla" * 1000)
+  >>> [adaptador.valida()
+  ...  for adaptador in subscribers([doc], IValidador)
+  ...  if adaptador.valida()]
+  ['El resumen debe tener sólo una linea']
 
-  >>> doc = Document("A Document", "blah")
-  >>> [adapter.validate()
-  ...  for adapter in subscribers([doc], IValidate)
-  ...  if adapter.validate()]
-  ['too short']
+  >>> doc = Document("Un Documento", "bla")
+  >>> [adaptador.valida()
+  ...  for adaptador in subscribers([doc], IValidador)
+  ...  if adaptador.valida()]
+  ['demasiado corto']
 
 
 Manejador
