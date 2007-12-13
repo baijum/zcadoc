@@ -1317,8 +1317,8 @@ Subscription adapter
 ~~~~~~~~~~~~~~~~~~~~
 
 Unlike regular adapters, subscription adapters are used when we want
-all of the adapters that adapt an object to a particular adapter.
-Subscription adapter is also known as `subscriber` .
+all of the adapters that adapt an object to a particular interface.
+Subscription adapter is also known as `subscriber`.
 
 Consider a validation problem.  We have objects and we want to assess
 whether they meet some sort of standards.  We define a validation
@@ -1354,7 +1354,7 @@ Perhaps we have documents::
 
 Now, we may want to specify various validation rules for
 documents. For example, we might require that the summary be a single
-line:
+line::
 
   >>> from zope.component import adapts
 
@@ -1372,7 +1372,7 @@ line:
   ...         else:
   ...             return ''
 
-Or we might require the body to be at least 1000 characters in length:
+Or we might require the body to be at least 1000 characters in length::
 
   >>> class AdequateLength(object):
   ...
@@ -1388,7 +1388,7 @@ Or we might require the body to be at least 1000 characters in length:
   ...         else:
   ...             return ''
 
-We can register these as subscription adapters:
+We can register these as subscription adapters::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
@@ -1396,7 +1396,7 @@ We can register these as subscription adapters:
   >>> gsm.registerSubscriptionAdapter(SingleLineSummary)
   >>> gsm.registerSubscriptionAdapter(AdequateLength)
 
-We can then use the subscribers to validate objects:
+We can then use the subscribers to validate objects::
 
   >>> from zope.component import subscribers
 
