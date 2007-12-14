@@ -262,21 +262,20 @@ Procedural approach
 ~~~~~~~~~~~~~~~~~~~
 
 In any business application, data storage is very critical.  For
-simplicity, this example use a Python dictionary as the storage.  Key
-of the dictionary will be the unique Id for a particular guest.  And
-value will be another dictionary with key as the property name::
+simplicity, this example use a Python dictionary as the storage.  We 
+will generate unique id's for the dictionary, the associated value
+will be a dictionary of details about the booking.
 
-  >>> guests_db = {} #key: unique Id, value: details in a dictionary
+  >>> bookings_db = {} #key: unique Id, value: details in a dictionary
 
-In a simplistic method, a function which accepts details as arguments
-is enough to do the registration.  You also required a supporting
-function to get the next Id for your data storage.
+A minimal implementation requires a function which we pass the details
+of the booking, and a supporting function which provides the the
+unique id for the storage dictionary key.
 
-The supporting function, for getting the next Id can be implemented
-like this::
+We can get the unique id like this::
 
   >>> def get_next_id():
-  ...     db_keys = guests_db.keys()
+  ...     db_keys = bookings_db.keys()
   ...     if db_keys == []:
   ...         next_id = 1
   ...     else:
@@ -284,28 +283,46 @@ like this::
   ...     return next_id
 
 As you can see, the `get_next_id` function implementation is very
-simple.  Well, this is not the ideal way, but it is sufficient to
-explain concepts.  The function first get all keys of storage as list
-and check whether it is empty or not.  If the list is empty, so no
-item is stored, it return `1` as the next Id.  And if the list is not
-empty, the next Id is calculated by adding `1` to the maximum value of
-list.
+simple.  The function gets a list of keys and checks for an empty 
+list. If the list is empty this is our first booking, so we return
+`1`. If the list is not empty, we add `1` to the maximum value in the
+list and return it.
 
-The function to register guest can get next unique Id using
-`get_next_id` function, then assign the details of guest using a
-dictionary.  Here is the function to get details and store in the
-database::
+Now we will use the above function to create entries in the 
+bookings_db dictionary::
 
-  >>> def register_guest(name, place):
+  >>> def book_room(name, place):
   ...     next_id = get_next_id()
-  ...     guests_db[next_id] = {
+  ...     bookings_db[next_id] = {
   ...     'name': name,
-  ...     'place': place
+  ...     'room': place
   ...     }
 
-We will end our discussion of the procedural approach here.
-It will be much easier to add required features such as data
-persistence, design flexibility, and code testability using objects.
+The requirements of a hotel booking management application require
+considering additional data:
+
+  - phone numbers
+  - room options
+  - payment methods
+  - ...
+
+And code to manage the data:
+
+  - cancel a reservation
+  - update a reservation
+  - pay for a room
+  - persist the data
+  - insure security of the data
+  - ...
+
+Were we to continue with the procedural example, we would create many
+functions, passing data back and forth between them.  As requirements
+change and are added, the code becomes harder to maintain and bugs
+become harder to find and fix.
+
+We will end our discussion of the procedural approach here. It will be
+much easier to provide data persistence, design flexibility and code
+testability using objects.
 
 
 Object oriented approach
@@ -314,86 +331,88 @@ Object oriented approach
 .. ??? should this paragraph talk about "creating an object for
  handling registration" or "creating a class to handle registration"?
 
-In object oriented methodology, you can think of a registrar object
-handling the registration.  There are many advantages for creating an
-object for handling registration.  Most importantly, the abstraction
-provided by the registrar object makes the code easier to understand.
-It offers a way to group related functionality, and can be extended
-via inheritance. As features are added, such as canceling and updating
-registration, the registrar object can grow to provide them, or
-delegate them to another object.
+Our discussion of object oriented design will introduce the `class` which
+serves to encapsulate the data, and the code to manage it.
 
-Lets look at the implementation details of a registrar object
-implemented as a class::
+Our main class will be the `FrontDesk`. FrontDesk, or other classes it
+delegates to, will know how to manage the data for the hotel.  We will
+create `instances` of FrontDesk to apply this knowledge to the
+business of running a hotel.
 
-  >>> class guestRegistrar(object):
+Experience has shown that by consolidating the code and data requirements via
+objects, we will end up with a design which is easier to understand,
+test, and change.
+
+Lets look at the implementation details of a FrontDesk class::
+
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, name, place):
+  ...     def book_room(self, name, place):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': name,
   ...         'place': place
   ...         }
 
-In this implementation, the registrar object (an instance of
-`GuestRegistrar` class) is handling the registration.  With this
-design, a particular registrar object can perform multiple
-registrations.
+In this implementation, the `frontdesk` object (an instance of
+`FrontDesk` class) is handling the booking.  With this
+design, a particular frontdesk object can perform multiple
+bookings.
 
-This is how you can use the current registrar implementation::
+This is how you can use the current frontdesk implementation::
 
-  >>> registrar = GuestRegistrar()
-  >>> registrar.register("Jack", "Bangalore")
+  >>> frontdesk = FrontDesk()
+  >>> frontdesk.book_room("Jack", "Bangalore")
 
 Requirement changes are unavoidable in any real world project.
 Consider this case, after some time, a new requirement is arising: the
 guests also required to provide phone number to admit them.  You will
-be required to change the implementation of registrar object to
+be required to change the implementation of frontdesk object to
 support it.
 
-You can achieve this requirement by adding one argument to `registrar`
-method and use that argument in the dictionary of values.  Here is the
-new implementation for this requirement::
+You can achieve this requirement by adding one argument to the 
+`book_room` method and use that argument in the dictionary of values.
+Here is the new implementation for this requirement::
 
-  >>> class GuestRegistrar(object):
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, name, place, phone):
+  ...     def book_room(self, name, place, phone):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': name,
   ...         'place': place,
   ...         'phone': phone
   ...         }
 
 Other than migrating the data to new schema, now you have to change
-the usage of `GuestRegistrar` in all places.  If you can abstract the
+the usage of `FrontDesk` in all places.  If you can abstract the
 details of guest into an object and use it for registration, the code
 changes can be minimized.  If you follow this design, you have to pass
 that guest object instead of more arguments to the function.  The new
 implementation with guest object will look like this::
 
-  >>> class GuestRegistrar(object):
+  >>> class FrontDesk(object):
   ...
   ...     def register(self, guest):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
 
-Well, even in this implementation you have to change code.  Code
-change for requirement is unavoidable, your goal should be to minimize
-changes and make it maintainable.
+Well, even in this implementation you have to change code.  Changing 
+in resonse to changing requirements is unavoidable, however, our goal
+is to minimize those changes, thereby increasing maintainability. 
 
 .. note::
-
-  You should have the courage to make any change, major or minor, at
-  any time.  Immediate feedback is the only way you can get the
-  courage.  Using automated testing, you can get the immediate
-  feedback and so the courage to make changes.  For more details about
-  this subject, you can read the book called `Extreme Programming
-  Explained` by Kent Beck.
+  
+  When coding, it is important to feel free to make changes without
+  fear of breaking the application.  The way to get the immediate 
+  feedback required is via automated testing.  With well written
+  tests (and good version control) you can make changes large or 
+  small with impunity.  For more details about this subject, you can
+  read the book `Extreme Programming Explained` by Kent Beck.
 
 By introducing the guest object, you saved some typing.  More than
 that, the abstraction of guest object made the system much simpler and
@@ -422,7 +441,7 @@ object as an attribute::
   ...     def register(self):
   ...         guest = self.guest
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -849,7 +868,7 @@ with explicit interface declaration::
   ...     def register(self):
   ...         guest = self.guest
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -1059,7 +1078,7 @@ similar.  But the intent of ZCA adapter usage is more wider than the
 convert the interface of a class into another interface clients
 expect.  This allows classes work together that couldn't otherwise
 because of incompatible interfaces.  But in the `motivation` section
-of Design Patterns book, GoF says: "Often the adapter is responsible
+of Degisgn Patterns book, GoF says: "Often the adapter is responsible
 for functionality the adapted class doesn't provide".  ZCA adapter has
 more focus on adding functionalities than creating a new interface for
 an adapted object (adaptee).  ZCA adapter lets adapter classes extend
@@ -1890,7 +1909,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -2266,7 +2285,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -2343,7 +2362,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -2401,7 +2420,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3168,7 +3187,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3246,7 +3265,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3415,7 +3434,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3481,7 +3500,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3940,7 +3959,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
