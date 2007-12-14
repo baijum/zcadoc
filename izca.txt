@@ -1,10 +1,10 @@
-===========================
-Zope Component Architecture
-===========================
+====================================================
+A Comprehensive Guide to Zope Component Architecture
+====================================================
 
 
 :Author: Baiju M
-:Version: 0.4.1
+:Version: 0.4.2
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 
