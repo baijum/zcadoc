@@ -1147,161 +1147,163 @@ Utilidad
 Introducción
 ~~~~~~~~~~~~
 
-Now you know the concept of interface, adapter and component registry.
-Sometimes it would be useful to register an object which is not
-adapting anything.  Database connection, XML parser, object returning
-unique Ids etc. are examples of these kinds of objects.  These kind of
-components provided by Zope component architecture are called
-``utility`` components.
+Ahora ya conoces el concepto de interfaz, adaptador y registro de
+componentes. A veces es útil registrar un objeto que no adapta
+nada. Conexión a base de datos, analizador de XML, objetos que
+devuelven identificadores únicos, etc. son ejemplos de este tipo
+de objetos. Este tipo de componentes ofrecidos por la arquitectura
+de componentes de Zope se llaman componentes ``utilidad``.
 
-Utilities are just objects that provide an interface and that are
-looked up by an interface and a name.  This approach creates a global
-registry by which instances can be registered and accessed by
-different parts of your application, with no need to pass the
-instances around as parameters.
+Las utilidades son sólo objetos que ofrecen una interfaz y que
+son recuperados con una interfaz y un nombre. Este enfoque crea
+un registro global en el que las instancias se pueden registrar
+y recuperar desde distintas partes de tu aplicación, sin
+necesidad de pasar las instancias arriba y abajo como parámetros.
 
-You need not to register all component instances like this.  Only
-register components which you want to make replaceable.
+No necesitas registrar todas las instancias de componentes así.
+Registra sólo aquellos componentes que quieras hacer sustituibles.
 
 
 Utilidad simple
 ~~~~~~~~~~~~~~~
 
-Before implementing the utility, as usual, define its interface.  Here
-is a `greeter` interface::
+Antes de implementar la utilidad, como siempre, define su interfaz.
+Aqui tenemos una interfaz `saludador`::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
 
-  >>> class IGreeter(Interface):
+  >>> class ISaludador(Interface):
   ...
-  ...     def greet(name):
-  ...         "say hello"
+  ...     def saluda(nombre):
+  ...         "dice hola"
 
-Here is a possible implementation of the above interface::
+Aquí tenemos una posible implementación de la interfaz anterior::
 
-  >>> class Greeter(object):
+  >>> class Saludador(object):
   ...
-  ...     implements(IGreeter)
+  ...     implements(ISaludador)
   ...
-  ...     def greet(self, name):
-  ...         return "Hello " + name
+  ...     def saluda(self, nombre):
+  ...         return "Hola " + nombre
 
-You can register an instance of this class using ``registerUtility``::
+Puedes registrar una instancia de esta clase usando ``registerUtility``::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> greet = Greeter()
-  >>> gsm.registerUtility(greet, IGreeter)
+  >>> saludador = Saludador()
+  >>> gsm.registerUtility(saludador, ISaludador)
 
-In this example you registered the utility as providing the `IGreeter`
-interface.  You can look the interface up with either `queryUtility`
-or `getUtility`::
+En este ejemplo has registrado la utilidad como proveedora de la
+interfaz `ISaludador`. Puedes recuperar la utilidad con `queryUtility`
+o `getUtility`::
 
   >>> from zope.component import queryUtility
   >>> from zope.component import getUtility
 
-  >>> queryUtility(IGreeter).greet('Jack')
-  'Hello Jack'
+  >>> queryUtility(ISaludador).saluda('Antonio')
+  'Hola Antonio'
 
-  >>> getUtility(IGreeter).greet('Jack')
-  'Hello Jack'
+  >>> getUtility(ISaludador).greet('Susana')
+  'Hola Susana'
 
-As you can see, adapters are normally classes, but utilities are
-normally instances of classes.
+Como puedes ver, los adaptadores normalmente son clases, pero las
+utilidades normalmente son instancias de clases.
 
 
 Utilidad con nombre
 ~~~~~~~~~~~~~~~~~~~
 
-When registering a utility component, like adapter, you can use a
-name.
+Cuando registras un componente utilidad, como un adaptador, puedes
+usar un nombre.
 
-For example consider this:
+Por ejemplo, considera esto::
 
-  >>> greet = Greeter()
-  >>> gsm.registerUtility(greet, IGreeter, 'new')
+  >>> saludador = Saludador()
+  >>> gsm.registerUtility(saludador, ISaludador, 'nuevo')
 
-In this example you registered the utility with a name as providing
-the `IGreeter` interface.  You can look the interface up with either
-`queryUtility` or `getUtility`::
+En este ejemplo has registrado una utilidad que ofrece la interfaz
+`IGreeter` con un nombre. Puedes buscar la interfaz tanto con
+`queryUtility` como con `getUtility`::
 
   >>> from zope.component import queryUtility
   >>> from zope.component import getUtility
 
-  >>> queryUtility(IGreeter, 'new').greet('Jill')
-  'Hello Jill'
+  >>> queryUtility(ISaludador, 'nuevo').saluda('Antonio')
+  'Hola Antonio'
 
-  >>> getUtility(IGreeter, 'new').greet('Jill')
-  'Hello Jill'
+  >>> getUtility(ISaludador, 'nuevo').saluda('Antonio')
+  'Hola Antonio'
 
-As you can see here, while querying you have to use the `name` as
-second argument.
+Como puedes ver, cuando preguntas tienes que usar el `nombre`
+como segundo argumento.
 
 .. note::
 
-  Calling `getUtility` function without a name (second argument) is
-  equivalent to calling with an empty string ('') as the name.
-  Because, the default value for second (keyword) argument is an empty
-  string.  Then, component lookup mechanism will try to find the
-  component with name as empty string (''), and it will fail.  When
-  component lookup fails it will raise `ComponentLookupError`
-  exception.  Remember, it will not return some random component
-  registered with some other name.
+  LLamar a la función `getUtility` sin un nombre (segundo argumento)
+  es equivalente a llamarla con una cadena vacía ('') comos el nombre.
+  Porque, el valor predeterminado para el segundo argumento (nombrado)
+  es una cadena vacía. Entonces, el mecanismo de recuperación de
+  componentes intentará encontrar el componente con un nombre de
+  cadena vacía (''), y fallará. Cuando la recuperación de un componente
+  falla se lanza la excepción `ComponentLookupError`. Recuérdalo, no
+  devolverá algún componente aleatorio registrado con cualquier otro
+  nombre.
 
 
 Fábrica
 ~~~~~~~
 
-A ``Factory`` is a utility component which provides ``IFactory``
-interface.
+Una ``Fábrica`` es un componente utilidad que ofrece la intefaz
+``IFactory``.
 
-To create a factory, first define the interface of the object::
+Para crear una fábrica, primero tienes que definir el interfaz del
+objeto::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
 
-  >>> class IDatabase(Interface):
+  >>> class IBaseDatos(Interface):
   ...
-  ...     def getConnection():
-  ...         """Return connection object"""
+  ...     def getConexion():
+  ...         """Devuelve el objeto conexion"""
 
-Here is fake implementation of `IDatabase` interface::
+Aquí tenemos una implementación de mentira de la interfaz `IBaseDatos`::
 
-  >>> class FakeDb(object):
+  >>> class BDFalsa(object):
   ...
-  ...     implements(IDatabase)
+  ...     implements(IBaseDatos)
   ...
-  ...     def getConnection(self):
-  ...         return "connection"
+  ...     def getConexion(self):
+  ...         return "conexion"
 
-You can create a factory using ``zope.component.factory.Factory``::
+Puedes crear una fábrica usando ``zope.component.factory.Factory``::
 
   >>> from zope.component.factory import Factory
 
-  >>> factory = Factory(FakeDb, 'FakeDb')
+  >>> fabrica = Factory(BDFalsa, 'BDFalsa')
 
-Now you can register it like this::
+Ahora puedes registrarla así::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
   >>> from zope.component.interfaces import IFactory
-  >>> gsm.registerUtility(factory, IFactory, 'fakedb')
+  >>> gsm.registerUtility(fabrica, IFactory, 'bdfalsa')
 
-To use the factory, you may do it like this::
+Para usar la fábrica, puedes hacer lo siguiente::
 
   >>> from zope.component import queryUtility
-  >>> queryUtility(IFactory, 'fakedb')() #doctest: +ELLIPSIS
-  <FakeDb object at ...>
+  >>> queryUtility(IFactory, 'bdfalsa')() #doctest: +ELLIPSIS
+  <BDFalsa object at ...>
 
-There is a shortcut to use factory::
+Hay un atajo para usar la fábrica::
 
   >>> from zope.component import createObject
-  >>> createObject('fakedb') #doctest: +ELLIPSIS
-  <FakeDb object at ...>
+  >>> createObject('bdfalsa') #doctest: +ELLIPSIS
+  <BDFalsa object at ...>
 
 
 Adaptadores avanzados
@@ -1311,9 +1313,9 @@ Adaptadores avanzados
 Multi adaptador
 ~~~~~~~~~~~~~~~
 
-A simple adapter normally adapts only one object, but an adapter can
-adapt more than one object.  If an adapter adapts more than one
-objects, it is called as multi-adapter.
+Un adaptador simple normalmente adapta sólo un objeto, pero un
+adaptador puede adaptar más de un objeto. Si un adaptador adapta
+más de un objeto, se le llama multi-adaptador.
 
 ::
 
@@ -1321,153 +1323,155 @@ objects, it is called as multi-adapter.
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class IAdapteeOne(Interface):
+  >>> class IAdaptadoUno(Interface):
   ...     pass
 
-  >>> class IAdapteeTwo(Interface):
+  >>> class IAdaptadoDos(Interface):
   ...     pass
 
-  >>> class IFunctionality(Interface):
+  >>> class IFuncionalidad(Interface):
   ...     pass
 
-  >>> class MyFunctionality(object):
-  ...     implements(IFunctionality)
-  ...     adapts(IAdapteeOne, IAdapteeTwo)
+  >>> class MiFuncionalidad(object):
+  ...     implements(IFuncionalidad)
+  ...     adapts(IAdaptadoUno, IAdaptadoDos)
   ...
-  ...     def __init__(self, one, two):
-  ...         self.one = one
-  ...         self.two = two
+  ...     def __init__(self, uno, dos):
+  ...         self.uno = uno
+  ...         self.dos = dos
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> gsm.registerAdapter(MyFunctionality)
+  >>> gsm.registerAdapter(MiFuncionalidad)
 
-  >>> class One(object):
-  ...     implements(IAdapteeOne)
+  >>> class Uno(object):
+  ...     implements(IAdaptadoUno)
 
-  >>> class Two(object):
-  ...     implements(IAdapteeTwo)
+  >>> class Dos(object):
+  ...     implements(IAdaptadoDos)
 
-  >>> one = One()
-  >>> two = Two()
+  >>> uno = Uno()
+  >>> dos = Dos()
 
   >>> from zope.component import getMultiAdapter
 
-  >>> getMultiAdapter((one,two), IFunctionality) #doctest: +ELLIPSIS
-  <MyFunctionality object at ...>
+  >>> getMultiAdapter((uno, dos), IFuncionalidad) #doctest: +ELLIPSIS
+  <MiFuncionalidad object at ...>
 
-  >>> myfunctionality = getMultiAdapter((one,two), IFunctionality)
-  >>> myfunctionality.one #doctest: +ELLIPSIS
-  <One object at ...>
-  >>> myfunctionality.two #doctest: +ELLIPSIS
-  <Two object at ...>
+  >>> mifuncionalidad = getMultiAdapter((uno, dos), IFuncionalidad)
+  >>> mifuncionalidad.uno #doctest: +ELLIPSIS
+  <Uno object at ...>
+  >>> mifuncionalidad.dos #doctest: +ELLIPSIS
+  <Dos object at ...>
 
 
 Adaptador de subscripción
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unlike regular adapters, subscription adapters are used when we want
-all of the adapters that adapt an object to a particular adapter.
-Subscription adapter is also known as `subscriber` .
+A diferencia de los adaptadores normales, los adaptadores de
+subscripción se usan cuando queremos todos los adaptadores que
+adaptan un objeto a una interfaz particular. El adaptador de
+subscripción también se conoce como `subscriptor`.
 
-Consider a validation problem.  We have objects and we want to assess
-whether they meet some sort of standards.  We define a validation
-interface::
+Imagina un problema de validación. Tenemos objetos y queremos
+comprobar si cumplen algún tipo de estándar. Definimos una interfaz
+de validación::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
   >>> from zope.interface import implements
 
-  >>> class IValidate(Interface):
+  >>> class IValidador(Interface):
   ...
-  ...     def validate(ob):
-  ...         """Determine whether the object is valid
+  ...     def valida(ob):
+  ...         """Determina si el objeto es válido
   ...
-  ...         Return a string describing a validation problem.
-  ...         An empty string is returned to indicate that the
-  ...         object is valid.
+  ...         Devuelve una cadena que describe un problema de validación.
+  ...         Se devuelve la cadena vacía para indicar que el objeto
+  ...         es válido.
   ...         """
 
-Perhaps we have documents::
+Quizá tengamos documentos::
 
-  >>> class IDocument(Interface):
+  >>> class IDocumento(Interface):
   ...
-  ...     summary = Attribute("Document summary")
-  ...     body = Attribute("Document text")
+  ...     resumen = Attribute("Resumen del documento")
+  ...     cuerpo = Attribute("Cuerpo del documento")
 
-  >>> class Document(object):
+  >>> class Documento(object):
   ...
-  ...     implements(IDocument)
+  ...     implements(IDocumento)
   ...
-  ...     def __init__(self, summary, body):
-  ...         self.summary, self.body = summary, body
+  ...     def __init__(self, resumen, cuerpo):
+  ...         self.resumen, self.cuerpo = resumen, cuerpo
 
-Now, we may want to specify various validation rules for
-documents. For example, we might require that the summary be a single
-line:
+Ahora puede que queramos especificar varias regalas de validación
+para los documentos. Por ejemplo, podemos requerir que el resumen
+sean una sola linea::
 
   >>> from zope.component import adapts
 
-  >>> class SingleLineSummary:
+  >>> class ResumenLineaUnica:
   ...
-  ...     adapts(IDocument)
-  ...     implements(IValidate)
-  ...
-  ...     def __init__(self, doc):
-  ...         self.doc = doc
-  ...
-  ...     def validate(self):
-  ...         if '\n' in self.doc.summary:
-  ...             return 'Summary should only have one line'
-  ...         else:
-  ...             return ''
-
-Or we might require the body to be at least 1000 characters in length:
-
-  >>> class AdequateLength(object):
-  ...
-  ...     adapts(IDocument)
-  ...     implements(IValidate)
+  ...     adapts(IDocumento)
+  ...     implements(IValidador)
   ...
   ...     def __init__(self, doc):
   ...         self.doc = doc
   ...
-  ...     def validate(self):
-  ...         if len(self.doc.body) < 1000:
-  ...             return 'too short'
+  ...     def valida(self):
+  ...         if '\n' in self.doc.resumen:
+  ...             return 'El resumen debe tener sólo una linea'
   ...         else:
   ...             return ''
 
-We can register these as subscription adapters:
+O podemos exigir que el cuerpo tenga al menos una longitud de 1000
+caracteres::
+
+  >>> class LongitudAdecuada(object):
+  ...
+  ...     adapts(IDocumento)
+  ...     implements(IValidador)
+  ...
+  ...     def __init__(self, doc):
+  ...         self.doc = doc
+  ...
+  ...     def valida(self):
+  ...         if len(self.doc.cuerpo) < 1000:
+  ...             return 'demasiado corto'
+  ...         else:
+  ...             return ''
+
+Podemos registrar estas reglas como adaptadores de subscripción::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> gsm.registerSubscriptionAdapter(SingleLineSummary)
-  >>> gsm.registerSubscriptionAdapter(AdequateLength)
+  >>> gsm.registerSubscriptionAdapter(ResumenLineaUnica)
+  >>> gsm.registerSubscriptionAdapter(LongitudAdecuada)
 
-We can then use the subscribers to validate objects:
+Podemos usar los subscriptores para validar objetos::
 
   >>> from zope.component import subscribers
 
-  >>> doc = Document("A\nDocument", "blah")
-  >>> [adapter.validate()
-  ...  for adapter in subscribers([doc], IValidate)
-  ...  if adapter.validate()]
-  ['Summary should only have one line', 'too short']
+  >>> doc = Documento("Un\nDocumento", "bla")
+  >>> [adaptador.valida()
+  ...  for adaptador in subscribers([doc], IValidador)
+  ...  if adaptador.valida()]
+  ['El resumen debe tener sólo una linea', 'demasiado corto']
 
-  >>> doc = Document("A\nDocument", "blah" * 1000)
-  >>> [adapter.validate()
-  ...  for adapter in subscribers([doc], IValidate)
-  ...  if adapter.validate()]
-  ['Summary should only have one line']
+  >>> doc = Documento("Un\nDocumento", "bla" * 1000)
+  >>> [adaptador.valida()
+  ...  for adaptador in subscribers([doc], IValidador)
+  ...  if adaptador.valida()]
+  ['El resumen debe tener sólo una linea']
 
-  >>> doc = Document("A Document", "blah")
-  >>> [adapter.validate()
-  ...  for adapter in subscribers([doc], IValidate)
-  ...  if adapter.validate()]
-  ['too short']
+  >>> doc = Document("Un Documento", "bla")
+  >>> [adaptador.valida()
+  ...  for adaptador in subscribers([doc], IValidador)
+  ...  if adaptador.valida()]
+  ['demasiado corto']
 
 
 Manejador
