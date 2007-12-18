@@ -1,145 +1,167 @@
-====================================================
-A Comprehensive Guide to Zope Component Architecture
-====================================================
+===========================
+Zope Component Architecture
+===========================
 
 
-:Author: Baiju M
-:Version: 0.4.2
+:Auteur: Baiju M
+:Version: 0.4.1
 :URL: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
+:Traducteur: Stéphane Klein <stephane@harobed.org>
 
 Copyright (C) 2007 Baiju M <baiju.m.mail AT gmail.com>.
 
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.2 or
-(at your option) any later version published by the Free Software
+Chacun est autorisé à copier, distribuer et/ou modifier ce document
+suivant les termes de la "GNU Free Documentation License", version 1.2
+ou (à votre gré) toute version ultérieur publiée par la Free Software
 Foundation.
 
-The source code in this document is subject to the provisions of the
-Zope Public License, Version 2.1 (ZPL).
+Le code source présent dans ce document est soumis aux conditions de
+la licence Zope Public License, Version 2.1 (ZPL).
 
-THE SOURCE CODE IN THIS DOCUMENT IS PROVIDED "AS IS" AND ANY AND ALL
-EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST
-INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
+LE CODE SOURCE DE CE DOCUMENT EST FOURNI "EN L'ETAT" SANS AUCUNE
+GARANTIE.
 
 .. note::
 
-  Thanks to Kent Tenney (Wisconsin, USA) and Brad Allen (Dallas, USA)
-  for their suggestions.
+  Merci à Kent Tenney (Wisconsin, USA) et Brad Allen (Dallas, USA)
+  pour leurs suggestions.
 
 
 .. contents::
 .. .. sectnum::
 
 
-Getting started
----------------
+Premiers pas
+------------
 
 
 Introduction
 ~~~~~~~~~~~~
 
-Developing a large software system is always very complicated.  An
-object oriented approach to analysis, design and programming has been
-shown to be well suited for dealing with large systems.  Component
-based design, and programming using components are becoming very
-popular these days.  There are many frameworks for supporting
-component based design in different languages, some are even language
-neutral.  Examples of this are Microsoft's COM and Mozilla's XPCOM.
+Le développement de logiciels de grandes tailles (grande quantité de
+lignes de code...) est toujours une tâche très complexe.  L'expérience
+montre que l'utilisation d'une approche orienté objet simplifie
+l'analyse, la modélisation et l'implémentation de programmes
+complexes. Les logiciels informatiques basés sur une architecture et
+une programmation oriénté composant sont de nos jours de plus en plus
+populaire. Une grande partie des langages de programmations disposent
+de framework qui permettent ou simplifient la programmation orienté
+composant. Certain de ces frameworks sont même compatibles avec
+plusieurs langages. Parmi ces frameworks orientés composants on trouve
+par exemple la technologie COM de Microsoft ou alors la technologie
+XPCOM de Mozilla.
 
-Zope Component Architecture (ZCA) is a Python framework for supporting
-component based design and programming.  ZCA is very well suited to
-developing large Python software systems.  ZCA is not specific to the
-Zope web application server, it can be used for developing any Python
-application.  Maybe it should be called the `Python Component
-Architecture`.
+L'architecture composant de Zope (nommé ZCA : Zope Component
+Architecture) est un framework qui permet d'écrire des programmes
+orientés composants en langage Python. ZCA est très bien adapté pour
+écrire des programmes Python complexes. Ce framework n'est pas limité
+au serveur web d'application Zope, il peut être utilisé pour
+l'écriture de tout type d'application Python, peut être même qu'il
+devrait être nommé `Python Component Architecture` plutôt que Zope
+Component Architecture.
 
-There are two core packages related to Zope component architecture:
+ZCA dépend principalement de deux paquets:
 
-  - ``zope.interface`` used to define the interface of a component.
+  - ``zope.interface`` utilisé pour définir l'interface des
+    composants.
 
-  - ``zope.component`` deals with registration and retrieval of
-    components.
+  - ``zope.component`` pour réaliser les opérations d'enregistrements
+    et de recherches de composants.
 
-Zope component architecture is all about using Python objects
-effectively.  Components are reusable objects with introspectable
-interfaces.  A component provides an interface implemented in a class,
-or any other callable object.  It doesn't matter how the component is
-implemented, the important part is that it comply with its interface
-contracts.  Using Zope component architecture you can spread the
-complexity of systems over multiple cooperating components.  Zope
-component architecture helps you to create two basic kinds of
-components: `adapter` and `utility`.
+ZCA dispose de tout ce qu'il faut pour utiliser efficacement des
+objets Python. Les composants sont des objets réutilisables disposant
+d'interface est introspectable. Un composant est un objet disposant
+d'une interface implémenté par une classe ou tout autre objet
+exécutable. L'implémentation d'un composant n'est pas l'élément le
+plus important, ce qui compte avant tout c'est sa conformité avec le
+"contrat" défini par son interface.  L'utilisation d'une architecture
+orienté composant vous permet de diviser la compléxité d'un système à
+travers de multiples composants coopératifs. L'architecture composant
+de Zope vous aide à créer deux types de composants de base : des
+`adapter` et des `utility`.
 
-Remember, ZCA is not about the components themselves, rather it is
-about creating, registering, and retrieving components.  Remember
-also, an `adapter` is a normal Python class (or a factory in general)
-and `utility` is a normal Python callable object.
+Notez bien que l'architecture composant de Zope ne vous aide pas à
+écrire les composants eux-mêmes mais elle vous permet la création,
+l'enregistrement et la recherche de composants.Notez aussi qu'un
+composant `adapter` est une classe Python tout à fait normal (ou en
+général une fabrique d'objet (factory)) et qu'un composant `utility`
+est un objet Python exécutable standard.
 
-The ZCA framework is developed as part of the Zope 3 project.  ZCA, as
-noted earlier, is a pure Python framework, so it can be used in any
-kind of Python application.  Currently both Zope 3 and Zope 2 projects
-use this framework extensively.  There are many other projects
-including non-web applications using Zope Component Architecture
-[#projects]_.
+L'architecture composant Zope est développé comme une partie distincte
+du projet Zope 3. ZCA, comme indiqué plus tôt, est un framework
+purement Python, il peut être utilisé pour développer n'importe quel
+type d'application.  Actuellement à la fois Zope 3 et Zope 2 utilisent
+très fortement ce framework mais il existe de nombreux autres projets
+et même des applications non orientés Internet qui utilisent
+l'architecture composant de Zope [#projects]_.
 
 
-A brief history
-~~~~~~~~~~~~~~~
+Petit historique
+~~~~~~~~~~~~~~~~
 
-The ZCA framework project began in 2001 as part of Zope 3 project.  It
-grew out of lessons learned while developing large software systems
-using Zope 2.  Jim Fulton was the project leader of this project.
-Many people contributed to the design and implementation, including
-but not limited to, Stephan Richter, Philipp von Weitershausen, Guido
-van Rossum (AKA *Python BDFL*), Tres Seaver, Phillip J Eby and Martijn
-Faassen.
+Le développement de la ZCA a débuté en 2001 dans le cadre du projet
+Zope 3. Ce framework est le fruit de l'expérience aquise durant le
+développement d'application d'envergure en Zope 2. Jim Fulton est le
+père de ce projet. De nombreuses personnes ont participé à la
+conception de ce framework, parmit eux on peut citer : Stephan
+Richter, Philipp von Weitershausen, Guido van Rossum (créateur du
+langage Python), Tres Seaver, Phillip J Eby et Martijn Faassen.
 
-Initially ZCA defined additional components; `services` and `views`,
-but the developers came to realize that utility can replace `service`
-and multi-adapter can replace `view`.  Now ZCA has a very small number
-of core component types: utilities, adapters, subscribers and
-handlers.  In fact, subscribers and handlers are two special types of
-adapters.
+Par rapport à la version actuel, les premières versions de ZCA
+disposaient de quelques composants supplémentaires : les composants
+`services` et les composants `views`.  Ils ont été supprimé car les
+développeurs ont réalisé que le composant `utility` pouvait remplacer
+le composant `service` et le composant `multi-adapter` pouvait
+remplacer le composant `view`. La ZCA comporte actuellement un nombre
+réduit de type de type de composant :les `utility`, les `adapter`, les
+`subscribers` et les `handler`. En fait, les composants `subscriber`
+et `handler` sont tous deux des adaptateurs spécialisés.
 
-During the Zope 3.2 release cycle, Jim Fulton proposed a major
-simplification of ZCA [#proposal]_.  With this simplification, a new
-single interface (`IComponentRegistry`) for registration of both
-global and local component was created.
+Pendant le cycle de développement de Zope 3.2, Jim Fulton a proposé
+une importante simplification de l'achitecture composant de Zope
+[#proposal]_. Parmit ces simplications, on trouve la possibilité en
+passant par une interface unique de déclarer à la fois des composants
+globaux et locaux.
 
-The ``zope.component`` package had a long list of dependencies, many
-of which were not required for a non Zope 3 application.  During PyCon
-2007, Jim Fulton added setuptools' `extras_require` feature to allow
-separating out core ZCA functionality from add-on features [#extras]_.
+Le paquet ``zope.component`` a une longue liste de dépendances, parmit
+elles beaucoup ne sont pas nécessaire aux applications non Zope 3.
+Pendant le PyCon 2007, Jim Fulton a ajouté à setuptools une nouvelle
+fonctionnalité nommée `extras_require`. Elle permet de séparer les
+fonctionnalités constituant le coeur de ZCA des fonctionnalités
+annexes [#extras]_.
 
-Now, The ZCA project is an independent project with it's own release
-cycle and Subversion repository.  However, issues and bugs are still
-tracked as part of Zope 3 project [#bugs]_, and the main zope-dev list
-is used for development discussions [#discussions]_.
+Maintenant, le projet Zope Component Architecture est un projet
+indépendant avec son propre cycle de version et son propre dépôt
+Subversion. Toutefois, les bugs et problèmes sont encore traités à
+l'intérieur du projet Zope 3 [#bugs]_, et la liste de diffusion
+zope-dev est utilisé pour les discussions liées aux développements
+[#discussions]_.
 
 
 Installation
 ~~~~~~~~~~~~
 
-The ``zope.component``, package together with the ``zope.interface``
-package are the core of Zope component architecture.  They provide
-facilities for defining, registering and looking up components.  The
-``zope.component`` package and its dependencies are available in egg
-format from the Python Package Index (PyPI) [#pypi]_.
+Les paquets ``zope.component`` et ``zope.interface`` forment
+ensemble le coeur de l'architecture composant de Zope. Ils fournissent
+les fonctionnalités permettant de définir, déclarer et retrouver des
+composants. Le paquet ``zope.component`` et ses dépendances sont
+disponibles sous forme de PythonEggs dans le dépôt PyPI (Python Package
+Index) [#pypi]_.
 
-You can install ``zope.component`` and it's dependencies using
-`easy_install` [#easyinstall]_ ::
+Vous pouvez utiliser `easy_install` [#easyinstall]_ pour installer
+``zope.component`` et ses dépendances :
 
   $ easy_install zope.component
 
-This command will download ``zope.component`` and its dependencies
-from PyPI and install it in your Python path.
+Cette commande télécharge ``zope.component`` et ses depandances depuis
+le dépôt PyPI et les installe sur votre système.
 
-Alternately, you can download ``zope.component`` and its dependencies
-from PyPI and then install them.  Install packages in the order given
-below.  On Windows, you may need binary packages of ``zope.interface``
-and ``zope.proxy``.
+D'une manière alternative, vous pouvez télécharger manuellement le
+paquet ``zope.component`` et ses dépendances depuis PyPi puis les
+installer manuellement. L'ordre d'installation des paquets vous est
+donné ci-dessous. Sous Windows, vous aurais besoin du paquet binaire
+de ``zope.interface`` et ``zope.proxy``.
 
   1. ``zope.interface``
   2. ``zope.proxy``
@@ -148,71 +170,77 @@ and ``zope.proxy``.
   5. ``zope.deprecation``
   6. ``zope.component``
 
-To install these packages, after downloading them, you can use
-``easy_install`` command with argument as the eggs.  (You may also
-give all these eggs in the same line.)::
+Pour installer ces paquets après les avoir téléchagré, vous pouvez
+utiliser la commande ``easy_install`` avec le nom des paquets comme
+argument (vous pouvez aussi donner la totalité des noms des paquets
+en argument sur la même ligne)::
 
   $ easy_install /path/to/zope.interface-3.4.x.tar.gz
   $ easy_install /path/to/zope.proxy-3.4.x.tar.gz
   ...
 
-These methods install ZCA to the `system Python`, in the
-``site-packages`` directory, which can cause problems.  In a Zope3
-mailing list post, Jim Fulton recommends against using the system
-Python [#systempython]_.
+Cette méthode install le framework ZCA dans votre `system Python`, dans
+le répertoire ``site-packages``... ce qui peut poser certain soucis.
+Dans un poste présent dans la liste de diffusion Zope 3, Jim Fulton
+est défavorable à l'utilisation du `system Python` [#systempython]_
+(c'est à dire à l'installation dans ``site-packages``).
 
 
-Experimenting with code
-~~~~~~~~~~~~~~~~~~~~~~~
+Environement d'expérimentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``virtualenv`` and ``zc.buildout`` are tools which install ZCA to an
-isolated working environment.  This is a good practice for
-experimenting with code, and familiarity with these tools will be
-beneficial when developing and deploying applications.
+``virtualenv`` et ``zc.buildout`` sont des outils qui permettent
+l'installation de la ZCA dans un environement isolé. L'utilisation de
+ces outils est conseillé lors l'expérimentation de code. De plus, il
+est bénéfique de se familiariser avec eux car ils sont très pratiques autant
+lors de la phase de développement que lors du déploiement d'applications.
 
-You can install ``virtualenv`` using ``easy_install``::
+Vous pouvez installer``virtualenv`` via ``easy_install``::  
 
   $ easy_install virtualenv
 
-Then create a new environment like this::
+Vous pouvez créez ensuite un nouvel environement comme ceci::
 
   $ virtualenv myve
 
-This will create a new virtual environment in the ``myve`` directory.
-Now, from inside the ``myve`` directory, you can install
-``zope.component`` and dependencies using ``easy_install`` inside
-``myve/bin`` directory::
+Cette command a pour effet de créer un nouvel environement virtuel dans le
+dossier ``myve``. Maintenant, à partir du dossier ``myve``, vous
+pouvez installer ``zope.component`` et ses dépendances en utilisant
+l'exécutable ``easy_install`` qui se trouve dans le dossier
+``myve/bin``::
 
   $ cd myve
   $ ./bin/easy_install zope.component
 
-Now you can import ``zope.interface`` and ``zope.component`` from the
-new ``python`` interpreter inside ``myve/bin`` directory::
+Vous pouvez maintenant importer les modules ``zope.interface`` et
+``zope.component`` a partir de votre nouvel interpréteur ``python``
+qui se trouve dans le dossier ``myve/bin||::
 
   $ ./bin/python
 
-This command will give you a Python prompt which you can use to run
-the code in this book.
+Cette commande vous donnera une invite de commande Python que vous
+pouvez utiliser pour exécuter les codes sources de ce livre.
 
-Using ``zc.buildout`` with ``zc.recipe.egg`` recipe you can create
-Python interpreter with specified Python eggs.  First, install
-``zc.buildout`` using ``easy_install`` command.  (You may also do it
-inside virtual environment).  To create new buildout to experiment
-with Python eggs, first create a directory and initialize it using
-``buildout init`` command::
+L'utilisation de la recette ``zc.recipe.egg`` du paquet
+``zc.buildout`` vous permet de créer un interpréteur python avec des
+PythonEggs spécifique. Premièrement, installez ``zc.buildout`` en
+utilisant la commande ``easy_install`` (Vous pouvez aussi faire cela à
+l'intérieur d'un environement virtuel). Pour créer un nouveau buildout
+pour expériement des PythonEggs, commencez par créer un nouveau
+dossier et initialisez le en utilisant la command ``buildout init``::
 
   $ mkdir mybuildout
   $ cd mybuildout
   $ buildout init
 
-Now the new ``mybuildout`` directory is a buildout.  The default
-configuration file for buildout is `buildout.cfg` .  After
-initializing, it will be having this content::
+Maintenant, le nouveau dossier ``mybuildout`` est un buildout. Le
+fichier de configuration par défaut du buildout est `buildout.cfg`.
+Après l'initilisation, il a pour contenu::
 
   [buildout]
   parts =
 
-You can change it like this::
+Vous pouvez le modifier comme ceci::
 
   [buildout]
   parts = py
@@ -222,15 +250,16 @@ You can change it like this::
   interpreter = python
   eggs = zope.component
 
-Now run ``buildout`` command available inside ``mybuildout/bin``
-directory without any argument.  This will create a new Python
-interpreter inside ``mybuildout/bin`` directory::
+Maintenant exécutez la commande ``buildout`` disponible dans le
+dossier ``mybuildout/bin`` sans aucun argument. Cela a pour effet de
+créer un nouvel interpréteur à l'intérieur du dossier
+``mybuildout/bin``::
 
   $ ./bin/buildout
   $ ./bin/python
 
-This command will give you a Python prompt which you can use to run
-the code in this book.
+Cette commande vous donnera un invite de commande Python que vous
+pourrez utiliser pour tester le code source de ce livre.
 
 .. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
 .. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
@@ -1059,7 +1088,7 @@ similar.  But the intent of ZCA adapter usage is more wider than the
 convert the interface of a class into another interface clients
 expect.  This allows classes work together that couldn't otherwise
 because of incompatible interfaces.  But in the `motivation` section
-of Design Patterns book, GoF says: "Often the adapter is responsible
+of Degisgn Patterns book, GoF says: "Often the adapter is responsible
 for functionality the adapted class doesn't provide".  ZCA adapter has
 more focus on adding functionalities than creating a new interface for
 an adapted object (adaptee).  ZCA adapter lets adapter classes extend
@@ -1317,8 +1346,8 @@ Subscription adapter
 ~~~~~~~~~~~~~~~~~~~~
 
 Unlike regular adapters, subscription adapters are used when we want
-all of the adapters that adapt an object to a particular interface.
-Subscription adapter is also known as `subscriber`.
+all of the adapters that adapt an object to a particular adapter.
+Subscription adapter is also known as `subscriber` .
 
 Consider a validation problem.  We have objects and we want to assess
 whether they meet some sort of standards.  We define a validation
@@ -1354,7 +1383,7 @@ Perhaps we have documents::
 
 Now, we may want to specify various validation rules for
 documents. For example, we might require that the summary be a single
-line::
+line:
 
   >>> from zope.component import adapts
 
@@ -1372,7 +1401,7 @@ line::
   ...         else:
   ...             return ''
 
-Or we might require the body to be at least 1000 characters in length::
+Or we might require the body to be at least 1000 characters in length:
 
   >>> class AdequateLength(object):
   ...
@@ -1388,7 +1417,7 @@ Or we might require the body to be at least 1000 characters in length::
   ...         else:
   ...             return ''
 
-We can register these as subscription adapters::
+We can register these as subscription adapters:
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
@@ -1396,7 +1425,7 @@ We can register these as subscription adapters::
   >>> gsm.registerSubscriptionAdapter(SingleLineSummary)
   >>> gsm.registerSubscriptionAdapter(AdequateLength)
 
-We can then use the subscribers to validate objects::
+We can then use the subscribers to validate objects:
 
   >>> from zope.component import subscribers
 
@@ -1465,7 +1494,7 @@ To register the subscriber above, we define a document-created event::
   ...     def __init__(self, doc):
   ...         self.doc = doc
 
-We'll also change our handler definition to::
+We'll also change our handler definition to:
 
   >>> def documentCreated(event):
   ...     event.doc.created = datetime.datetime.utcnow()
@@ -1485,7 +1514,7 @@ Now we'll register the handler::
 
   >>> gsm.registerHandler(documentCreated)
 
-Now, we can create an event and use the `handle` function to call
+Now, if we can create an event and use the `handle` function to call
 handlers registered for the event::
 
   >>> from zope.component import handle
@@ -1565,7 +1594,7 @@ the implementation::
       component=".database.connection"
       />
 
-If you want to register the component as named utility, you can give a
+If you want to register the component as named adapter, you can give a
 `name` attribute::
 
 
@@ -1636,7 +1665,7 @@ example, consider this example::
   >>> getAdapter(a, IP) #doctest: +ELLIPSIS
   <AP object at ...>
 
-If you register another adapter, the existing one will be replaced::
+  If you register another adapter, the existing one will be replaced:
 
   >>> gsm.registerAdapter(AP2)
 
