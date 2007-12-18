@@ -4,7 +4,7 @@ Arquitectura de Componentes de Zope
 
 
 :Autor: Baiju M
-:Version: 0.4.1
+:Version: 0.4.2
 :URL original: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 :Traductor: Lorenzo Gil Sanchez <lgs@sicem.biz>
