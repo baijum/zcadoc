@@ -4,7 +4,7 @@ Arquitectura de Componentes de Zope
 
 
 :Autor: Baiju M
-:Version: 0.4.1
+:Version: 0.4.2
 :URL original: `http://www.muthukadan.net/docs/zca.pdf
        <http://www.muthukadan.net/docs/zca.pdf>`_
 :Traductor: Lorenzo Gil Sanchez <lgs@sicem.biz>
@@ -1477,176 +1477,181 @@ Podemos usar los subscriptores para validar objetos::
 Manejador
 ~~~~~~~~~
 
-Handlers are subscription adapter factories that don't produce
-anything.  They do all of their work when called.  Handlers are
-typically used to handle events.  Handlers are also known as event
-subscribers or event subscription adapters.
+Los manejadores son factorias de adaptadores de subscripción que
+no producen nada. Realizan todo su trabajo cuando son llamados.
+Los manejadores se utilizan normalmente para tratar eventos. Los
+manejadores también se conocen como subscriptores de eventos o
+incluso como adaptadores de subscripción de eventos.
 
-Event subscribers are different from other subscription adapters in
-that the caller of event subscribers doesn't expect to interact with
-them in any direct way.  For example, an event publisher doesn't
-expect to get any return value.  Because subscribers don't need to
-provide an API to their callers, it is more natural to define them
-with functions, rather than classes.  For example, in a
-document-management system, we might want to record creation times for
-documents::
+Los subscriptores de eventos son distintos a los adaptadores de
+subscripción en cuanto a que el que llama a los subscriptores de
+eventos no espera interactuar con ellos de manera directa. Por
+ejemplo, un publicador de eventos no espera recibir ningún valor
+de retorno. Ya que los subscriptores no necesitan ofrecer una API
+a los que los llaman, es más natural definirlos con funciones,
+en vez de con clases. Por ejemplo, en un sistema de gestión
+documental, podemos querer registrar tiempos de creación para los
+documentos::
 
   >>> import datetime
 
-  >>> def documentCreated(event):
-  ...     event.doc.created = datetime.datetime.utcnow()
+  >>> def documentoCreado(evento):
+  ...     evento.doc.creado = datetime.datetime.utcnow()
 
-In this example, we have a function that takes an event and performs
-some processing.  It doesn't actually return anything.  This is a
-special case of a subscription adapter that adapts an event to
-nothing.  All of the work is done when the adapter "factory" is
-called.  We call subscribers that don't actually create anything
-"handlers".  There are special APIs for registering and calling them.
+En este ejemplo, tenemos una función que recibe un evento y realiza
+un procesamiento. Realmente no devuelve nada. Este es un caso especial
+de un adaptador de subscripción que adapta un evento a nada. Todo el
+trabajo se realiza cuando la "fábrica" del adaptador es invocada.
+Llamamos "manejadores" a los subscriptores que no crean nada. Hay
+APIs especiales para registrarlos y llamarlos.
 
-To register the subscriber above, we define a document-created event::
+Para registrar el subscriptor anterior definimos un evento de
+creación de documento::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
   >>> from zope.interface import implements
 
-  >>> class IDocumentCreated(Interface):
+  >>> class IDocumentoCreado(Interface):
   ...
-  ...     doc = Attribute("The document that was created")
+  ...     doc = Attribute("El documento que se creó")
 
-  >>> class DocumentCreated(object):
+  >>> class DocumentoCreado(object):
   ...
-  ...     implements(IDocumentCreated)
+  ...     implements(IDocumentoCreado)
   ...
   ...     def __init__(self, doc):
   ...         self.doc = doc
 
-We'll also change our handler definition to:
+También cambiamos nuestra definición del manejador a::
 
-  >>> def documentCreated(event):
-  ...     event.doc.created = datetime.datetime.utcnow()
+  >>> def documentoCreado(evento):
+  ...     evento.doc.creado = datetime.datetime.utcnow()
 
   >>> from zope.component import adapter
 
-  >>> @adapter(IDocumentCreated)
-  ... def documentCreated(event):
-  ...     event.doc.created = datetime.datetime.utcnow()
+  >>> @adapter(IDocumentoCreado)
+  ... def documentoCreado(evento):
+  ...     evento.doc.creado = datetime.datetime.utcnow()
 
-This marks the handler as an adapter of `IDocumentCreated` events.
+Esto marca al manejador como un adaptador para los eventos
+`IDocumentoCreado`.
 
-Now we'll register the handler::
+Ahora registraremos el manejador::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> gsm.registerHandler(documentCreated)
+  >>> gsm.registerHandler(documentoCreado)
 
-Now, if we can create an event and use the `handle` function to call
-handlers registered for the event::
+Ahora, podemos crear un evento y usar la función `handle` para
+llamar a los manejadores registrados para el evento::
 
   >>> from zope.component import handle
 
-  >>> handle(DocumentCreated(doc))
-  >>> doc.created.__class__.__name__
+  >>> handle(DocumentoCreado(doc))
+  >>> doc.creado.__class__.__name__
   'datetime'
 
 
 Uso de la ZCA en Zope
 ---------------------
 
-Zope Component Architecture is used in both Zope 3 and Zope 2.  This
-chapter go through ZCA usage in Zope.
+La Arquitectura de Componentes de Zope se usa tanto en Zope 3 como en
+Zope 2. En este capítulo veremos el uso de la ZCA en Zope.
 
 
 ZCML
 ~~~~
 
-The Zope Configuration Markup Language (ZCML) is an XML based
-configuration system for registration of components.  So, instead of
-using Python API for registration, you can use ZCML.  But to use ZCML,
-unfortunately, you will be required to install more dependency
-packages.
+El Lenguaje de Marcado de Configuración de Zope (ZCML) es un sistema
+de configuración basado en XML para registrar componentes. Así, en
+lugar de usar la API Python para los registros, puedes usar ZCML.
+Pero para usar ZCML, desafortunadamente, necesitas instalar más
+paquetes de dependencias.
 
-To install these packages::
+Para instalar estos paquetes::
 
   $ easy_install "zope.component [zcml]"
 
-To register an adapter::
+Para registrar un adaptador::
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
   <adapter
-      factory=".company.EmployeeSalary"
-      provides=".interfaces.ISalary"
-      for=".interfaces.IEmployee"
+      factory=".empresa.SalarioEmpleado"
+      provides=".interfaces.ISalario"
+      for=".interfaces.IEmpleado"
       />
 
-The `provides` and `for` attributes are optional, provided you have
-declared it in the implementation::
+Los atributos `provides` y `for` son opcionales, siempre que los hayas
+declarado en la implementación::
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
   <adapter
-      factory=".company.EmployeeSalary"
+      factory=".empresa.SalarioEmpleado"
       />
 
-If you want to register the component as named adapter, you can give a
-`name` attribute::
+Si quieres registrar el componente como un adaptador con nombre,
+puedes darle un atributo `name`::
 
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
   <adapter
-      factory=".company.EmployeeSalary"
-      name="salary"
+      factory=".empresa.SalarioEmpleado"
+      name="salario"
       />
 
-Utilities are also registered similarly.
+Las utilidades se registran de forma similar.
 
-To register an utility::
+Para registrar una utilidad::
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
   <utility
-      component=".database.connection"
-      provides=".interfaces.IConnection"
+      component=".basedatos.conexion"
+      provides=".interfaces.IConexion"
       />
 
-The `provides` attribute is optional, provided you have declared it in
-the implementation::
+El atributo `provides` es opcional, siempre que lo hayas declarado
+en la implementación::
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
   <utility
-      component=".database.connection"
+      component=".basedatos.conexion"
       />
 
-If you want to register the component as named adapter, you can give a
-`name` attribute::
+Si quieres registrar el componente como una utilidad con nombre,
+puedes darle un atributo `name`::
 
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
   <utility
-      component=".database.connection"
-      name="Database Connection"
+      component=".basedatos.conexion"
+      name="Conexión de Base de Datos"
       />
 
-Instead of directly using the component, you can also give a factory::
+En vez de usar directamente el componente, también puedes dar una
+fábrica::
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
   <utility
-      factory=".database.Connection"
+      factory=".basedatos.Conexion"
       />
 
 
 Redefiniciones
 ~~~~~~~~~~~~~~
 
-When you register components using Python API (``register*`` methods),
-the last registered component will replace previously registered
-component, if both are registered with same type of arguments.  For
-example, consider this example::
+Cuando registras componentes usando la API de Python (métodos
+``register*``), el último componente registrado sustituirá el
+componente registrado anteriormente, si los dos se registran con
+los mismos tipos de argumentos. Por ejemplo, imagina este ejemplo::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -1691,35 +1696,35 @@ example, consider this example::
   >>> getAdapter(a, IP) #doctest: +ELLIPSIS
   <AP object at ...>
 
-  If you register another adapter, the existing one will be replaced:
+Si registras otro adaptador, el ya hay será sustituido::
 
   >>> gsm.registerAdapter(AP2)
 
   >>> getAdapter(a, IP) #doctest: +ELLIPSIS
   <AP2 object at ...>
 
-But when registering components using ZCML, the second registration
-will raise a conflict error.  This is a hint for you, otherwise there
-is a chance for overriding registration by mistake.  This may lead to
-hard to track bugs in your system.  So, using ZCML is a win for the
-application.
+Pero cuando se registran componente usando ZCML, el segundo registro
+causará un error de conflicto. Esto es una ayuda para tí, si no,
+cabría la posibilidad de que sustituyas los registros por error. Esto
+podría hacer que sea dificil de encontrar errores en tu sistema. Así,
+usar ZCML es un avance para la aplicación.
 
-Sometimes you will be required to override existing registration.
-ZCML provides ``includeOverrides`` directive for this.  Using this,
-you can write your overrides in a separate file::
+A veces es necesario sustituir registros existentes. ZCML ofrece una
+directiva ``includeOverrides`` para esto. Usándola, puedes escribir
+sustituciones en un fichero aparte::
 
   <includeOverrides file="overrides.zcml" />
 
 
-NameChooser
-~~~~~~~~~~~
+NameChooser (Elejidor de nombres)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Location: `zope.app.container.contained.NameChooser`
+Situación: `zope.app.container.contained.NameChooser`
 
-This is an adapter for choosing a unique name for an object inside a
-container.
+Este es un adaptador para elejir un nombre único para un objeto dentro
+de un contenedor.
 
-The registration of adapter is like this::
+El registro del adaptador es así::
 
   <adapter
       provides=".interfaces.INameChooser"
@@ -1727,17 +1732,17 @@ The registration of adapter is like this::
       factory=".contained.NameChooser"
       />
 
-From the registration, you can see that the adaptee is a
-``IWriteContainer`` and the adapter provides ``INameChooser``.
+A partir del registro, puedes ver que el adaptado es un 
+``IWriteContainer`` y el adaptador ofrece ``INameChooser``.
 
-This adapter provides a very convenient functionality for Zope
-programmers.  The main implementations of ``IWriteContainer`` in
-Zope 3 are ``zope.app.container.BTreeContainer`` and
-``zope.app.folder.Folder``.  Normally you will be inheriting from
-these implementations for creating your own container classes.
-Suppose there is no interface called ``INameChooser`` and
-adapter, then you will be required to implement this functionality
-for every implementations separately.
+Este adaptador ofrece una funcionalidad muy útil para los programadores
+de Zope. Las principales implementaciones de ``IWriteContainer`` en
+Zope 3 son ``zope.app.container.BTreeContainer`` y
+``zope.app.folder.Folder``. Normalmente heredarás de estas
+implementaciones al crear tus propias clases de contenedores. Supón
+que no hay interfaz llamada ``INameChooser`` ni adaptador, entonces
+tendrás que implementar esta funcionalidad para cada implementación
+de forma separada.
 
 
 LocationPhysicallyLocatable

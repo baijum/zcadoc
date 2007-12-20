@@ -1465,7 +1465,7 @@ To register the subscriber above, we define a document-created event::
   ...     def __init__(self, doc):
   ...         self.doc = doc
 
-We'll also change our handler definition to:
+We'll also change our handler definition to::
 
   >>> def documentCreated(event):
   ...     event.doc.created = datetime.datetime.utcnow()
@@ -1485,7 +1485,7 @@ Now we'll register the handler::
 
   >>> gsm.registerHandler(documentCreated)
 
-Now, if we can create an event and use the `handle` function to call
+Now, we can create an event and use the `handle` function to call
 handlers registered for the event::
 
   >>> from zope.component import handle
@@ -1565,7 +1565,7 @@ the implementation::
       component=".database.connection"
       />
 
-If you want to register the component as named adapter, you can give a
+If you want to register the component as named utility, you can give a
 `name` attribute::
 
 
@@ -1636,7 +1636,7 @@ example, consider this example::
   >>> getAdapter(a, IP) #doctest: +ELLIPSIS
   <AP object at ...>
 
-  If you register another adapter, the existing one will be replaced:
+If you register another adapter, the existing one will be replaced::
 
   >>> gsm.registerAdapter(AP2)
 
