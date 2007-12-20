@@ -262,21 +262,20 @@ Procedural approach
 ~~~~~~~~~~~~~~~~~~~
 
 In any business application, data storage is very critical.  For
-simplicity, this example use a Python dictionary as the storage.  Key
-of the dictionary will be the unique Id for a particular guest.  And
-value will be another dictionary with key as the property name::
+simplicity, this example use a Python dictionary as the storage.  We 
+will generate unique id's for the dictionary, the associated value
+will be a dictionary of details about the booking.
 
-  >>> guests_db = {} #key: unique Id, value: details in a dictionary
+  >>> bookings_db = {} #key: unique Id, value: details in a dictionary
 
-In a simplistic method, a function which accepts details as arguments
-is enough to do the registration.  You also required a supporting
-function to get the next Id for your data storage.
+A minimal implementation requires a function which we pass the details
+of the booking, and a supporting function which provides the the
+unique id for the storage dictionary key.
 
-The supporting function, for getting the next Id can be implemented
-like this::
+We can get the unique id like this::
 
   >>> def get_next_id():
-  ...     db_keys = guests_db.keys()
+  ...     db_keys = bookings_db.keys()
   ...     if db_keys == []:
   ...         next_id = 1
   ...     else:
@@ -284,28 +283,46 @@ like this::
   ...     return next_id
 
 As you can see, the `get_next_id` function implementation is very
-simple.  Well, this is not the ideal way, but it is sufficient to
-explain concepts.  The function first get all keys of storage as list
-and check whether it is empty or not.  If the list is empty, so no
-item is stored, it return `1` as the next Id.  And if the list is not
-empty, the next Id is calculated by adding `1` to the maximum value of
-list.
+simple.  The function gets a list of keys and checks for an empty 
+list. If the list is empty this is our first booking, so we return
+`1`. If the list is not empty, we add `1` to the maximum value in the
+list and return it.
 
-The function to register guest can get next unique Id using
-`get_next_id` function, then assign the details of guest using a
-dictionary.  Here is the function to get details and store in the
-database::
+Now we will use the above function to create entries in the 
+bookings_db dictionary::
 
-  >>> def register_guest(name, place):
+  >>> def book_room(name, place):
   ...     next_id = get_next_id()
-  ...     guests_db[next_id] = {
+  ...     bookings_db[next_id] = {
   ...     'name': name,
-  ...     'place': place
+  ...     'room': place
   ...     }
 
-We will end our discussion of the procedural approach here.
-It will be much easier to add required features such as data
-persistence, design flexibility, and code testability using objects.
+The requirements of a hotel booking management application require
+considering additional data:
+
+  - phone numbers
+  - room options
+  - payment methods
+  - ...
+
+And code to manage the data:
+
+  - cancel a reservation
+  - update a reservation
+  - pay for a room
+  - persist the data
+  - insure security of the data
+  - ...
+
+Were we to continue with the procedural example, we would create many
+functions, passing data back and forth between them.  As requirements
+change and are added, the code becomes harder to maintain and bugs
+become harder to find and fix.
+
+We will end our discussion of the procedural approach here. It will be
+much easier to provide data persistence, design flexibility and code
+testability using objects.
 
 
 Object oriented approach
@@ -314,115 +331,113 @@ Object oriented approach
 .. ??? should this paragraph talk about "creating an object for
  handling registration" or "creating a class to handle registration"?
 
-In object oriented methodology, you can think of a registrar object
-handling the registration.  There are many advantages for creating an
-object for handling registration.  Most importantly, the abstraction
-provided by the registrar object makes the code easier to understand.
-It offers a way to group related functionality, and can be extended
-via inheritance. As features are added, such as canceling and updating
-registration, the registrar object can grow to provide them, or
-delegate them to another object.
+Our discussion of object oriented design will introduce the `class` which
+serves to encapsulate the data, and the code to manage it.
 
-Lets look at the implementation details of a registrar object
-implemented as a class::
+Our main class will be the `FrontDesk`. FrontDesk, or other classes it
+delegates to, will know how to manage the data for the hotel.  We will
+create `instances` of FrontDesk to apply this knowledge to the
+business of running a hotel.
 
-  >>> class guestRegistrar(object):
+Experience has shown that by consolidating the code and data requirements via
+objects, we will end up with a design which is easier to understand,
+test, and change.
+
+Lets look at the implementation details of a FrontDesk class::
+
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, name, place):
+  ...     def book_room(self, name, place):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': name,
   ...         'place': place
   ...         }
 
-In this implementation, the registrar object (an instance of
-`GuestRegistrar` class) is handling the registration.  With this
-design, a particular registrar object can perform multiple
-registrations.
+In this implementation, the `frontdesk` object (an instance of
+`FrontDesk` class) is able to handle the bookings.  We can
+use it like this::
 
-This is how you can use the current registrar implementation::
+  >>> frontdesk = FrontDesk()
+  >>> frontdesk.book_room("Jack", "Bangalore")
 
-  >>> registrar = GuestRegistrar()
-  >>> registrar.register("Jack", "Bangalore")
+Any real project will involve changing requirements.  In this
+case management has decided that each guest must provide a phone
+number, so we must change the code.
 
-Requirement changes are unavoidable in any real world project.
-Consider this case, after some time, a new requirement is arising: the
-guests also required to provide phone number to admit them.  You will
-be required to change the implementation of registrar object to
-support it.
+We can achieve this requirement by adding one argument to the 
+`book_room` method which will be added to the dictionary of values::
 
-You can achieve this requirement by adding one argument to `registrar`
-method and use that argument in the dictionary of values.  Here is the
-new implementation for this requirement::
-
-  >>> class GuestRegistrar(object):
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, name, place, phone):
+  ...     def book_room(self, name, place, phone):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': name,
   ...         'place': place,
   ...         'phone': phone
   ...         }
 
-Other than migrating the data to new schema, now you have to change
-the usage of `GuestRegistrar` in all places.  If you can abstract the
-details of guest into an object and use it for registration, the code
-changes can be minimized.  If you follow this design, you have to pass
-that guest object instead of more arguments to the function.  The new
-implementation with guest object will look like this::
+In addition to migrating the data to new schema, we now have to change
+all calls to FrontDesk.  If we abstract the details of guest into an 
+object and use it for registration, the code changes can be minimized.
+We now can make changes to the details of the guest object and the
+calls to FrontDesk won't need to change.
 
-  >>> class GuestRegistrar(object):
+Now we have::
+
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, guest):
+  ...     def book_room(self, guest):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
 
-Well, even in this implementation you have to change code.  Code
-change for requirement is unavoidable, your goal should be to minimize
-changes and make it maintainable.
+We still will have to change code to respond to changing requirements.
+This is unavoidable, however, our goal is to minimize those changes,
+thereby increasing maintainability. 
 
 .. note::
+  
+  When coding, it is important to feel free to make changes without
+  fear of breaking the application.  The way to get the immediate 
+  feedback required is via automated testing.  With well written
+  tests (and good version control) you can make changes large or 
+  small with impunity.  A good source of information about this
+  programming philosophy is the book `Extreme Programming Explained`
+  by Kent Beck.
 
-  You should have the courage to make any change, major or minor, at
-  any time.  Immediate feedback is the only way you can get the
-  courage.  Using automated testing, you can get the immediate
-  feedback and so the courage to make changes.  For more details about
-  this subject, you can read the book called `Extreme Programming
-  Explained` by Kent Beck.
-
-By introducing the guest object, you saved some typing.  More than
-that, the abstraction of guest object made the system much simpler and
-easy to understand.  The better understanding leads to better
-restructuring and hence maintainable code.
+By introducing the guest object, you saved some typing.  More
+importantly, the abstraction provided by the guest object made the
+system simpler and more understandable.  As a result, the code is 
+easier to restructure and maintain. 
 
 
 The adapter pattern
 ~~~~~~~~~~~~~~~~~~~
 
-In a real application, as you noted earlier, the registrar object may
-have cancellation and/or updation functionalities.  Suppose there are
-two more methods like, `cancel_registration` and
-`update_registration`.  In the new design you will be required to pass
-the guest object for each methods.  You can solve this problem by
-setting guest object as an attribute of registrar object.
+In a real application, as was noted earlier, the frontdesk object may
+have cancellation and/or updation functionality.  Suppose there are
+two more methods like, `cancel_booking` and `update_booking`.  In the
+current design you will be required to pass the guest object for each
+methods.  We can avoid this requirement if we make the guest object an
+attribute of the frontdesk object.
 
-Here is the new implementation of registrar object which set guest
+Here is the new implementation of FrontDesk which sets a guest
 object as an attribute::
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
   ...     def __init__(self, guest):
   ...         self.guest = guest
   ...
-  ...     def register(self):
+  ...     def book_room(self):
   ...         guest = self.guest
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -434,15 +449,15 @@ if required.
 
 In this implementation, while creating the instance you have to pass
 the guest object which has the values as attributes.  Now you also
-required to create separate instances of `GuestRegistrarNG` for each
+required to create separate instances of `FrontDeskNG` for each
 guest object.
 
 Now just step back and think differently.  Suppose you are the creator
 of this software and selling it to many hotel customers.  Consider a
 case where your different clients requires different storages.  For
-example, one registrar might store the details in a relational
+example, one frontdesk might store the details in a relational
 database and another one might store them in Zope Object Database
-(ZODB).  It would be better if you can replace the registrar object
+(ZODB).  It would be better if you can replace the frontdesk object
 with another one which store guest details in a different way.  So, a
 mechanism to change implementation based on some configuration would
 be useful.
@@ -452,8 +467,8 @@ based on configuration.  Using Zope component architecture you can
 register components in a registry called component registry.  Later,
 retrieve component based on the configuration.
 
-The `GuestRegistrarNG` class follows, as you noted, a pattern called
-`Adapter`.  The `GuestRegistrarNG` is the adapter which adapts the
+The `FrontDeskNG` class follows, as you noted, a pattern called
+`Adapter`.  The `FrontDeskNG` is the adapter which adapts the
 guest object (adaptee).  As you can see, the adapter should contain
 the component it adapts (adaptee).  This is a typical implementation
 of adapter::
@@ -493,7 +508,7 @@ applications extensible or pluggable.  Do not use `adapter`
 components where you do not want extensibility or pluggability.
 
 Zope component architecture provides `adapter` components to solve
-these kinds of problems.  In fact, `GuestRegistrarNG` is an adapter
+these kinds of problems.  In fact, `FrontDeskNG` is an adapter
 without explicit interface declaration.  This tutorial will discuss
 adapters after introducing the concept of interfaces.  Interfaces are
 one of the foundations of Zope components, so understanding the
@@ -685,12 +700,12 @@ Example revisited
 ~~~~~~~~~~~~~~~~~
 
 Now, return to the example application.  Here you will see how to
-define the interface of the registrar object::
+define the interface of the frontdesk object::
 
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -702,7 +717,7 @@ be an interface from Zope component architecture point of view.  An
 interface can be implemented, as you already noted, in a class or any
 other callable object.
 
-The registrar interface defined here is ``IRegistrar``.  The
+The frontdesk interface defined here is ``IDesk``.  The
 documentation string for interface gives an idea about the object.  By
 defining a method in the interface, you made a contract for the
 component, that there will be a method with same name available.  For
@@ -832,15 +847,15 @@ component architecture for effectively using Python objects.  Adapter
 components are Python objects, but with well defined interface.
 
 To declare a class is an adapter use `adapts` function defined in
-``zope.component`` package.  Here is a new `GuestRegistrarNG` adapter
+``zope.component`` package.  Here is a new `FrontDeskNG` adapter
 with explicit interface declaration::
 
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -849,17 +864,17 @@ with explicit interface declaration::
   ...     def register(self):
   ...         guest = self.guest
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
 
 
-What you defined here is an `adapter` for `IRegistrar`, which adapts
-`IGuest` object.  The `IRegistrar` interface is implemented by
-`GuestRegistrarNG` class.  So, an instance of this class will provide
-`IRegistrar` interface.
+What you defined here is an `adapter` for `IDesk`, which adapts
+`IGuest` object.  The `IDesk` interface is implemented by
+`FrontDeskNG` class.  So, an instance of this class will provide
+`IDesk` interface.
 
 ::
 
@@ -872,12 +887,12 @@ What you defined here is an `adapter` for `IRegistrar`, which adapts
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
-The `GuestRegistrarNG` is just one adapter you created, you can also
+The `FrontDeskNG` is just one adapter you created, you can also
 create other adapters which handles guest registration differently.
 
 
@@ -896,8 +911,8 @@ To register your component, first get the global site manager::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
 To get the global site manager, you have to call
 ``getGlobalSiteManager`` function available in ``zope.component``
@@ -919,7 +934,7 @@ interface to be provided by the adapter.  Since you have already given
 these details in adapter implementation, it is not required to specify
 again.  In fact, you could have done the registration like this::
 
-  >>> gsm.registerAdapter(GuestRegistrarNG, name='ng')
+  >>> gsm.registerAdapter(FrontDeskNG, name='ng')
 
 There are some old API to do the registration, which you should avoid.
 The old API functions starts with `provide`, eg: ``provideAdapter``,
@@ -929,7 +944,7 @@ components.  In Zope 3, local components (persistent components) can
 be registered from Zope Management Interface (ZMI) or you can do it
 programmatically also.
 
-You registered `GuestRegistrarNG` with a name `ng`.  Similarly you can
+You registered `FrontDeskNG` with a name `ng`.  Similarly you can
 register other adapters with different names.  If a component is
 registered without name, it will default to an empty string.
 
@@ -957,19 +972,19 @@ You can import the methods like this::
   >>> from zope.component import queryAdapter
 
 In the previous section you have registered a component for guest
-object (adaptee) which provides `IRegistrar` interface with name as
+object (adaptee) which provides `IDesk` interface with name as
 'ng'.  In the first section of this chapter, you have created a guest
 object named `jack` .
 
 This is how you can retrieve a component which adapts the interface of
-`jack` object (`IGuest`) and provides `IRegistrar` interface also with
+`jack` object (`IGuest`) and provides `IDesk` interface also with
 name as 'ng'.  Here both ``getAdapter`` and ``queryAdapter`` works
 similarly::
 
-  >>> getAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
-  >>> queryAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> getAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 As you can see, the first argument should be adaptee then, the
 interface which should be provided by component and last the name of
@@ -979,12 +994,12 @@ If you try to lookup the component with an name not used for
 registration but for same adaptee and interface, the lookup will fail.
 Here is how the two methods works in such a case::
 
-  >>> getAdapter(jack, IRegistrar, 'not-exists') #doctest: +ELLIPSIS
+  >>> getAdapter(jack, IDesk, 'not-exists') #doctest: +ELLIPSIS
   Traceback (most recent call last):
   ...
   ComponentLookupError: ...
   >>> reg = queryAdapter(jack,
-  ...           IRegistrar, 'not-exists') #doctest: +ELLIPSIS
+  ...           IDesk, 'not-exists') #doctest: +ELLIPSIS
   >>> reg is None
   True
 
@@ -997,11 +1012,11 @@ Since there is no component registered with an empty string,
 ``getAdapter`` will raise ``ComponentLookupError`` .  Similarly
 ``queryAdapter`` will return `None`, see yourself how it works::
 
-  >>> getAdapter(jack, IRegistrar) #doctest: +ELLIPSIS
+  >>> getAdapter(jack, IDesk) #doctest: +ELLIPSIS
   Traceback (most recent call last):
   ...
   ComponentLookupError: ...
-  >>> reg = queryAdapter(jack, IRegistrar) #doctest: +ELLIPSIS
+  >>> reg = queryAdapter(jack, IDesk) #doctest: +ELLIPSIS
   >>> reg is None
   True
 
@@ -1020,31 +1035,31 @@ work for non-named single adapters.  The first argument is the adaptee
 and the second argument is a keyword argument.  If adapter lookup
 fails, second argument will be returned.
 
-  >>> IRegistrar(jack, alternate='default-output')
+  >>> IDesk(jack, alternate='default-output')
   'default-output'
 
   Keyword name can be omitted:
 
-  >>> IRegistrar(jack, 'default-output')
+  >>> IDesk(jack, 'default-output')
   'default-output'
 
   If second argument is not given, it will raise `TypeError`:
 
-  >>> IRegistrar(jack) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+  >>> IDesk(jack) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
   Traceback (most recent call last):
   ...
   TypeError: ('Could not adapt',
     <Guest object at ...>,
-    <InterfaceClass __builtin__.IRegistrar>)
+    <InterfaceClass __builtin__.IDesk>)
 
-  Here `GuestRegistrarNG` is registered without name:
+  Here `FrontDeskNG` is registered without name:
 
-  >>> gsm.registerAdapter(GuestRegistrarNG)
+  >>> gsm.registerAdapter(FrontDeskNG)
 
   Now the adapter lookup should succeed:
 
-  >>> IRegistrar(jack, 'default-output') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> IDesk(jack, 'default-output') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 For simple cases, you may use interface to get adapter components.
 
@@ -1059,7 +1074,7 @@ similar.  But the intent of ZCA adapter usage is more wider than the
 convert the interface of a class into another interface clients
 expect.  This allows classes work together that couldn't otherwise
 because of incompatible interfaces.  But in the `motivation` section
-of Design Patterns book, GoF says: "Often the adapter is responsible
+of Degisgn Patterns book, GoF says: "Often the adapter is responsible
 for functionality the adapted class doesn't provide".  ZCA adapter has
 more focus on adding functionalities than creating a new interface for
 an adapted object (adaptee).  ZCA adapter lets adapter classes extend
@@ -1880,9 +1895,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -1890,7 +1905,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -1925,7 +1940,7 @@ Example::
 
   >>> class Person(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     name = u""
 
   >>> jack = Person()
@@ -1968,7 +1983,7 @@ Example::
 
   >>> class Person(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     name = u""
   ...     college = u""
 
@@ -2246,8 +2261,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -2256,9 +2271,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -2266,7 +2281,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -2281,18 +2296,18 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
-  >>> getAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> getAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 getAdapterInContext
@@ -2323,8 +2338,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -2333,9 +2348,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -2343,7 +2358,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -2358,21 +2373,21 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> sm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar)
+  >>> sm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk)
 
   >>> from zope.component import getAdapterInContext
   >>> from zope.component import queryAdapterInContext
 
-  >>> getAdapterInContext(jack, IRegistrar, sm) #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> getAdapterInContext(jack, IDesk, sm) #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 getAdapters
@@ -2391,9 +2406,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -2401,23 +2416,23 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> gsm.registerAdapter(GuestRegistrarNG, name='ng')
+  >>> gsm.registerAdapter(FrontDeskNG, name='ng')
 
   >>> from zope.component import getAdapters
-  >>> list(getAdapters((jack,), IRegistrar)) #doctest: +ELLIPSIS
-  [(u'ng', <GuestRegistrarNG object at ...>)]
+  >>> list(getAdapters((jack,), IDesk)) #doctest: +ELLIPSIS
+  [(u'ng', <FrontDeskNG object at ...>)]
 
 
 getAllUtilitiesRegisteredFor
@@ -3148,8 +3163,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3158,9 +3173,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3168,7 +3183,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3183,18 +3198,18 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
-  >>> queryAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 queryAdapterInContext
@@ -3226,8 +3241,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3236,9 +3251,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3246,7 +3261,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3261,21 +3276,21 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> sm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar)
+  >>> sm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk)
 
   >>> from zope.component import getAdapterInContext
   >>> from zope.component import queryAdapterInContext
 
-  >>> queryAdapterInContext(jack, IRegistrar, sm) #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapterInContext(jack, IDesk, sm) #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 queryMultiAdapter
@@ -3395,8 +3410,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3405,9 +3420,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3415,7 +3430,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3430,20 +3445,20 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
   You can test it like this:
 
-  >>> queryAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 registeredAdapters
@@ -3461,8 +3476,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3471,9 +3486,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3481,7 +3496,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3496,15 +3511,15 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng2')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng2')
 
 
   >>> reg_adapter = list(gsm.registeredAdapters())
@@ -3920,8 +3935,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3930,9 +3945,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3940,7 +3955,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3955,29 +3970,29 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng6')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng6')
 
   You can test it like this:
 
-  >>> queryAdapter(jack, IRegistrar, 'ng6') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng6') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
   Now unregister:
 
-  >>> gsm.unregisterAdapter(GuestRegistrarNG, name='ng6')
+  >>> gsm.unregisterAdapter(FrontDeskNG, name='ng6')
   True
 
   After unregistration:
 
-  >>> print queryAdapter(jack, IRegistrar, 'ng6')
+  >>> print queryAdapter(jack, IDesk, 'ng6')
   None
 
 
