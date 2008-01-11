@@ -3012,12 +3012,22 @@ interface specification.  An error will be raised if the module
 already has an interface specification.  In other words, it is an
 error to call this function more than once in a module definition.
 
-This function is provided for convenience. It provides a more
-convenient way to call directlyProvides for a module.
+This function is provided for convenience.  It provides a more
+convenient way to call ``directlyProvides`` for a module.
 
  - Location: ``zope.interface``
 
  - Signature: `moduleProvides(*interfaces)`
+
+ - See also: `directlyProvides`_
+
+You can see an example usage in `zope.component` source itself.  The
+`__init__.py` file has a statement like this::
+
+  moduleProvides(IComponentArchitecture, IComponentRegistrationConvenience)
+
+So, the `zope.component` provides two interfaces:
+`IComponentArchitecture` and `IComponentRegistrationConvenience`.
 
 
 noLongerProvides
@@ -3073,31 +3083,31 @@ Example::
 provideAdapter
 ~~~~~~~~~~~~~~
 
-It is recommend to use `registerAdapter`_ .
+It is recommended to use `registerAdapter`_ .
 
 
 provideHandler
 ~~~~~~~~~~~~~~
 
-It is recommend to use `registerHandler`_ .
+It is recommended to use `registerHandler`_ .
 
 
 provideSubscriptionAdapter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is recommend to use `registerSubscriptionAdapter`_ .
+It is recommended to use `registerSubscriptionAdapter`_ .
 
 
 provideUtility
 ~~~~~~~~~~~~~~
 
-It is recommend to use `registerUtility`_ .
+It is recommended to use `registerUtility`_ .
 
 
 providedBy
 ~~~~~~~~~~
 
-Test whether the interface is implemented by the object. Return true
+Test whether the interface is implemented by the object.  Return true
 if the object asserts that it implements the interface, including
 asserting that it implements an extended interface.
 
@@ -3226,8 +3236,24 @@ Example::
 queryAdapterInContext
 ~~~~~~~~~~~~~~~~~~~~~
 
-Instead of this function, use `context` argument of `queryAdapter`_
-function.
+Look for a special adapter to an interface for an object.
+
+NOTE: This method should only be used if a custom context needs to be
+provided to provide custom component lookup. Otherwise, call the
+interface, as in::
+
+  interface(object, default)
+
+Returns an adapter that can adapt object to interface.  If a matching
+adapter cannot be found, returns the default.
+
+Context is adapted to IServiceService, and this adapter's 'Adapters'
+service is used.
+
+If the object has a __conform__ method, this method will be called
+with the requested interface.  If the method returns a non-None value,
+that value will be returned. Otherwise, if the object already
+implements the interface, the object will be returned.
 
  - Location: ``zope.component``
 
