@@ -2328,6 +2328,8 @@ function.
 
  - Signature: `getAdapterInContext(object, interface, context)`
 
+ - See also: `queryAdapterInContext`_
+
 Example::
 
   >>> from zope.component.globalregistry import BaseGlobalComponents
@@ -2392,7 +2394,6 @@ Example::
   ...                     (IGuest,), IDesk)
 
   >>> from zope.component import getAdapterInContext
-  >>> from zope.component import queryAdapterInContext
 
   >>> getAdapterInContext(jack, IDesk, sm) #doctest: +ELLIPSIS
   <FrontDeskNG object at ...>
@@ -2605,6 +2606,8 @@ an empty string for a name.
 
  - Signature: `getMultiAdapter(objects, interface=Interface, name='',
    context=None)`
+
+ - See also: `queryMultiAdapter`_
 
 Example::
 
@@ -3231,6 +3234,8 @@ function.
  - Signature: `queryAdapterInContext(object, interface, context,
    default=None)`
 
+ - See also: `getAdapterInContext`_
+
 Example::
 
   >>> from zope.component.globalregistry import BaseGlobalComponents
@@ -3294,7 +3299,6 @@ Example::
   >>> sm.registerAdapter(FrontDeskNG,
   ...                     (IGuest,), IDesk)
 
-  >>> from zope.component import getAdapterInContext
   >>> from zope.component import queryAdapterInContext
 
   >>> queryAdapterInContext(jack, IDesk, sm) #doctest: +ELLIPSIS
@@ -3315,6 +3319,8 @@ for a name.
 
  - Signature: `queryMultiAdapter(objects, interface=Interface,
    name=u'', default=None, context=None)`
+
+ - See also: `getMultiAdapter`_
 
 Example::
 
@@ -3368,8 +3374,8 @@ Example::
 queryUtility
 ~~~~~~~~~~~~
 
-Look up a utility that provides an interface.  If one is not found,
-returns default.
+This function is used to look up a utility that provides an interface.
+If one is not found, returns default.
 
  - Location: ``zope.component``
 
@@ -3406,12 +3412,14 @@ Example::
 registerAdapter
 ~~~~~~~~~~~~~~~
 
-Register an adapter factory.
+This function is used to register an adapter factory.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `registerAdapter(factory, required=None, provided=None,
    name=u'', info=u'')`
+
+ - See also: `unregisterAdapter`_
 
 Example::
 
@@ -3655,8 +3663,9 @@ Example::
 registeredUtilities
 ~~~~~~~~~~~~~~~~~~~
 
-Return an iterable of `IUtilityRegistrations` .  These registrations
-describe the current utility registrations in the object.
+This function return an iterable of `IUtilityRegistrations`.  These
+registrations describe the current utility registrations in the
+object.
 
  - Location: ``zope.component - IComponentRegistry``
 
@@ -3692,15 +3701,18 @@ Example::
 registerHandler
 ~~~~~~~~~~~~~~~
 
-Register a handler.  A handler is a subscriber that doesn't compute an
-adapter but performs some function when called.
+This function is used to register a handler.  A handler is a
+subscriber that doesn't compute an adapter but performs some function
+when called.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `registerHandler(handler, required=None, name=u'', info='')`
 
-In the current implementation of ``zope.component`` doesn't support
-`name` attribute.
+ - See also: `unregisterHandler`_
+
+Note: In the current implementation of ``zope.component`` doesn't
+support `name` attribute.
 
 Example::
 
@@ -3748,12 +3760,14 @@ Example::
 registerSubscriptionAdapter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Register a subscriber factory.
+This function is used to register a subscriber factory.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `registerSubscriptionAdapter(factory, required=None,
    provides=None, name=u'', info='')`
+
+ - See also: `unregisterSubscriptionAdapter`_
 
 Example::
 
@@ -3804,12 +3818,14 @@ Example::
 registerUtility
 ~~~~~~~~~~~~~~~
 
-Register a utility.
+This function is used to register a utility.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `registerUtility(component, provided=None, name=u'',
    info=u'')`
+
+ - See also: `unregisterUtility`_
 
 Example::
 
@@ -3837,9 +3853,9 @@ Example::
 subscribers
 ~~~~~~~~~~~
 
-Get subscribers.  Subscribers are returned that provide the provided
-interface and that depend on and are computed from the sequence of
-required objects.
+This function is used to get subscribers.  Subscribers are returned
+that provide the provided interface and that depend on and are
+computed from the sequence of required objects.
 
  - Location: ``zope.component - IComponentRegistry``
 
@@ -3927,16 +3943,18 @@ Example::
 unregisterAdapter
 ~~~~~~~~~~~~~~~~~
 
-Register an adapter factory.  A boolean is returned indicating whether
-the registry was changed.  If the given component is None and there is
-no component registered, or if the given component is not None and is
-not registered, then the function returns False, otherwise it returns
-True.
+This function is used to unregister an adapter factory.  A boolean is
+returned indicating whether the registry was changed.  If the given
+component is None and there is no component registered, or if the
+given component is not None and is not registered, then the function
+returns False, otherwise it returns True.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `unregisterAdapter(factory=None, required=None,
    provided=None, name=u'')`
+
+ - See also: `registerAdapter`_
 
 Example::
 
@@ -4007,14 +4025,17 @@ Example::
 unregisterHandler
 ~~~~~~~~~~~~~~~~~
 
-Unregister a handler.  A handler is a subscriber that doesn't compute
-an adapter but performs some function when called.  A boolean is
-returned indicating whether the registry was changed.
+This function is used for unregistering a handler.  A handler is a
+subscriber that doesn't compute an adapter but performs some function
+when called.  A boolean is returned indicating whether the registry
+was changed.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `unregisterHandler(handler=None, required=None,
    name=u'')`
+
+ - See also: `registerHandler`_
 
 Example::
 
@@ -4077,17 +4098,18 @@ Example::
 unregisterSubscriptionAdapter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unregister a subscriber factory.  A boolean is returned indicating
-whether the registry was changed.  If the given component is None and
-there is no component registered, or if the given component is not
-None and is not registered, then the function returns False, otherwise
-it returns True.
+This function is used to unregister a subscriber factory.  A boolean
+is returned indicating whether the registry was changed.  If the given
+component is None and there is no component registered, or if the
+given component is not None and is not registered, then the function
+returns False, otherwise it returns True.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `unregisterSubscriptionAdapter(factory=None,
    required=None, provides=None, name=u'')`
 
+ - See also: `registerSubscriptionAdapter`_
 
 Example::
 
@@ -4158,16 +4180,18 @@ Example::
 unregisterUtility
 ~~~~~~~~~~~~~~~~~
 
-Unregister a utility.  A boolean is returned indicating whether the
-registry was changed.  If the given component is None and there is no
-component registered, or if the given component is not None and is not
-registered, then the function returns False, otherwise it returns
-True.
+This function is used for unregistering a utility.  A boolean is
+returned indicating whether the registry was changed.  If the
+given component is None and there is no component registered, or if
+the given component is not None and is not registered, then the
+function returns False, otherwise it returns True.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `unregisterUtility(component=None, provided=None,
    name=u'')`
+
+ - See also: `registerUtility`_
 
 Example::
 
