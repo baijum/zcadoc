@@ -92,6 +92,8 @@ use this framework extensively.  There are many other projects
 including non-web applications using Zope Component Architecture
 [#projects]_.
 
+.. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
+
 
 A brief history
 ~~~~~~~~~~~~~~~
@@ -116,15 +118,22 @@ simplification of ZCA [#proposal]_.  With this simplification, a new
 single interface (`IComponentRegistry`) for registration of both
 global and local component was created.
 
+.. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
+
 The ``zope.component`` package had a long list of dependencies, many
 of which were not required for a non Zope 3 application.  During PyCon
 2007, Jim Fulton added setuptools' `extras_require` feature to allow
 separating out core ZCA functionality from add-on features [#extras]_.
 
+.. [#extras] http://peak.telecommunity.com/DevCenter/setuptools#declaring-dependencies
+
 Now, The ZCA project is an independent project with it's own release
 cycle and Subversion repository.  However, issues and bugs are still
 tracked as part of Zope 3 project [#bugs]_, and the main zope-dev list
 is used for development discussions [#discussions]_.
+
+.. [#bugs] https://bugs.launchpad.net/zope3
+.. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
 
 
 Installation
@@ -136,10 +145,14 @@ facilities for defining, registering and looking up components.  The
 ``zope.component`` package and its dependencies are available in egg
 format from the Python Package Index (PyPI) [#pypi]_.
 
+.. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
+
 You can install ``zope.component`` and it's dependencies using
 `easy_install` [#easyinstall]_ ::
 
   $ easy_install zope.component
+
+.. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
 
 This command will download ``zope.component`` and its dependencies
 from PyPI and install it in your Python path.
@@ -168,6 +181,8 @@ These methods install ZCA to the `system Python`, in the
 ``site-packages`` directory, which can cause problems.  In a Zope3
 mailing list post, Jim Fulton recommends against using the system
 Python [#systempython]_.
+
+.. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
 
 Experimenting with code
@@ -239,15 +254,6 @@ interpreter inside ``mybuildout/bin`` directory::
 
 This command will give you a Python prompt which you can use to run
 the code in this book.
-
-.. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
-.. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
-.. [#extras] http://peak.telecommunity.com/DevCenter/setuptools#declaring-dependencies
-.. [#bugs] https://bugs.launchpad.net/zope3
-.. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
-.. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
-.. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
-.. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
 
 An example
@@ -536,6 +542,8 @@ to an interface, not an implementation".  Defining formal interfaces
 helps you better understand system.  Moreover interface brings you all
 the benefits of ZCA.
 
+.. [#patternbook] http://en.wikipedia.org/wiki/Design_Patterns
+
 Interface define the behavior and state of objects.  An interface
 describes how you work with the object.  If you like metaphor, think
 of interface as a `contract for object`.  Another metaphor which may
@@ -579,6 +587,8 @@ looks like, that is, what are the methods and attributes of the
 object.  For this, either you have go through the implementation
 details (``Host`` class) of the object or a separate API documentation
 [#api]_ will be required.
+
+.. [#api] http://en.wikipedia.org/wiki/Application_programming_interface
 
 You can use the ``zope.interface`` package to define the interface of
 objects.  For the class given above you can specify the interface like
@@ -837,9 +847,6 @@ As you can see `jack` object validated without raising any
 exception. But `jill` object didn't validated the invariant
 constraint, so it raised exception.
 
-.. [#patternbook] http://en.wikipedia.org/wiki/Design_Patterns
-.. [#api] http://en.wikipedia.org/wiki/Application_programming_interface
-
 
 Adapters
 --------
@@ -1090,6 +1097,9 @@ functionality by adding methods.  (It would be interesting to note
 that `Adapter` was known as `Feature` in earlier stage of ZCA
 design. ) [#feature]_
 
+.. [#feature] Thread discussing renaming of `Feature` to `Adapter`:
+   http://mail.zope.org/pipermail/zope3-dev/2001-December/000008.html
+
 The above paragraph has a quote from Gang of Four book, it ends like
 this: " ...adapted class doesn't provide".  But in the next sentence I
 used "adapted object" instead of "adapted class", because GoF
@@ -1107,9 +1117,6 @@ The major attraction of ZCA adapter are the explicit interface for
 components and the component registry.  ZCA adapter components are
 registered in component registry and looked up by client objects using
 interface and name when required.
-
-.. [#feature] Thread discussing renaming of `Feature` to `Adapter`:
-   http://mail.zope.org/pipermail/zope3-dev/2001-December/000008.html
 
 
 Utility
