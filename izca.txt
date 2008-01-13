@@ -939,10 +939,10 @@ To register the adapter in component, as you can see above, use
 should be your adapter class/factory.  The second argument is a tuple
 of `adaptee` objects, i.e, the object which you are adapting.  In this
 example, you are adapting only `IGuest` object.  The third argument is
-the interface provided by the adapter component.  The fourth argument
-is optional, that is the name of the particular adapter.  Since you
-gave a name for this adapter, this is a `named adapter`.  If name is
-not given, it will default to an empty string ('').
+the interface implemented by the adapter component.  The fourth
+argument is optional, that is the name of the particular adapter.
+Since you gave a name for this adapter, this is a `named adapter`.  If
+name is not given, it will default to an empty string ('').
 
 In the above registration, you have given the adaptee interface and
 interface to be provided by the adapter.  Since you have already given
@@ -1842,7 +1842,7 @@ Reference
 Attribute
 ~~~~~~~~~
 
-Using this class, you can define normal attribute in an interface.
+Using this class, you can define normal attributes in an interface.
 
  - Location: ``zope.interface``
 
@@ -1863,7 +1863,6 @@ Declaration
 ~~~~~~~~~~~
 
 Need not to use directly.
-
 
 Interface
 ~~~~~~~~~
