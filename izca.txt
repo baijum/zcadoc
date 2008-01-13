@@ -29,9 +29,9 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 
 .. note::
 
-  Thanks to Kent Tenney (Wisconsin, USA) and Brad Allen (Dallas, USA)
-  for their suggestions.
-
+  Many people has helped me to write this book: Brad Allen, Kent
+  Tenney, Lorenzo Gil Sanchez, Michael Haubenwallner, Nando Quintana,
+  Stephane Klein and Tim Cook.  Thanks to all !
 
 .. contents::
 .. .. sectnum::
