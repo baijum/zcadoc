@@ -1089,7 +1089,7 @@ similar.  But the intent of ZCA adapter usage is more wider than the
 convert the interface of a class into another interface clients
 expect.  This allows classes work together that couldn't otherwise
 because of incompatible interfaces.  But in the `motivation` section
-of Degisgn Patterns book, GoF says: "Often the adapter is responsible
+of Design Patterns book, GoF says: "Often the adapter is responsible
 for functionality the adapted class doesn't provide".  ZCA adapter has
 more focus on adding functionalities than creating a new interface for
 an adapted object (adaptee).  ZCA adapter lets adapter classes extend
@@ -1290,9 +1290,9 @@ Advanced adapters
 Multi adapter
 ~~~~~~~~~~~~~
 
-A simple adapter normally adapts only one object, but an adapter can
+A simple adapter normally adapts only one object, but an adapter may
 adapt more than one object.  If an adapter adapts more than one
-objects, it is called as multi-adapter.
+objects, it is called `multi-adapter`.
 
 ::
 
