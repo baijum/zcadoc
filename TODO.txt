@@ -14,8 +14,6 @@ TODO List
 
  - Change "Adapter pattern" section to a sidebar ?
 
- - Add "See also" to reference
-
  - Include reference for interfaces in ``zope.interface.interfaces``
    and ``zope.component.interfaces``
 

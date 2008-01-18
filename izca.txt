@@ -1130,8 +1130,7 @@ Now you know the concept of interface, adapter and component registry.
 Sometimes it would be useful to register an object which is not
 adapting anything.  Database connection, XML parser, object returning
 unique Ids etc. are examples of these kinds of objects.  These kind of
-components provided by Zope component architecture are called
-``utility`` components.
+components provided by the ZCA are called ``utility`` components.
 
 Utilities are just objects that provide an interface and that are
 looked up by an interface and a name.  This approach creates a global
@@ -1529,13 +1528,13 @@ ZCA usage in Zope
 -----------------
 
 Zope Component Architecture is used in both Zope 3 and Zope 2.  This
-chapter go through ZCA usage in Zope.
+chapter will go through usage of the ZCA in Zope.
 
 
 ZCML
 ~~~~
 
-The Zope Configuration Markup Language (ZCML) is an XML based
+The **Zope Configuration Markup Language (ZCML)** is an XML based
 configuration system for registration of components.  So, instead of
 using Python API for registration, you can use ZCML.  But to use ZCML,
 unfortunately, you will be required to install more dependency
