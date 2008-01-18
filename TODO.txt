@@ -1,13 +1,11 @@
 TODO List
 =========
 
- - Document ``zope.interface.adapter``
+ - Document ``zope.interface.verify``
 
  - Document ``zope.interface.advice``
 
  - Document ``zope.component.event``
-
- - Document ``zope.interface.verify``
 
  - Change "Adapter pattern" section to a sidebar ?
 

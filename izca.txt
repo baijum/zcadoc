@@ -1873,6 +1873,54 @@ Example::
   (<InterfaceClass __builtin__.IGuest>,)
 
 
+adapter
+~~~~~~~
+
+Adapters can be any callable object, you can use the `adapter`
+decorator to declare that a callable object adapts some interfaces (or
+classes)
+
+ - Location: ``zope.component``
+
+ - Signature: `adapter(*interfaces)`
+
+Example::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+  >>> from zope.interface import implementer
+  >>> from zope.component import adapter
+  >>> from zope.interface import implements
+
+  >>> class IJob(Interface):
+  ...     """A job"""
+
+  >>> class Job(object):
+  ...     implements(IJob)
+
+  >>> class IPerson(Interface):
+  ...
+  ...     name = Attribute("Name")
+  ...     job = Attribute("Job")
+
+  >>> class Person(object):
+  ...     implements(IPerson)
+  ...
+  ...     name = None
+  ...     job = None
+
+  >>> @implementer(IJob)
+  ... @adapter(IPerson)
+  ... def personJob(person):
+  ...     return person.job
+
+  >>> jack = Person()
+  >>> jack.name = "Jack"
+  >>> jack.job = Job()
+  >>> personJob(jack) #doctest: +ELLIPSIS
+  <Job object at ...>
+    
+
 adapts
 ~~~~~~
 
