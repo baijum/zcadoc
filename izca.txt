@@ -1839,62 +1839,6 @@ Reference
 ---------
 
 
-Attribute
-~~~~~~~~~
-
-Using this class, you can define normal attributes in an interface.
-
- - Location: ``zope.interface``
-
- - Signature: `Attribute(name, doc='')`
-
-Example::
-
-  >>> from zope.interface import Attribute
-  >>> from zope.interface import Interface
-
-  >>> class IPerson(Interface):
-  ...
-  ...     name = Attribute("Name of person")
-  ...     email = Attribute("Email Address")
-
-
-Declaration
-~~~~~~~~~~~
-
-Need not to use directly.
-
-Interface
-~~~~~~~~~
-
-Using this class, you can define an interface.  To define an
-interface, just inherit from ``Interface`` class.
-
- - Location: ``zope.interface``
-
- - Signature: `Interface(name, doc='')`
-
-Example 1::
-
-  >>> from zope.interface import Attribute
-  >>> from zope.interface import Interface
-
-  >>> class IPerson(Interface):
-  ...
-  ...     name = Attribute("Name of person")
-  ...     email = Attribute("Email Address")
-
-
-Example 2::
-
-  >>> from zope.interface import Interface
-
-  >>> class IHost(Interface):
-  ...
-  ...     def goodmorning(guest):
-  ...         """Say good morning to guest"""
-
-
 adapts
 ~~~~~~
 
@@ -1967,6 +1911,28 @@ Example::
   >>> from zope.interface import providedBy
   >>> IStudent in providedBy(jack)
   True
+
+
+Attribute
+~~~~~~~~~
+
+Using this class, you can define normal attributes in an interface.
+
+ - Location: ``zope.interface``
+
+ - Signature: `Attribute(name, doc='')`
+
+ - See also: `Interface`_
+
+Example::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+
+  >>> class IPerson(Interface):
+  ...
+  ...     name = Attribute("Name of person")
+  ...     email = Attribute("Email Address")
 
 
 classImplements
@@ -2158,6 +2124,12 @@ Example::
   >>> from zope.component import createObject
   >>> createObject('fakedb') #doctest: +ELLIPSIS
   <FakeDb object at ...>
+
+
+Declaration
+~~~~~~~~~~~
+
+Need not to use directly.
 
 
 directlyProvidedBy
@@ -3021,6 +2993,37 @@ Example::
   False
   >>> IStudent in providedBy(jack)
   True
+
+
+Interface
+~~~~~~~~~
+
+Using this class, you can define an interface.  To define an
+interface, just inherit from ``Interface`` class.
+
+ - Location: ``zope.interface``
+
+ - Signature: `Interface(name, doc='')`
+
+Example 1::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+
+  >>> class IPerson(Interface):
+  ...
+  ...     name = Attribute("Name of person")
+  ...     email = Attribute("Email Address")
+
+
+Example 2::
+
+  >>> from zope.interface import Interface
+
+  >>> class IHost(Interface):
+  ...
+  ...     def goodmorning(guest):
+  ...         """Say good morning to guest"""
 
 
 moduleProvides
