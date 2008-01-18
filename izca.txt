@@ -8,9 +8,11 @@ A Comprehensive Guide to Zope Component Architecture
 
 
 :Author: Baiju M
-:Version: 0.5.1
-:URL: `http://www.muthukadan.net/docs/zca.pdf
-       <http://www.muthukadan.net/docs/zca.pdf>`_
+:Version: 0.5.2
+:Printed Book: `http://www.lulu.com/content/1561045
+                    <http://www.lulu.com/content/1561045>`_
+:Online PDF: `http://www.muthukadan.net/docs/zca.pdf
+                  <http://www.muthukadan.net/docs/zca.pdf>`_
 
 Copyright (C) 2007,2008 Baiju M <baiju.m.mail AT gmail.com>.
 
