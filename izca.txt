@@ -2,11 +2,6 @@
 A Comprehensive Guide to Zope Component Architecture
 ====================================================
 
-.. raw:: latex
-
-  \pagenumbering{roman}
-
-
 :Author: Baiju M
 :Version: 0.5.2
 :Printed Book: `http://www.lulu.com/content/1561045
@@ -33,12 +28,13 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 
   Many people has helped me to write this book.  The initial draft was
   reviewed by my colleague Brad Allen.  When I announced this book
-  through my blog, many people encouraged me to proceed with this
-  work.  Kent Tenney edited most of the parts of the book, he also
-  rewrote the example application.  Many others also helped me to
-  write this book: Lorenzo Gil Sanchez, Michael Haubenwallner, Nando
-  Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas Herve.
-  Thanks to all !
+  through my blog, I got encouraging comments to proceed with this
+  work.  Kent Tenney edited most parts of the book, he also rewrote
+  the example application.  Many others send me fixes and comments for
+  this book including, Lorenzo Gil Sanchez, Michael Haubenwallner,
+  Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas
+  Herve.  Lorenzo translated this work to Spanish and Stephane
+  translated it to French.  Thanks to all !
 
 .. contents::
 .. .. sectnum::
@@ -46,11 +42,6 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 
 Getting started
 ---------------
-
-.. raw:: latex
-
-  \pagenumbering{arabic}
-
 
 Introduction
 ~~~~~~~~~~~~
