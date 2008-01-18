@@ -276,7 +276,7 @@ Procedural approach
 ~~~~~~~~~~~~~~~~~~~
 
 In any business application, data storage is very critical.  For
-simplicity, this example use a Python dictionary as the storage.  We 
+simplicity, this example use a Python dictionary as the storage.  We
 will generate unique id's for the dictionary, the associated value
 will be a dictionary of details about the booking.
 
@@ -297,12 +297,12 @@ We can get the unique id like this::
   ...     return next_id
 
 As you can see, the `get_next_id` function implementation is very
-simple.  The function gets a list of keys and checks for an empty 
+simple.  The function gets a list of keys and checks for an empty
 list. If the list is empty this is our first booking, so we return
 `1`. If the list is not empty, we add `1` to the maximum value in the
 list and return it.
 
-Now we will use the above function to create entries in the 
+Now we will use the above function to create entries in the
 bookings_db dictionary::
 
   >>> def book_room(name, place):
@@ -379,7 +379,7 @@ Any real project will involve changing requirements.  In this
 case management has decided that each guest must provide a phone
 number, so we must change the code.
 
-We can achieve this requirement by adding one argument to the 
+We can achieve this requirement by adding one argument to the
 `book_room` method which will be added to the dictionary of values::
 
   >>> class FrontDesk(object):
@@ -393,7 +393,7 @@ We can achieve this requirement by adding one argument to the
   ...         }
 
 In addition to migrating the data to new schema, we now have to change
-all calls to FrontDesk.  If we abstract the details of guest into an 
+all calls to FrontDesk.  If we abstract the details of guest into an
 object and use it for registration, the code changes can be minimized.
 We now can make changes to the details of the guest object and the
 calls to FrontDesk won't need to change.
@@ -412,22 +412,22 @@ Now we have::
 
 We still will have to change code to respond to changing requirements.
 This is unavoidable, however, our goal is to minimize those changes,
-thereby increasing maintainability. 
+thereby increasing maintainability.
 
 .. note::
-  
+
   When coding, it is important to feel free to make changes without
-  fear of breaking the application.  The way to get the immediate 
+  fear of breaking the application.  The way to get the immediate
   feedback required is via automated testing.  With well written
-  tests (and good version control) you can make changes large or 
+  tests (and good version control) you can make changes large or
   small with impunity.  A good source of information about this
   programming philosophy is the book `Extreme Programming Explained`
   by Kent Beck.
 
 By introducing the guest object, you saved some typing.  More
 importantly, the abstraction provided by the guest object made the
-system simpler and more understandable.  As a result, the code is 
-easier to restructure and maintain. 
+system simpler and more understandable.  As a result, the code is
+easier to restructure and maintain.
 
 
 The adapter pattern
