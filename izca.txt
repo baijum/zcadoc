@@ -56,41 +56,39 @@ popular these days.  There are many frameworks for supporting
 component based design in different languages, some are even language
 neutral.  Examples of this are Microsoft's COM and Mozilla's XPCOM.
 
-Zope Component Architecture (ZCA) is a Python framework for supporting
-component based design and programming.  ZCA is very well suited to
-developing large Python software systems.  ZCA is not specific to the
-Zope web application server, it can be used for developing any Python
-application.  Maybe it should be called the `Python Component
-Architecture`.
+**Zope Component Architecture (ZCA)** is a Python framework for
+supporting component based design and programming.  It is very well
+suited to developing large Python software systems.  The ZCA is not
+specific to the Zope web application server: it can be used for
+developing any Python application.  Maybe it should be called the
+`Python Component Architecture`.
 
-There are two core packages related to Zope component architecture:
+There are two core packages related to the ZCA:
 
-  - ``zope.interface`` used to define the interface of a component.
+  - ``zope.interface`` is used to define the interface of a component.
 
   - ``zope.component`` deals with registration and retrieval of
     components.
 
-Zope component architecture is all about using Python objects
-effectively.  Components are reusable objects with introspectable
-interfaces.  A component provides an interface implemented in a class,
-or any other callable object.  It doesn't matter how the component is
-implemented, the important part is that it comply with its interface
-contracts.  Using Zope component architecture you can spread the
-complexity of systems over multiple cooperating components.  Zope
-component architecture helps you to create two basic kinds of
-components: `adapter` and `utility`.
+The ZCA is all about using Python objects effectively.  Components are
+reusable objects with introspectable interfaces.  A component provides
+an interface implemented in a class, or any other callable object.  It
+doesn't matter how the component is implemented, the important part is
+that it comply with its interface contracts.  Using ZCA, you can
+spread the complexity of systems over multiple cooperating components.
+It helps you to create two basic kinds of components: `adapter` and
+`utility`.
 
-Remember, ZCA is not about the components themselves, rather it is
+Remember, the ZCA is not about the components themselves, rather it is
 about creating, registering, and retrieving components.  Remember
 also, an `adapter` is a normal Python class (or a factory in general)
 and `utility` is a normal Python callable object.
 
-The ZCA framework is developed as part of the Zope 3 project.  ZCA, as
-noted earlier, is a pure Python framework, so it can be used in any
+The ZCA framework is developed as part of the Zope 3 project.  As
+noted earlier, it is a pure Python framework, so it can be used in any
 kind of Python application.  Currently both Zope 3 and Zope 2 projects
 use this framework extensively.  There are many other projects
-including non-web applications using Zope Component Architecture
-[#projects]_.
+including non-web applications using it [#projects]_.
 
 .. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
 
@@ -103,8 +101,8 @@ grew out of lessons learned while developing large software systems
 using Zope 2.  Jim Fulton was the project leader of this project.
 Many people contributed to the design and implementation, including
 but not limited to, Stephan Richter, Philipp von Weitershausen, Guido
-van Rossum (AKA *Python BDFL*), Tres Seaver, Phillip J Eby and Martijn
-Faassen.
+van Rossum (*aka. Python BDFL*), Tres Seaver, Phillip J Eby and
+Martijn Faassen.
 
 Initially ZCA defined additional components; `services` and `views`,
 but the developers came to realize that utility can replace `service`
@@ -130,11 +128,13 @@ separating out core ZCA functionality from add-on features [#extras]_.
 Now, The ZCA project is an independent project with it's own release
 cycle and Subversion repository.  However, issues and bugs are still
 tracked as part of Zope 3 project [#bugs]_, and the main zope-dev list
-is used for development discussions [#discussions]_.
+is used for development discussions [#discussions]_.  There is also
+another general user list for Zope 3 (`zope3-users`) which can be used
+for any queries about the ZCA [#z3users]_.
 
 .. [#bugs] https://bugs.launchpad.net/zope3
 .. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
-
+.. [#z3users] http://mail.zope.org/mailman/listinfo/zope3-users
 
 Installation
 ~~~~~~~~~~~~
