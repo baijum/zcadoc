@@ -1145,8 +1145,10 @@ register components which you want to make replaceable.
 Simple utility
 ~~~~~~~~~~~~~~
 
-Before implementing the utility, as usual, define its interface.  Here
-is a `greeter` interface::
+A utility can be registered with a name or without a name.  A utility
+registered with a name is called named utility, which you will see in
+the next section.  Before implementing the utility, as usual, define
+its interface.  Here is a `greeter` interface::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -1154,9 +1156,10 @@ is a `greeter` interface::
   >>> class IGreeter(Interface):
   ...
   ...     def greet(name):
-  ...         "say hello"
+  ...         """Say hello"""
 
-Here is a possible implementation of the above interface::
+Like an adapter a utility may have more than one implementation.  Here
+is a possible implementation of the above interface::
 
   >>> class Greeter(object):
   ...
@@ -1165,7 +1168,10 @@ Here is a possible implementation of the above interface::
   ...     def greet(self, name):
   ...         return "Hello " + name
 
-You can register an instance of this class using ``registerUtility``::
+The actual utility will be an instance of this class.  To use this
+utility, you have to register it, later you can query it using the ZCA
+API.  You can register an instance of this class (`utility`) using
+``registerUtility``::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
@@ -1187,22 +1193,25 @@ or `getUtility`::
   'Hello Jack'
 
 As you can see, adapters are normally classes, but utilities are
-normally instances of classes.
+normally instances of classes.  Only once you are creating the
+instance of a utility class, but adapter instances are dynamically
+created whenever you query for it.
 
 
 Named utility
 ~~~~~~~~~~~~~
 
 When registering a utility component, like adapter, you can use a
-name.
+name.  As mentioned in the previous section, a utility registered with
+a particular name is called named utility.
 
-For example consider this:
+This is how you can register the `greeter` utility with a name::
 
   >>> greet = Greeter()
   >>> gsm.registerUtility(greet, IGreeter, 'new')
 
 In this example you registered the utility with a name as providing
-the `IGreeter` interface.  You can look the interface up with either
+the `IGreeter` interface.  You can look up the interface with either
 `queryUtility` or `getUtility`::
 
   >>> from zope.component import queryUtility
@@ -1217,16 +1226,15 @@ the `IGreeter` interface.  You can look the interface up with either
 As you can see here, while querying you have to use the `name` as
 second argument.
 
-.. note::
-
-  Calling `getUtility` function without a name (second argument) is
-  equivalent to calling with an empty string ('') as the name.
-  Because, the default value for second (keyword) argument is an empty
-  string.  Then, component lookup mechanism will try to find the
-  component with name as empty string (''), and it will fail.  When
-  component lookup fails it will raise ``ComponentLookupError``
-  exception.  Remember, it will not return some random component
-  registered with some other name.
+Calling `getUtility` function without a name (second argument) is
+equivalent to calling with an empty string as the name.  Because, the
+default value for second (keyword) argument is an empty string.  Then,
+component lookup mechanism will try to find the component with name as
+empty string, and it will fail.  When component lookup fails it will
+raise ``ComponentLookupError`` exception.  Remember, it will not
+return some random component registered with some other name.  The
+adapter look up fuctions, `getAdapter` and `queryAdapter` also works
+similarly.
 
 
 Factory
