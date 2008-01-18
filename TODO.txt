@@ -1,32 +1,21 @@
 TODO List
 =========
 
- - Document ``zope.component.adapter`` and
-   ``zope.component.adaptedBy``
 
- - Chapters planned for future (priority wise):
-
-    1. A case study: desktop application
-    2. A chapter on testing ZCA based application
-    3. A chapter on schema
-    4. A chapter on events
-    5. A chapter on implementation of ZCA
-
- - Change "Adapter pattern" section to a sidebar ?
-
- - Include reference for interfaces in ``zope.interface.interfaces``
-   and ``zope.component.interfaces``
-
- - Include reference for utility functions in
-   ``zope.component.interface``
-
- - Document ``zope.component.event``
+ - Document ``zope.interface.adaptedBy``
 
  - Document ``zope.interface.adapter``
 
  - Document ``zope.interface.advice``
 
+ - Document ``zope.component.event``
+
  - Document ``zope.interface.verify``
+
+ - Change "Adapter pattern" section to a sidebar ?
+
+ - Include reference for utility functions in
+   ``zope.component.interface``
 
  - Some of these adapters can be documented:
 
@@ -44,4 +33,15 @@ TODO List
    - zope.traversing.adapters.Traverser
    - zope.traversing.adapters.DefaultTraversable
    - zope.traversing.adapters.RootPhysicallyLocatable
+
+ - Include reference for interfaces in ``zope.interface.interfaces``
+   and ``zope.component.interfaces``
+
+ - Chapters planned for future (priority wise):
+
+    1. A case study: desktop application
+    2. A chapter on testing ZCA based application
+    3. A chapter on schema
+    4. A chapter on events
+    5. A chapter on implementation of ZCA
 
