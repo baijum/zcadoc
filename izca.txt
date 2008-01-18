@@ -1846,6 +1846,33 @@ Reference
 ---------
 
 
+adaptedBy
+~~~~~~~~~
+
+This function helps to find the adapted interfaces.
+
+ - Location: ``zope.component``
+
+ - Signature: `adaptedBy(object)`
+
+Example::
+
+  >>> from zope.interface import implements
+  >>> from zope.component import adapts
+  >>> from zope.component import adaptedBy
+
+  >>> class FrontDeskNG(object):
+  ...
+  ...     implements(IDesk)
+  ...     adapts(IGuest)
+  ...
+  ...     def __init__(self, guest):
+  ...         self.guest = guest
+
+  >>> adaptedBy(FrontDeskNG)
+  (<InterfaceClass __builtin__.IGuest>,)
+
+
 adapts
 ~~~~~~
 

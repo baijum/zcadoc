@@ -1,9 +1,6 @@
 TODO List
 =========
 
-
- - Document ``zope.interface.adaptedBy``
-
  - Document ``zope.interface.adapter``
 
  - Document ``zope.interface.advice``
