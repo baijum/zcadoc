@@ -29,11 +29,16 @@ EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST
 INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 
-.. note::
+.. sidebar:: Acknowledgements
 
-  Many people has helped me to write this book: Brad Allen, Kent
-  Tenney, Lorenzo Gil Sanchez, Michael Haubenwallner, Nando Quintana,
-  Stephane Klein and Tim Cook.  Thanks to all !
+  Many people has helped me to write this book.  The initial draft was
+  reviewed by my colleague Brad Allen.  When I announced this book
+  through my blog, many people encouraged me to proceed with this
+  work.  Kent Tenney edited most of the parts of the book, he also
+  rewrote the example application.  Many others also helped me to
+  write this book: Lorenzo Gil Sanchez, Michael Haubenwallner, Nando
+  Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas Herve.
+  Thanks to all !
 
 .. contents::
 .. .. sectnum::
