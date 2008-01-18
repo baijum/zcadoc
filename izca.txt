@@ -28,13 +28,13 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 
   Many people has helped me to write this book.  The initial draft was
   reviewed by my colleague Brad Allen.  When I announced this book
-  through my blog, I got encouraging comments to proceed with this
-  work.  Kent Tenney edited most parts of the book, he also rewrote
-  the example application.  Many others send me fixes and comments for
-  this book including, Lorenzo Gil Sanchez, Michael Haubenwallner,
-  Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas
-  Herve.  Lorenzo translated this work to Spanish and Stephane
-  translated it to French.  Thanks to all !
+  through my blog, I got many encouraging comments to proceed with
+  this work.  Kent Tenney edited most parts of the book, he also
+  rewrote the example application.  Many others send me fixes and
+  comments for this book including, Lorenzo Gil Sanchez, Michael
+  Haubenwallner, Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill
+  and Thomas Herve.  Lorenzo translated this work to Spanish and
+  Stephane translated it to French.  Thanks to all !
 
 .. contents::
 .. .. sectnum::
@@ -1290,6 +1290,9 @@ There is a shortcut to use factory::
 
 Advanced adapters
 -----------------
+
+This chapter discuss some advanced adapters like multi adapter,
+subscription adapter and handler.
 
 
 Multi adapter
