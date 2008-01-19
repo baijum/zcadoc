@@ -176,10 +176,20 @@ give all these eggs in the same line.)::
   $ easy_install /path/to/zope.proxy-3.4.x.tar.gz
   ...
 
-These methods install ZCA to the `system Python`, in the
-``site-packages`` directory, which can cause problems.  In a Zope3
+You can also install these packages after extracting each one
+separately.  For example::
+
+  $ tar zxvf /path/to/zope.interface-3.4.x.tar.gz
+  $ cd zope.interface-3.4.x
+  $ python setup.py build
+  $ python setup.py install
+
+These methods will install the ZCA to the `system Python`, in the
+``site-packages`` directory, which can cause problems.  In a Zope 3
 mailing list post, Jim Fulton recommends against using the system
-Python [#systempython]_.
+Python [#systempython]_.  You can use ``virtualenv`` and/or
+``zc.buildout`` for playing with any Python packages, also good for
+deployments.
 
 .. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
@@ -187,10 +197,15 @@ Python [#systempython]_.
 Experimenting with code
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-``virtualenv`` and ``zc.buildout`` are tools which install ZCA to an
-isolated working environment.  This is a good practice for
-experimenting with code, and familiarity with these tools will be
-beneficial when developing and deploying applications.
+There are two good packages in Python for setting up isolated working
+environments for developing Python applications.  ``virtualenv``
+created by Ian Biking and ``zc.buildout`` created by Jim Fulton are
+these two packages.  You can also use these packages together.  Using
+these packages you can install ``zope.component`` and other
+dependencies into an isolated working environment.  This is a good
+practice for experimenting with any Python code, and familiarity with
+these tools will be beneficial when developing and deploying
+applications.
 
 You can install ``virtualenv`` using ``easy_install``::
 
