@@ -32,10 +32,10 @@ PURPOSE.
   through my blog, I got many encouraging comments to proceed with
   this work.  Kent Tenney edited most parts of the book, he also
   rewrote the example application.  Many others send me fixes and
-  comments for this book including, Lorenzo Gil Sanchez, Michael
-  Haubenwallner, Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill
-  and Thomas Herve.  Lorenzo translated this work to Spanish and
-  Stephane translated it to French.  Thanks to all !
+  comments including, Lorenzo Gil Sanchez, Michael Haubenwallner,
+  Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas
+  Herve.  Lorenzo translated this work to Spanish and Stephane
+  translated it to French.  Thanks to all !
 
 .. contents::
 .. .. sectnum::
@@ -53,7 +53,7 @@ shown to be well suited for dealing with large systems.  Component
 based design, and programming using components are becoming very
 popular these days.  There are many frameworks for supporting
 component based design in different languages, some are even language
-neutral.  Examples of this are Microsoft's COM and Mozilla's XPCOM.
+neutral.  Examples of these are Microsoft's COM and Mozilla's XPCOM.
 
 **Zope Component Architecture (ZCA)** is a Python framework for
 supporting component based design and programming.  It is very well
@@ -61,13 +61,6 @@ suited to developing large Python software systems.  The ZCA is not
 specific to the Zope web application server: it can be used for
 developing any Python application.  Maybe it should be called the
 `Python Component Architecture`.
-
-There are two core packages related to the ZCA:
-
-  - ``zope.interface`` is used to define the interface of a component.
-
-  - ``zope.component`` deals with registration and retrieval of
-    components.
 
 The ZCA is all about using Python objects effectively.  Components are
 reusable objects with introspectable interfaces.  A component provides
@@ -77,6 +70,13 @@ that it comply with its interface contracts.  Using ZCA, you can
 spread the complexity of systems over multiple cooperating components.
 It helps you to create two basic kinds of components: `adapter` and
 `utility`.
+
+There are two core packages related to the ZCA:
+
+  - ``zope.interface`` is used to define the interface of a component.
+
+  - ``zope.component`` deals with registration and retrieval of
+    components.
 
 Remember, the ZCA is not about the components themselves, rather it is
 about creating, registering, and retrieving components.  Remember
