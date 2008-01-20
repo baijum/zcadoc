@@ -1858,6 +1858,133 @@ running from subversion checkout, it will show the latest revision
 number.  If none of the above works it will set it to:
 `Development/Unknown`.
 
+Case study
+----------
+
+.. note::
+
+  This chapter is not yet completed.  Please send your suggestion !
+
+Introduction
+~~~~~~~~~~~~
+
+This chapter demonstrates creating a desktop application using PyGTK
+GUI library and the ZCA.  This application also use two different
+kinds of data persistence mechanisms, one object database (ZODB) & and
+another relational database (SQLite).  However, practically, only one
+storage can be used for a particular installation.  The reason for
+using two different persistence mechanisms is to demonstrate how to
+use the ZCA to glue components.  Majority of the code in this
+application is related to PyGTK.
+
+As the application grows you may use the ZCA components wherever you
+want pluggability or exensibility.  Use plain Python objects directly
+where you do not required pluggability or exensibility.
+
+There is no differnce in using ZCA for web or desktop or any other
+kind of applicatiion or framework.  It is better to follow a
+convention for the location from where you are going to register
+components.  This application use a convention, which can be extended
+by putting registration of similar components in separate modules and
+later import them from main registration module.  In this application
+the main component registration module is `register.py`.
+
+
+Use cases
+~~~~~~~~~
+
+The application we are going to discuss here is a library management
+system with minimal features.  The requirements can be summarized like
+this:
+
+  - Add members with a unique number and name.
+
+  - Add books with barcode, author & title
+
+  - Issue books
+
+  - Return books
+
+
+The application can designed in such a way that major features can be
+accessed from a single window.  The main window for accessing all
+these features can be designed like this:
+
+.. image:: mainwindow.png
+   :align: center
+
+The other windows are given below:
+
+.. image:: memberwindow.png
+   :align: center
+.. image:: catalogwindow.png
+   :align: center
+.. image:: circulationwindow.png
+   :align: center
+
+The windows of this application are designed using Glade GUI builder.
+You should give proper names for widgets you are going to use from
+code.  In the above window, all menu entries has names like:
+circulation, catalog, member, quit & about.
+
+The ``gtk.glade.XML`` object is used to parse glade file, thie will
+create GUI widgets.  This is how to parse and access objects::
+
+  import gtk.glade
+  xmlobj = gtk.glade.XML('/path/to/file.glade')
+  widget = xmlobj.get_widget('widget_name')
+
+In the mainwindow.py, you can see code like this::
+
+  curdir = os.path.abspath(os.path.dirname(__file__))
+  xml = os.path.join(curdir, 'glade', 'mainwindow.glade')
+  xmlobj = gtk.glade.XML(xml)
+
+  self.mainwindow = xmlobj.get_widget('mainwindow')
+
+The name of main window widget is `mainwindow`.  Similarly, other
+widgets are retrived blow that::
+
+  circulation = xmlobj.get_widget('circulation')
+  member = xmlobj.get_widget('member')
+  quit = xmlobj.get_widget('quit')
+  catalog = xmlobj.get_widget('catalog')
+  about = xmlobj.get_widget('about')
+
+Then, these widgets are connected for some events::
+
+  self.mainwindow.connect('delete_event', self.delete_event)
+  quit.connect('activate', self.delete_event)
+  circulation.connect('activate', self.on_circulation_activate)
+  member.connect('activate', self.on_member_activate)
+  catalog.connect('activate', self.on_catalog_activate)
+  about.connect('activate', self.on_about_activate)
+
+The `delete_event` is the event when the window is closing using the
+window close button.  The `activate` event is emitted when the menu is
+selected.  The widgets are connected to some callback functions for
+some eventes.
+
+You can see from the above code is that, main window is connected to
+`on_delete_event` method for `delete_event`.  The `quit` widget is
+also connected to same method for `activate` event::
+
+    def on_delete_event(self, *args):
+        gtk.main_quit()
+
+The callback function just call `main_quit` function 
+
+PyGTK
+~~~~~
+
+PySQLite
+~~~~~~~~
+
+ZODB
+~~~~
+
+Conclusions
+~~~~~~~~~~~
 
 Reference
 ---------
