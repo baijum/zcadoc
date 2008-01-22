@@ -3282,7 +3282,8 @@ convenient way to call ``directlyProvides`` for a module.
 You can see an example usage in `zope.component` source itself.  The
 `__init__.py` file has a statement like this::
 
-  moduleProvides(IComponentArchitecture, IComponentRegistrationConvenience)
+  moduleProvides(IComponentArchitecture,
+                 IComponentRegistrationConvenience)
 
 So, the `zope.component` provides two interfaces:
 `IComponentArchitecture` and `IComponentRegistrationConvenience`.
