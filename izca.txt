@@ -1910,19 +1910,28 @@ this:
   - Return books
 
 
-The application can designed in such a way that major features can be
-accessed from a single window.  The main window for accessing all
+The application can be designed in such a way that major features can
+be accessed from a single window.  The main window for accessing all
 these features can be designed like this:
 
 .. image:: mainwindow.png
    :align: center
 
-The other windows are given below:
+From member adding window, user should be able to manage members.  So,
+the member adding window should have *add*, *update* and *delete*
+buttons:
 
 .. image:: memberwindow.png
    :align: center
+
+From the catalog window, user can *add*, *edit* and *delete* books:
+
 .. image:: catalogwindow.png
    :align: center
+
+The circulation window should have the facility for issuing and
+returning books:
+
 .. image:: circulationwindow.png
    :align: center
 
