@@ -1858,6 +1858,7 @@ running from subversion checkout, it will show the latest revision
 number.  If none of the above works it will set it to:
 `Development/Unknown`.
 
+
 Case study
 ----------
 
@@ -1888,6 +1889,9 @@ components.  This application use a convention, which can be extended
 by putting registration of similar components in separate modules and
 later import them from main registration module.  In this application
 the main component registration module is `register.py`.
+
+Source code of this application can be downloaded from:
+http://www.muthukadan.net/downloads/zcalib.tar.bz2
 
 
 Use cases
@@ -1922,13 +1926,17 @@ The other windows are given below:
 .. image:: circulationwindow.png
    :align: center
 
+
+Overview of PyGTK code
+~~~~~~~~~~~~~~~~~~~~~~
+
 The windows of this application are designed using Glade GUI builder.
 You should give proper names for widgets you are going to use from
 code.  In the above window, all menu entries has names like:
 circulation, catalog, member, quit & about.
 
-The ``gtk.glade.XML`` object is used to parse glade file, thie will
-create GUI widgets.  This is how to parse and access objects::
+The ``gtk.glade.XML`` object is used to parse glade file, this will
+create GUI widget objects.  This is how to parse and access objects::
 
   import gtk.glade
   xmlobj = gtk.glade.XML('/path/to/file.glade')
@@ -1943,7 +1951,7 @@ In the mainwindow.py, you can see code like this::
   self.mainwindow = xmlobj.get_widget('mainwindow')
 
 The name of main window widget is `mainwindow`.  Similarly, other
-widgets are retrived blow that::
+widgets are retrived below that::
 
   circulation = xmlobj.get_widget('circulation')
   member = xmlobj.get_widget('member')
@@ -1965,7 +1973,7 @@ window close button.  The `activate` event is emitted when the menu is
 selected.  The widgets are connected to some callback functions for
 some eventes.
 
-You can see from the above code is that, main window is connected to
+You can see from the above code that, main window is connected to
 `on_delete_event` method for `delete_event`.  The `quit` widget is
 also connected to same method for `activate` event::
 
