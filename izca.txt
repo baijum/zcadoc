@@ -1864,7 +1864,7 @@ Case study
 
 .. note::
 
-  This chapter is not yet completed.  Please send your suggestion !
+  This chapter is not yet completed.  Please send your suggestions !
 
 Introduction
 ~~~~~~~~~~~~
@@ -1939,10 +1939,12 @@ returning books:
 Overview of PyGTK code
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The windows of this application are designed using Glade GUI builder.
-You should give proper names for widgets you are going to use from
-code.  In the above window, all menu entries has names like:
-circulation, catalog, member, quit & about.
+As you can see in the code, most of the code are related to PyGTK.
+The code structure is very similar for different windows.  The windows
+of this application are designed using Glade GUI builder.  You should
+give proper names for widgets you are going to use from code.  In the
+above window, all menu entries has names like: circulation, catalog,
+member, quit & about.
 
 The ``gtk.glade.XML`` object is used to parse glade file, this will
 create GUI widget objects.  This is how to parse and access objects::
@@ -1991,8 +1993,27 @@ also connected to same method for `activate` event::
 
 The callback function just call `main_quit` function 
 
-PyGTK
-~~~~~
+
+The code
+~~~~~~~~
+
+This is the `zcalib.py`::
+
+  import registry
+  import mainwindow
+
+  if __name__ == '__main__':
+      registry.initialize()
+      try:
+          mainwindow.main()
+      except KeyboardInterrupt:
+          import sys
+          sys.exit(1)
+
+Here, two modules are imported `registry` and `mainwindow`.  Then,
+registry is initialized and mainwindow's `main` function is called.
+
+
 
 PySQLite
 ~~~~~~~~
