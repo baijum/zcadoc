@@ -53,7 +53,6 @@ def initialize_odb():
                         (ICirculation,),
                         IDbOperation)
 
-
 def check_use_relational_db():
     use_rdb = False
     try:
@@ -64,14 +63,9 @@ def check_use_relational_db():
         pass
     return use_rdb
 
-
 def initialize():
     use_rdb = check_use_relational_db()
     if use_rdb:
         initialize_rdb()
     else:
         initialize_odb()
-
-
-def finalize():
-    pass

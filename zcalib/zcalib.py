@@ -6,6 +6,5 @@ if __name__ == '__main__':
     try:
         mainwindow.main()
     except KeyboardInterrupt:
-        registry.finalize()
         import sys
         sys.exit(1)
