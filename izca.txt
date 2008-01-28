@@ -27,11 +27,11 @@ PURPOSE.
 
 .. sidebar:: Acknowledgements
 
-  Many people has helped me to write this book.  The initial draft was
+  Many people have helped me to write this book.  The initial draft was
   reviewed by my colleague Brad Allen.  When I announced this book
   through my blog, I got many encouraging comments to proceed with
   this work.  Kent Tenney edited most parts of the book, he also
-  rewrote the example application.  Many others send me fixes and
+  rewrote the example application.  Many others sent me fixes and
   comments including, Lorenzo Gil Sanchez, Michael Haubenwallner,
   Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas
   Herve.  Lorenzo translated this work to Spanish and Stephane
@@ -452,8 +452,12 @@ chores such as cancellations and updates.  In the current design, we
 will need to pass the guest object to frontdesk every time we call
 methods such as `cancel_booking` and `update_booking`.
 
-We can avoid this requirement by implementing FrontDesk such that the
-guest object is set as an attribute::
+..
+    We can avoid this requirement by implementing FrontDesk such that the
+    guest object is set as an attribute::
+
+We can avoid this requirement if we pass the guest object to
+FrontDesk.__init__(), making it an attribute of the instance.
 
   >>> class FrontDeskNG(object):
   ...
@@ -469,81 +473,54 @@ guest object is set as an attribute::
   ...         'phone': guest.phone
   ...         }
 
-The solution you reached is a common design pattern called, `Adapter`.
-With this design, now you can add more methods, so more functionality,
-if required.
+.. include this bit at the front of the `Adapters` section when I get
+    the equivalent quote from the Patterns book to start the 
+    `Interfaces` section
 
-In this implementation, while creating the instance you have to pass
-the guest object which has the values as attributes.  Now you also
-required to create separate instances of `FrontDeskNG` for each
-guest object.
+    The solution we have reached is a common design pattern called,
+    `Adapter`.  The `Gang of Four` [#patternbook]_ give this as the
+    *intent* of Adapter::
 
-Now just step back and think differently.  Suppose you are the creator
-of this software and selling it to many hotel customers.  Consider a
-case where your different clients requires different storages.  For
-example, one frontdesk might store the details in a relational
-database and another one might store them in Zope Object Database
-(ZODB).  It would be better if you can replace the frontdesk object
-with another one which store guest details in a different way.  So, a
-mechanism to change implementation based on some configuration would
-be useful.
+     "Convert the interface of a class into another interface clients
+     expect.  Adapter lets classes work together that couldn't otherwise
+     because of incompatible interfaces."
 
-Zope component architecture provides a mechanism to replace components
-based on configuration.  Using Zope component architecture you can
-register components in a registry called component registry.  Later,
-retrieve component based on the configuration.
-
-The `FrontDeskNG` class follows, as you noted, a pattern called
-`Adapter`.  The `FrontDeskNG` is the adapter which adapts the
-guest object (adaptee).  As you can see, the adapter should contain
-the component it adapts (adaptee).  This is a typical implementation
-of adapter::
+The solution we have reached is a well known pattern, the *adapter*.
+In general, an adapter *contains* an *adaptee*::
 
   >>> class Adapter(object):
   ...
   ...     def __init__(self, adaptee):
   ...         self.adaptee = adaptee
 
-Now the adapter can make use adaptee (call its methods or access
-attributes).  An adapter may adapt more than one component.  Zope
-component architecture provides a mechanism to effectively use these
-kind of objects.  So, which component should be used will become a
-matter of configuration.
+This pattern will be useful in dealing with implementation details
+which depend on considerations such as:
 
-This is a common scenario where you want to use different objects
-doing same things, but the details may change.  There are many
-situations in programming where you want to use different
-implementations for same type of objects.  Here is a small list of
-other common scenarios:
+- changing customer requirements
+- storage requirements (ZODB, RDBM, XML ...)
+- output requirements (HTML, PDF, plain text ...)
+- markup rendering (ReST, Markdown, Textile ...) 
 
- - A wiki engine with support for multiple markups (STX, reST, Plain
-   text, etc.)
+ZCA uses adapters and a *component registry* to provide the capability
+to change implementation details of code via *configuration*.
 
- - An object browser which shows size of different types of objects.
+As we will see in the section on ZCA adapters, the ability to
+configure implementation details provides useful capability:
 
- - Different types of output formats for text data (PDF, HTML etc.)
+- the ability to switch between implementations
+- the ability to add implementations as needed
+- increased re-use of both legacy and ZCA code
 
- - When developing an application for multiple clients, their
-   requirements may change.  Maintaining separate code bases of the
-   same application for different clients is difficult.  A better
-   approach would be to create reusable components and configure them
-   based on client-specific requirements.
+These capabilities lead to code that is flexible, scalable and
+re-usable. There is a cost however, maintaining the component registry
+adds a level of complexity to the application.  If an application will
+never require these features, ZCA is unnecessary.
 
-All these examples points to situations where you want to make
-applications extensible or pluggable.  Do not use `adapter`
-components where you do not want extensibility or pluggability.
-
-Zope component architecture provides `adapter` components to solve
-these kinds of problems.  In fact, `FrontDeskNG` is an adapter
-without explicit interface declaration.  This tutorial will discuss
-adapters after introducing the concept of interfaces.  Interfaces are
-one of the foundations of Zope components, so understanding the
-concept and usage of interfaces is very important.
-
+We are now ready to begin our study of the Zope Component
+Architecture, beginning with interfaces.
 
 Interfaces
 ----------
-
 
 Introduction
 ~~~~~~~~~~~~
