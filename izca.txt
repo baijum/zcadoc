@@ -447,15 +447,13 @@ easier to restructure and maintain.
 The adapter pattern
 ~~~~~~~~~~~~~~~~~~~
 
-In a real application, as was noted earlier, the frontdesk object may
-have cancellation and/or updation functionality.  Suppose there are
-two more methods like, `cancel_booking` and `update_booking`.  In the
-current design you will be required to pass the guest object for each
-methods.  We can avoid this requirement if we make the guest object an
-attribute of the frontdesk object.
+In a real application, the frontdesk object will need to handle
+chores such as cancellations and updates.  In the current design, we
+will need to pass the guest object to frontdesk every time we call
+methods such as `cancel_booking` and `update_booking`.
 
-Here is the new implementation of FrontDesk which sets a guest
-object as an attribute::
+We can avoid this requirement by implementing FrontDesk such that the
+guest object is set as an attribute::
 
   >>> class FrontDeskNG(object):
   ...
