@@ -3,7 +3,7 @@ A Comprehensive Guide to Zope Component Architecture
 ====================================================
 
 :Author: Baiju M
-:Version: 0.5.4
+:Version: 0.5.5
 :Printed Book: `http://www.lulu.com/content/1561045
                     <http://www.lulu.com/content/1561045>`_
 :Online PDF: `http://www.muthukadan.net/docs/zca.pdf
