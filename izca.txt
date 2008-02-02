@@ -525,6 +525,20 @@ Interfaces
 Introduction
 ~~~~~~~~~~~~
 
+The README.txt [#readmes]_ in path/to/zope/interface defines
+interfaces like this::
+
+    Interfaces are objects that specify (document) the external behavior
+    of objects that "provide" them.  An interface specifies behavior
+    through:
+
+    - Informal documentation in a doc string
+
+    - Attribute definitions
+
+    - Invariants, which are conditions that must hold for objects that
+      provide the interface
+
 The classic software engineering book `Design Patterns`[#patternbook]_
 by the `Gang of Four` recommends that you "Program to an interface,
 not an implementation".  Defining a formal interface is helpful in
@@ -532,10 +546,16 @@ understanding a system.  Moreover, interfaces bring to you all the
 benefits of ZCA.
 
 .. [#patternbook] http://en.wikipedia.org/wiki/Design_Patterns
+.. [#readmes] The Zope code tree is full of README.txt files which
+    offer wonderful documentation.
 
 An interface specifies the characteristics of an object, it's
 behaviour, it's capabilities.  The interface describes *what* an
 object can do, to learn *how*, you must look at the implementation.
+
+A commonly used metaphor for an interface is `contract` or
+`blueprint`, the legal and architectural terms for a set of
+specifications.
 
 In some modern programming languages: Java, C#, VB.NET etc, interfaces
 are an explicit aspect of the language.  Since Python lacks
