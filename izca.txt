@@ -519,41 +519,49 @@ never require these features, ZCA is unnecessary.
 We are now ready to begin our study of the Zope Component
 Architecture, beginning with interfaces.
 
+
 Interfaces
 ----------
 
 Introduction
 ~~~~~~~~~~~~
 
-`Design Patterns` is a classic book in software engineering by the
-`Gang of Four` [#patternbook]_.  In this book they recommend: "Program
-to an interface, not an implementation".  Defining formal interfaces
-helps you better understand system.  Moreover interface brings you all
-the benefits of ZCA.
+The README.txt [#readmes]_ in path/to/zope/interface defines
+interfaces like this::
 
+    Interfaces are objects that specify (document) the external behavior
+    of objects that "provide" them.  An interface specifies behavior
+    through:
+
+    - Informal documentation in a doc string
+
+    - Attribute definitions
+
+    - Invariants, which are conditions that must hold for objects that
+      provide the interface
+
+The classic software engineering book `Design Patterns` [#patternbook]_
+by the `Gang of Four` recommends that you "Program to an interface,
+not an implementation".  Defining a formal interface is helpful in
+understanding a system.  Moreover, interfaces bring to you all the
+benefits of ZCA.
+
+.. [#readmes] The Zope code tree is full of README.txt files which
+    offer wonderful documentation.
 .. [#patternbook] http://en.wikipedia.org/wiki/Design_Patterns
 
-Interface define the behavior and state of objects.  An interface
-describes how you work with the object.  If you like metaphor, think
-of interface as a `contract for object`.  Another metaphor which may
-help is `blueprint for objects`.  In the code, methods and attributes
-are forming the object's interface.
+An interface specifies the characteristics of an object, it's
+behaviour, it's capabilities.  The interface describes *what* an
+object can do, to learn *how*, you must look at the implementation.
 
-The notion of interface is very explicit in modern languages like
-Java, C#, VB.NET etc.  Also these languages provide some syntax for
-defining interfaces.  Python has the notion interfaces, but it is not
-very explicit.  To simulate a formal definition of interfaces in C++,
-`Gang of Four` used classes with virtual functions in `Design
-Patterns` book.  In a similar fashion, Zope component architecture use
-``zope.interface.Interface`` inherited meta-class for defining an
-interface.
+Commonly used metaphors for interfaces are `contract` or `blueprint`,
+the legal and architectural terms for a set of specifications.
 
-The base of object-orientation is the communication between objects.
-Messages are used for the communication between objects.  In Python,
-functions, methods or any other callable can be used to handle
-messages.
+In some modern programming languages: Java, C#, VB.NET etc, interfaces
+are an explicit aspect of the language.  Since Python lacks
+interfaces, ZCA implements them as a meta-class to inherit from.
 
-For example, consider this class::
+Here is a classic *hello world* style example::
 
   >>> class Host(object):
   ...
@@ -570,18 +578,14 @@ will return `Good morning, ...!` ::
   >>> host.goodmorning('Jack')
   'Good morning, Jack!'
 
-Here ``host`` is the actual object.  The implementation details of
-this object is the class ``Host``.  Now, how to find how the object
-looks like, that is, what are the methods and attributes of the
-object.  For this, either you have go through the implementation
-details (``Host`` class) of the object or a separate API documentation
-[#api]_ will be required.
+Here ``host`` is the actual object your code uses.  If you want to
+examine implementation details you need to access the class ``Host``,
+either via the source code or an API [#api]_ documentation tool.
 
 .. [#api] http://en.wikipedia.org/wiki/Application_programming_interface
 
-You can use the ``zope.interface`` package to define the interface of
-objects.  For the class given above you can specify the interface like
-this::
+Now we will begin to use the ZCA interfaces.  For the class given
+above you can specify the interface like this::
 
   >>> from zope.interface import Interface
 
@@ -590,11 +594,10 @@ this::
   ...     def goodmorning(guest):
   ...         """Say good morning to guest"""
 
-As you can see, the interface is defined using Python class statement.
-We use (abuse?) Python's class statement to define interfaces.  To
-make a class an interface, it must be inherited from
-``zope.interface.Interface`` .  The ``I`` prefix for interface name is
-a convention.
+As you can see, the interface inherits from zope.interface.Interface.
+This use (abuse?) of Python's class statement is how ZCA defines an
+interface.  The ``I`` prefix for the interface name is a useful
+convention.
 
 
 Declaring interfaces
