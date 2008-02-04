@@ -1083,7 +1083,7 @@ expect.  This allows classes work together that couldn't otherwise
 because of incompatible interfaces.  But in the `motivation` section
 of Design Patterns book, GoF says: "Often the adapter is responsible
 for functionality the adapted class doesn't provide".  ZCA adapter has
-more focus on adding functionalities than creating a new interface for
+more focus on adding functionality than creating a new interface for
 an adapted object (adaptee).  ZCA adapter lets adapter classes extend
 functionality by adding methods.  (It would be interesting to note
 that `Adapter` was known as `Feature` in earlier stage of ZCA
@@ -1225,7 +1225,7 @@ component lookup mechanism will try to find the component with name as
 empty string, and it will fail.  When component lookup fails it will
 raise ``ComponentLookupError`` exception.  Remember, it will not
 return some random component registered with some other name.  The
-adapter look up fuctions, `getAdapter` and `queryAdapter` also works
+adapter look up functions, `getAdapter` and `queryAdapter` also works
 similarly.
 
 
@@ -1857,11 +1857,11 @@ use the ZCA to glue components.  Majority of the code in this
 application is related to PyGTK.
 
 As the application grows you may use the ZCA components wherever you
-want pluggability or exensibility.  Use plain Python objects directly
-where you do not required pluggability or exensibility.
+want pluggability or extensibility.  Use plain Python objects directly
+where you do not required pluggability or extensibility.
 
-There is no differnce in using ZCA for web or desktop or any other
-kind of applicatiion or framework.  It is better to follow a
+There is no difference in using ZCA for web or desktop or any other
+kind of application or framework.  It is better to follow a
 convention for the location from where you are going to register
 components.  This application use a convention, which can be extended
 by putting registration of similar components in separate modules and
@@ -1895,14 +1895,15 @@ these features can be designed like this:
 .. image:: mainwindow.png
    :align: center
 
-From member adding window, user should be able to manage members.  So,
-the member adding window should have *add*, *update* and *delete*
-buttons:
+From member window, user should be able to manage members.  So, it
+should be possible to *add*, *update* and *delete* members as shown
+in the below picture:
 
 .. image:: memberwindow.png
    :align: center
 
-From the catalog window, user can *add*, *edit* and *delete* books:
+Similar to member window, the catalog window allows user to *add*,
+*edit* and *delete* books:
 
 .. image:: catalogwindow.png
    :align: center
@@ -1921,10 +1922,10 @@ As you can see in the code, most of the code are related to PyGTK.
 The code structure is very similar for different windows.  The windows
 of this application are designed using Glade GUI builder.  You should
 give proper names for widgets you are going to use from code.  In the
-above window, all menu entries has names like: circulation, catalog,
+main window, all menu entries has names like: circulation, catalog,
 member, quit & about.
 
-The ``gtk.glade.XML`` object is used to parse glade file, this will
+The ``gtk.glade.XML`` class is used to parse glade file, this will
 create GUI widget objects.  This is how to parse and access objects::
 
   import gtk.glade
@@ -1940,7 +1941,7 @@ In the mainwindow.py, you can see code like this::
   self.mainwindow = xmlobj.get_widget('mainwindow')
 
 The name of main window widget is `mainwindow`.  Similarly, other
-widgets are retrived below that::
+widgets are retrieved like this::
 
   circulation = xmlobj.get_widget('circulation')
   member = xmlobj.get_widget('member')
@@ -1960,7 +1961,7 @@ Then, these widgets are connected for some events::
 The `delete_event` is the event when the window is closing using the
 window close button.  The `activate` event is emitted when the menu is
 selected.  The widgets are connected to some callback functions for
-some eventes.
+some events.
 
 You can see from the above code that, main window is connected to
 `on_delete_event` method for `delete_event`.  The `quit` widget is
