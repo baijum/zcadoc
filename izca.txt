@@ -496,10 +496,10 @@ In general, an adapter *contains* an *adaptee*::
 This pattern will be useful in dealing with implementation details
 which depend on considerations such as:
 
-- changing customer requirements
-- storage requirements (ZODB, RDBM, XML ...)
-- output requirements (HTML, PDF, plain text ...)
-- markup rendering (ReST, Markdown, Textile ...) 
+ - changing customer requirements
+ - storage requirements (ZODB, RDBM, XML ...)
+ - output requirements (HTML, PDF, plain text ...)
+ - markup rendering (ReST, Markdown, Textile ...) 
 
 ZCA uses adapters and a *component registry* to provide the capability
 to change implementation details of code via *configuration*.
@@ -507,9 +507,9 @@ to change implementation details of code via *configuration*.
 As we will see in the section on ZCA adapters, the ability to
 configure implementation details provides useful capability:
 
-- the ability to switch between implementations
-- the ability to add implementations as needed
-- increased re-use of both legacy and ZCA code
+ - the ability to switch between implementations
+ - the ability to add implementations as needed
+ - increased re-use of both legacy and ZCA code
 
 These capabilities lead to code that is flexible, scalable and
 re-usable. There is a cost however, maintaining the component registry
