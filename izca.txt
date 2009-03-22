@@ -44,6 +44,7 @@ PURPOSE.
 Getting started
 ---------------
 
+
 Introduction
 ~~~~~~~~~~~~
 
@@ -110,10 +111,10 @@ Martijn Faassen.
 
 Initially ZCA defined additional components; `services` and `views`,
 but the developers came to realize that utility can replace `service`
-and multi-adapter can replace `view`.  Now ZCA has a very small number
-of core component types: utilities, adapters, subscribers and
-handlers.  In fact, subscribers and handlers are two special types of
-adapters.
+and multi-adapter can replace `view`.  Now ZCA has a very small
+number of core component types: `utilities`, `adapters`,
+`subscribers` and `handlers`.  In fact, `subscribers` and `handlers`
+are two special types of adapters.
 
 During the Zope 3.2 release cycle, Jim Fulton proposed a major
 simplification of ZCA [#proposal]_.  With this simplification, a new
@@ -129,16 +130,23 @@ separating out core ZCA functionality from add-on features [#extras]_.
 
 .. [#extras] http://peak.telecommunity.com/DevCenter/setuptools#declaring-dependencies
 
-Now, The ZCA project is an independent project with it's own release
-cycle and Subversion repository.  However, issues and bugs are still
-tracked as part of Zope 3 project [#bugs]_, and the main zope-dev list
-is used for development discussions [#discussions]_.  There is also
-another general user list for Zope 3 (`zope3-users`) which can be used
-for any queries about the ZCA [#z3users]_.
+In March 2009, Tres Seaver removed dependcencies of
+``zope.deferredimport`` and ``zope.proxy``.
 
+Now, The ZCA project is an independent project with it's own release
+cycle and Subversion repository.  This project is coming as part the
+bigger the Zope framework project [#framework]_.  However, issues and
+bugs are still tracked as part of the Zope 3 project [#bugs]_, and
+the main zope-dev list is used for development discussions
+[#discussions]_.  There is also another general user list for Zope 3
+(`zope3-users`) which can be used for any queries about the ZCA
+[#z3users]_.
+
+.. [#framework] http://docs.zope.org/zopeframework/
 .. [#bugs] https://bugs.launchpad.net/zope3
 .. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
 .. [#z3users] http://mail.zope.org/mailman/listinfo/zope3-users
+
 
 Installation
 ~~~~~~~~~~~~
