@@ -3,13 +3,13 @@ A Comprehensive Guide to Zope Component Architecture
 ====================================================
 
 :Author: Baiju M
-:Version: 0.5.6
+:Version: 0.5.7
 :Printed Book: `http://www.lulu.com/content/1561045
                     <http://www.lulu.com/content/1561045>`_
 :Online PDF: `http://www.muthukadan.net/docs/zca.pdf
                   <http://www.muthukadan.net/docs/zca.pdf>`_
 
-Copyright (C) 2007,2008 Baiju M <baiju.m.mail AT gmail.com>.
+Copyright (C) 2007,2008,2009 Baiju M <baiju.m.mail AT gmail.com>.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.2 or
@@ -27,12 +27,12 @@ PURPOSE.
 
 .. sidebar:: Acknowledgements
 
-  Many people have helped me to write this book.  The initial draft was
-  reviewed by my colleague Brad Allen.  When I announced this book
-  through my blog, I got many encouraging comments to proceed with
-  this work.  Kent Tenney edited most parts of the book, he also
-  rewrote the example application.  Many others sent me fixes and
-  comments including, Lorenzo Gil Sanchez, Michael Haubenwallner,
+  Many people have helped me to write this book.  The initial draft
+  was reviewed by my colleague Brad Allen.  When I announced this
+  book through my blog, I received many encouraging comments to
+  proceed with this work.  Kent Tenney edited most parts of the book,
+  he also rewrote the example application.  Many others sent me fixes
+  and comments including, Lorenzo Gil Sanchez, Michael Haubenwallner,
   Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas
   Herve.  Lorenzo translated this work to Spanish and Stephane
   translated it to French.  Thanks to all !
@@ -51,43 +51,48 @@ Developing a large software system is always very complicated.  An
 object oriented approach to analysis, design and programming has been
 shown to be well suited for dealing with large systems.  Component
 based design, and programming using components are becoming very
-popular these days.  There are many frameworks for supporting
-component based design in different languages, some are even language
-neutral.  Examples of these are Microsoft's COM and Mozilla's XPCOM.
+popular these days.  Component based approach helps you to write and
+maintain easily unit-testable software systems.  There are many
+frameworks for supporting component based design in different
+languages, some are even language neutral.  Examples of these are
+Microsoft's COM and Mozilla's XPCOM.
 
 **Zope Component Architecture (ZCA)** is a Python framework for
 supporting component based design and programming.  It is very well
 suited to developing large Python software systems.  The ZCA is not
 specific to the Zope web application server: it can be used for
-developing any Python application.  Maybe it should be called the
+developing any Python application.  Maybe it should be called as
 `Python Component Architecture`.
 
-The ZCA is all about using Python objects effectively.  Components are
-reusable objects with introspectable interfaces.  A component provides
-an interface implemented in a class, or any other callable object.  It
-doesn't matter how the component is implemented, the important part is
-that it comply with its interface contracts.  Using ZCA, you can
-spread the complexity of systems over multiple cooperating components.
-It helps you to create two basic kinds of components: `adapter` and
-`utility`.
+The ZCA is all about using Python objects effectively.  Components
+are reusable objects with introspectable interfaces.  An interface is
+an object that describes how you work with a particular component.
+In other words, component provides an interface implemented in a
+class, or any other callable object.  It doesn't matter how the
+component is implemented, the important part is that it comply with
+its interface contracts.  Using ZCA, you can spread the complexity of
+systems over multiple cooperating components.  It helps you to create
+two basic kinds of components: `adapter` and `utility`.
 
-There are two core packages related to the ZCA:
+There are three core packages related to the ZCA:
 
   - ``zope.interface`` is used to define the interface of a component.
 
-  - ``zope.component`` deals with registration and retrieval of
-    components.
+  - ``zope.event`` provides a simple event system.
 
-Remember, the ZCA is not about the components themselves, rather it is
+  - ``zope.component`` deals with creation, registration and
+    retrieval of components.
+
+Remember, the ZCA is not the components themselves, rather it is
 about creating, registering, and retrieving components.  Remember
 also, an `adapter` is a normal Python class (or a factory in general)
 and `utility` is a normal Python callable object.
 
 The ZCA framework is developed as part of the Zope 3 project.  As
-noted earlier, it is a pure Python framework, so it can be used in any
-kind of Python application.  Currently both Zope 3 and Zope 2 projects
-use this framework extensively.  There are many other projects
-including non-web applications using it [#projects]_.
+noted earlier, it is a pure Python framework, so it can be used in
+any kind of Python application.  Currently Zope 3, Zope 2 and Grok
+projects use this framework extensively.  There are many other
+projects including non-web applications using it [#projects]_.
 
 .. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
 
