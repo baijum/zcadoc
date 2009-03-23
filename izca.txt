@@ -3,7 +3,7 @@ A Comprehensive Guide to Zope Component Architecture
 ====================================================
 
 :Author: Baiju M
-:Version: 0.5.7
+:Version: 0.5.8
 :Printed Book: `http://www.lulu.com/content/1561045
                     <http://www.lulu.com/content/1561045>`_
 :Online PDF: `http://www.muthukadan.net/docs/zca.pdf
@@ -12,9 +12,8 @@ A Comprehensive Guide to Zope Component Architecture
 Copyright (C) 2007,2008,2009 Baiju M <baiju.m.mail AT gmail.com>.
 
 Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.2 or
-(at your option) any later version published by the Free Software
-Foundation.
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation.
 
 The source code in this document is subject to the provisions of the
 Zope Public License, Version 2.1 (ZPL).
