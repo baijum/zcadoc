@@ -77,7 +77,8 @@ two basic kinds of components: `adapter` and `utility`.
 
 There are three core packages related to the ZCA:
 
-  - ``zope.interface`` is used to define the interface of a component.
+  - ``zope.interface`` is used to define the interface of a
+    component.
 
   - ``zope.event`` provides a simple event system.
 
@@ -208,15 +209,16 @@ deployments.
 Experimenting with code
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two approaches in Python for setting up isolated working
-environments for developing Python applications.  ``virtualenv``
-created by Ian Biking and ``zc.buildout`` created by Jim Fulton are
-these two packages.  You can also use these packages together.  Using
-these packages you can install ``zope.component`` and other
-dependencies into an isolated working environment.  This is a good
-practice for experimenting with any Python code, and familiarity with
-these tools will be beneficial when developing and deploying
-applications.
+There are two popular approaches in Python for setting up an isolated
+working environments for developing applications.  The most popular
+one is ``virtualenv`` package created by Ian Biking and
+``zc.buildout`` created by Jim Fulton.  You can also use these
+packages together.  These packages helps you to install
+``zope.component`` and other dependencies into an isolated working
+environment.  It is a good practice to use these packages for
+experimenting with any Python code.  Familiarity with these tools
+will be beneficial when developing and deploying any Python
+application.
 
 
 **virtualenv**
