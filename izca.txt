@@ -347,19 +347,19 @@ bookings_db dictionary::
 The requirements of a hotel booking management application require
 considering additional data:
 
-  - phone numbers
-  - room options
-  - payment methods
-  - ...
+- phone numbers
+- room options
+- payment methods
+- ...
 
 And code to manage the data:
 
-  - cancel a reservation
-  - update a reservation
-  - pay for a room
-  - persist the data
-  - insure security of the data
-  - ...
+- cancel a reservation
+- update a reservation
+- pay for a room
+- persist the data
+- insure security of the data
+- ...
 
 Were we to continue with the procedural example, we would create many
 functions, passing data back and forth between them.  As requirements
@@ -1770,15 +1770,15 @@ has only two attribute, ``__parent__`` and ``__name__``.  The
 The ``IPhysicallyLocatable`` interface has four methods:
 ``getRoot``, ``getPath``, ``getName``, and ``getNearestSite``.
 
-  - ``getRoot`` function will return the physical root object.
+- ``getRoot`` function will return the physical root object.
 
-  - ``getPath`` return the physical path to the object as a
-    string.
+- ``getPath`` return the physical path to the object as a
+  string.
 
-  - ``getName`` return the last segment of the physical path.
+- ``getName`` return the last segment of the physical path.
 
-  - ``getNearestSite`` return the site the object is contained
-    in.  If the object is a site, the object itself is returned.
+- ``getNearestSite`` return the site the object is contained
+  in.  If the object is a site, the object itself is returned.
 
 If you learn Zope 3, you can see that these are the important
 things which you required very often.  To understand the beauty
@@ -2522,9 +2522,9 @@ adaptedBy
 
 This function helps to find the adapted interfaces.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `adaptedBy(object)`
+- Signature: `adaptedBy(object)`
 
 Example::
 
@@ -2551,9 +2551,9 @@ Adapters can be any callable object, you can use the `adapter`
 decorator to declare that a callable object adapts some interfaces (or
 classes)
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `adapter(*interfaces)`
+- Signature: `adapter(*interfaces)`
 
 Example::
 
@@ -2597,9 +2597,9 @@ adapts
 
 This function helps to declare adapter classes.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `adapts(*interfaces)`
+- Signature: `adapts(*interfaces)`
 
 Example::
 
@@ -2630,9 +2630,9 @@ Declare interfaces declared directly for an object.  The arguments
 after the object are one or more interfaces.  The interfaces given are
 added to the interfaces previously declared for the object.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `alsoProvides(object, *interfaces)`
+- Signature: `alsoProvides(object, *interfaces)`
 
 Example::
 
@@ -2671,11 +2671,11 @@ Attribute
 
 Using this class, you can define normal attributes in an interface.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `Attribute(name, doc='')`
+- Signature: `Attribute(name, doc='')`
 
- - See also: `Interface`_
+- See also: `Interface`_
 
 Example::
 
@@ -2695,9 +2695,9 @@ Declare additional interfaces implemented for instances of a class.
 The arguments after the class are one or more interfaces.  The
 interfaces given are added to any interfaces previously declared.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `classImplements(cls, *interfaces)`
+- Signature: `classImplements(cls, *interfaces)`
 
 Example::
 
@@ -2784,9 +2784,9 @@ that class will provide the interface implemented by that class.  But
 if you want a class to be provided by an interface, you can declare it
 using ``classProvides`` function.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `classProvides(*interfaces)`
+- Signature: `classProvides(*interfaces)`
 
 Example::
 
@@ -2842,9 +2842,9 @@ looked up in a location other than the current site.  (Of course, this
 means that it is impossible to pass a keyword argument named "context"
 to the factory.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `createObject(factory_name, *args, **kwargs)`
+- Signature: `createObject(factory_name, *args, **kwargs)`
 
 Example::
 
@@ -2891,9 +2891,9 @@ directlyProvidedBy
 This function will return the interfaces directly provided by the
 given object.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `directlyProvidedBy(object)`
+- Signature: `directlyProvidedBy(object)`
 
 Example::
 
@@ -3005,9 +3005,9 @@ Get a named adapter to an interface for an object.  Returns an adapter
 that can adapt object to interface.  If a matching adapter cannot be
 found, raises ``ComponentLookupError`` .
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `getAdapter(object, interface=Interface, name=u'', context=None)`
+- Signature: `getAdapter(object, interface=Interface, name=u'', context=None)`
 
 Example::
 
@@ -3069,11 +3069,11 @@ getAdapterInContext
 Instead of this function, use `context` argument of `getAdapter`_
 function.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getAdapterInContext(object, interface, context)`
+- Signature: `getAdapterInContext(object, interface, context)`
 
- - See also: `queryAdapterInContext`_
+- See also: `queryAdapterInContext`_
 
 Example::
 
@@ -3151,9 +3151,9 @@ Look for all matching adapters to a provided interface for objects.
 Return a list of adapters that match. If an adapter is named, only the
 most specific adapter of a given name is returned.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getAdapters(objects, provided, context=None)`
+- Signature: `getAdapters(objects, provided, context=None)`
 
 Example::
 
@@ -3196,9 +3196,9 @@ Return all registered utilities for an interface.  This includes
 overridden utilities.  The returned value is an iterable of utility
 instances.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getAllUtilitiesRegisteredFor(interface)`
+- Signature: `getAllUtilitiesRegisteredFor(interface)`
 
 Example::
 
@@ -3280,9 +3280,9 @@ given name that is nearest to the context, and returns the interface
 or interface tuple that object instances created by the named factory
 will implement.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getFactoryInterfaces(name, context=None)`
+- Signature: `getFactoryInterfaces(name, context=None)`
 
 Example::
 
@@ -3324,9 +3324,9 @@ getGlobalSiteManager
 Return the global site manager.  This function should never fail and
 always return an object that provides `IGlobalSiteManager`
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getGlobalSiteManager()`
+- Signature: `getGlobalSiteManager()`
 
 Example::
 
@@ -3347,12 +3347,12 @@ consisting of an empty string is reserved for unnamed adapters. The
 unnamed adapter methods will often call the named adapter methods with
 an empty string for a name.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getMultiAdapter(objects, interface=Interface, name='',
-   context=None)`
+- Signature: `getMultiAdapter(objects, interface=Interface, name='',
+  context=None)`
 
- - See also: `queryMultiAdapter`_
+- See also: `queryMultiAdapter`_
 
 Example::
 
@@ -3412,9 +3412,9 @@ Get the nearest site manager in the given context.  If `context` is
 `IComponentLookup` can be found.  If no adapter is found, a
 `ComponentLookupError` is raised.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getSiteManager(context=None)`
+- Signature: `getSiteManager(context=None)`
 
 Example 1::
 
@@ -3453,9 +3453,9 @@ getUtilitiesFor
 Look up the registered utilities that provide an interface.  Returns
 an iterable of name-utility pairs.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getUtilitiesFor(interface)`
+- Signature: `getUtilitiesFor(interface)`
 
 Example::
 
@@ -3492,9 +3492,9 @@ Get the utility that provides interface.  Returns the nearest utility
 to the context that implements the specified interface.  If one is not
 found, raises ``ComponentLookupError``.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `getUtility(interface, name='', context=None)`
+- Signature: `getUtility(interface, name='', context=None)`
 
 Example::
 
@@ -3532,9 +3532,9 @@ subscription adapter factories that don't produce anything.  They do
 all of their work when called.  Handlers are typically used to handle
 events.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `handle(*objects)`
+- Signature: `handle(*objects)`
 
 Example::
 
@@ -3584,9 +3584,9 @@ implementedBy
 
 Return the interfaces implemented for a class' instances.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `implementedBy(class_)`
+- Signature: `implementedBy(class_)`
 
 Example 1::
 
@@ -3642,9 +3642,9 @@ Create a decorator for declaring interfaces implemented by a factory.
 A callable is returned that makes an implements declaration on objects
 passed to it.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `implementer(*interfaces)`
+- Signature: `implementer(*interfaces)`
 
 Example::
 
@@ -3671,9 +3671,9 @@ interfaces.  The interfaces given are added to any interfaces
 previously declared.  Previous declarations include declarations for
 base classes unless implementsOnly was used.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `implements(*interfaces)`
+- Signature: `implements(*interfaces)`
 
 Example::
 
@@ -3708,9 +3708,9 @@ function is called in a class definition.  The arguments are one or
 more interfaces.  Previous declarations including declarations for
 base classes are overridden.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `implementsOnly(*interfaces)`
+- Signature: `implementsOnly(*interfaces)`
 
 Example::
 
@@ -3754,9 +3754,9 @@ Interface
 Using this class, you can define an interface.  To define an
 interface, just inherit from ``Interface`` class.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `Interface(name, doc='')`
+- Signature: `Interface(name, doc='')`
 
 Example 1::
 
@@ -3792,11 +3792,11 @@ error to call this function more than once in a module definition.
 This function is provided for convenience.  It provides a more
 convenient way to call ``directlyProvides`` for a module.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `moduleProvides(*interfaces)`
+- Signature: `moduleProvides(*interfaces)`
 
- - See also: `directlyProvides`_
+- See also: `directlyProvides`_
 
 You can see an example usage in `zope.component` source itself.  The
 `__init__.py` file has a statement like this::
@@ -3814,9 +3814,9 @@ noLongerProvides
 Remove an interface from the list of an object's directly provided
 interfaces.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `noLongerProvides(object, interface)`
+- Signature: `noLongerProvides(object, interface)`
 
 Example::
 
@@ -3889,9 +3889,9 @@ Test whether the interface is implemented by the object.  Return true
 if the object asserts that it implements the interface, including
 asserting that it implements an extended interface.
 
- - Location: ``zope.interface``
+- Location: ``zope.interface``
 
- - Signature: `providedBy(object)`
+- Signature: `providedBy(object)`
 
 Example 1::
 
@@ -3952,10 +3952,10 @@ Look for a named adapter to an interface for an object.  Returns an
 adapter that can adapt object to interface.  If a matching adapter
 cannot be found, returns the default.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `queryAdapter(object, interface=Interface, name=u'',
-   default=None, context=None)`
+- Signature: `queryAdapter(object, interface=Interface, name=u'',
+  default=None, context=None)`
 
 Example::
 
@@ -4033,12 +4033,12 @@ with the requested interface.  If the method returns a non-None value,
 that value will be returned. Otherwise, if the object already
 implements the interface, the object will be returned.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `queryAdapterInContext(object, interface, context,
-   default=None)`
+- Signature: `queryAdapterInContext(object, interface, context,
+  default=None)`
 
- - See also: `getAdapterInContext`_
+- See also: `getAdapterInContext`_
 
 Example::
 
@@ -4119,12 +4119,12 @@ an empty string is reserved for unnamed adapters.  The unnamed adapter
 methods will often call the named adapter methods with an empty string
 for a name.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `queryMultiAdapter(objects, interface=Interface,
-   name=u'', default=None, context=None)`
+- Signature: `queryMultiAdapter(objects, interface=Interface,
+  name=u'', default=None, context=None)`
 
- - See also: `getMultiAdapter`_
+- See also: `getMultiAdapter`_
 
 Example::
 
@@ -4181,9 +4181,9 @@ queryUtility
 This function is used to look up a utility that provides an interface.
 If one is not found, returns default.
 
- - Location: ``zope.component``
+- Location: ``zope.component``
 
- - Signature: `queryUtility(interface, name='', default=None)`
+- Signature: `queryUtility(interface, name='', default=None)`
 
 Example::
 
@@ -4218,12 +4218,12 @@ registerAdapter
 
 This function is used to register an adapter factory.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registerAdapter(factory, required=None, provided=None,
-   name=u'', info=u'')`
+- Signature: `registerAdapter(factory, required=None, provided=None,
+  name=u'', info=u'')`
 
- - See also: `unregisterAdapter`_
+- See also: `unregisterAdapter`_
 
 Example::
 
@@ -4287,9 +4287,9 @@ registeredAdapters
 Return an iterable of `IAdapterRegistrations`.  These registrations
 describe the current adapter registrations in the object.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registeredAdapters()`
+- Signature: `registeredAdapters()`
 
 Example::
 
@@ -4353,9 +4353,9 @@ registeredHandlers
 Return an iterable of `IHandlerRegistrations`.  These registrations
 describe the current handler registrations in the object.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registeredHandlers()`
+- Signature: `registeredHandlers()`
 
 Example::
 
@@ -4410,9 +4410,9 @@ Return an iterable of `ISubscriptionAdapterRegistrations`.  These
 registrations describe the current subscription adapter registrations
 in the object.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registeredSubscriptionAdapters()`
+- Signature: `registeredSubscriptionAdapters()`
 
 Example::
 
@@ -4471,9 +4471,9 @@ This function return an iterable of `IUtilityRegistrations`.  These
 registrations describe the current utility registrations in the
 object.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registeredUtilities()`
+- Signature: `registeredUtilities()`
 
 Example::
 
@@ -4509,11 +4509,11 @@ This function is used to register a handler.  A handler is a
 subscriber that doesn't compute an adapter but performs some function
 when called.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registerHandler(handler, required=None, name=u'', info='')`
+- Signature: `registerHandler(handler, required=None, name=u'', info='')`
 
- - See also: `unregisterHandler`_
+- See also: `unregisterHandler`_
 
 Note: In the current implementation of ``zope.component`` doesn't
 support `name` attribute.
@@ -4566,12 +4566,12 @@ registerSubscriptionAdapter
 
 This function is used to register a subscriber factory.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registerSubscriptionAdapter(factory, required=None,
-   provides=None, name=u'', info='')`
+- Signature: `registerSubscriptionAdapter(factory, required=None,
+  provides=None, name=u'', info='')`
 
- - See also: `unregisterSubscriptionAdapter`_
+- See also: `unregisterSubscriptionAdapter`_
 
 Example::
 
@@ -4624,12 +4624,12 @@ registerUtility
 
 This function is used to register a utility.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `registerUtility(component, provided=None, name=u'',
-   info=u'')`
+- Signature: `registerUtility(component, provided=None, name=u'',
+  info=u'')`
 
- - See also: `unregisterUtility`_
+- See also: `unregisterUtility`_
 
 Example::
 
@@ -4661,9 +4661,9 @@ This function is used to get subscribers.  Subscribers are returned
 that provide the provided interface and that depend on and are
 computed from the sequence of required objects.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `subscribers(required, provided, context=None)`
+- Signature: `subscribers(required, provided, context=None)`
 
 Example::
 
@@ -4753,12 +4753,12 @@ component is None and there is no component registered, or if the
 given component is not None and is not registered, then the function
 returns False, otherwise it returns True.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `unregisterAdapter(factory=None, required=None,
-   provided=None, name=u'')`
+- Signature: `unregisterAdapter(factory=None, required=None,
+  provided=None, name=u'')`
 
- - See also: `registerAdapter`_
+- See also: `registerAdapter`_
 
 Example::
 
@@ -4834,12 +4834,12 @@ subscriber that doesn't compute an adapter but performs some function
 when called.  A boolean is returned indicating whether the registry
 was changed.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `unregisterHandler(handler=None, required=None,
-   name=u'')`
+- Signature: `unregisterHandler(handler=None, required=None,
+  name=u'')`
 
- - See also: `registerHandler`_
+- See also: `registerHandler`_
 
 Example::
 
@@ -4908,12 +4908,12 @@ component is None and there is no component registered, or if the
 given component is not None and is not registered, then the function
 returns False, otherwise it returns True.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `unregisterSubscriptionAdapter(factory=None,
-   required=None, provides=None, name=u'')`
+- Signature: `unregisterSubscriptionAdapter(factory=None,
+  required=None, provides=None, name=u'')`
 
- - See also: `registerSubscriptionAdapter`_
+- See also: `registerSubscriptionAdapter`_
 
 Example::
 
@@ -4990,12 +4990,12 @@ given component is None and there is no component registered, or if
 the given component is not None and is not registered, then the
 function returns False, otherwise it returns True.
 
- - Location: ``zope.component - IComponentRegistry``
+- Location: ``zope.component - IComponentRegistry``
 
- - Signature: `unregisterUtility(component=None, provided=None,
-   name=u'')`
+- Signature: `unregisterUtility(component=None, provided=None,
+  name=u'')`
 
- - See also: `registerUtility`_
+- See also: `registerUtility`_
 
 Example::
 
