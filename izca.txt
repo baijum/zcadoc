@@ -152,8 +152,8 @@ Installation
 ~~~~~~~~~~~~
 
 The ``zope.component``, package together with the ``zope.interface``
-and ``zope.event`` packages are the core of Zope component
-architecture.  They provide facilities for defining, registering and
+and ``zope.event`` packages are the core of Zope Component
+Architecture.  They provide facilities for defining, registering and
 looking up components.  The ``zope.component`` package and its
 dependencies are available in egg format from the Python Package
 Index (PyPI) [#pypi]_.
@@ -208,7 +208,7 @@ deployments.
 Experimenting with code
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two popular approaches in Python for setting up an isolated
+There are two popular approaches in Python for setting up isolated
 working environments for developing applications.  The most popular
 one is ``virtualenv`` package created by Ian Biking and
 ``zc.buildout`` created by Jim Fulton.  You can also use these
@@ -309,16 +309,16 @@ Procedural approach
 
 In any business application, data storage is very critical.  For
 simplicity, this example use a Python dictionary as the storage.  We
-will generate unique id's for the dictionary, the associated value
+will generate unique IDs for the dictionary, the associated value
 will be a dictionary of details about the booking.
 
-  >>> bookings_db = {} #key: unique Id, value: details in a dictionary
+  >>> bookings_db = {} #key: unique ID, value: details in a dictionary
 
-A minimal implementation requires a function which we pass the details
-of the booking, and a supporting function which provides the the
-unique id for the storage dictionary key.
+A minimal implementation requires a function which we pass the
+details of the booking, and a supporting function which provides the
+the unique ID for the storage dictionary key.
 
-We can get the unique id like this::
+We can get the unique ID like this::
 
   >>> def get_next_id():
   ...     db_keys = bookings_db.keys()
@@ -330,9 +330,9 @@ We can get the unique id like this::
 
 As you can see, the `get_next_id` function implementation is very
 simple.  The function gets a list of keys and checks for an empty
-list. If the list is empty this is our first booking, so we return
-`1`. If the list is not empty, we add `1` to the maximum value in the
-list and return it.
+list.  If the list is empty, this is our first booking, so we return
+`1`.  If the list is not empty, we add `1` to the maximum value in
+the list and return it.
 
 Now we will use the above function to create entries in the
 bookings_db dictionary::
@@ -366,9 +366,9 @@ functions, passing data back and forth between them.  As requirements
 change and are added, the code becomes harder to maintain and bugs
 become harder to find and fix.
 
-We will end our discussion of the procedural approach here. It will be
-much easier to provide data persistence, design flexibility and code
-testability using objects.
+We will end our discussion of the procedural approach here.  It will
+be much easier to provide data persistence, design flexibility and
+code testability using objects.
 
 
 Object oriented approach
@@ -380,16 +380,16 @@ Object oriented approach
 Our discussion of object oriented design will introduce the `class` which
 serves to encapsulate the data, and the code to manage it.
 
-Our main class will be the `FrontDesk`. FrontDesk, or other classes it
-delegates to, will know how to manage the data for the hotel.  We will
-create `instances` of FrontDesk to apply this knowledge to the
-business of running a hotel.
+Our main class will be the ``FrontDesk``.  ``FrontDesk``, or other
+classes it delegates to, will know how to manage the data for the
+hotel.  We will create `instances` of ``FrontDesk`` to apply this
+knowledge to the business of running a hotel.
 
-Experience has shown that by consolidating the code and data requirements via
-objects, we will end up with a design which is easier to understand,
-test, and change.
+Experience has shown that by consolidating the code and data
+requirements via objects, we will end up with a design which is
+easier to understand, test, and change.
 
-Lets look at the implementation details of a FrontDesk class::
+Lets look at the implementation details of a ``FrontDesk`` class::
 
   >>> class FrontDesk(object):
   ...
@@ -424,11 +424,11 @@ We can achieve this requirement by adding one argument to the
   ...         'phone': phone
   ...         }
 
-In addition to migrating the data to new schema, we now have to change
-all calls to FrontDesk.  If we abstract the details of guest into an
-object and use it for registration, the code changes can be minimized.
-We now can make changes to the details of the guest object and the
-calls to FrontDesk won't need to change.
+In addition to migrating the data to new schema, we now have to
+change all calls to ``FrontDesk``.  If we abstract the details of
+guest into an object and use it for registration, the code changes
+can be minimized.  We now can make changes to the details of the
+guest object and the calls to ``FrontDesk`` won't need to change.
 
 Now we have::
 
@@ -466,13 +466,9 @@ The adapter pattern
 ~~~~~~~~~~~~~~~~~~~
 
 In a real application, the frontdesk object will need to handle
-chores such as cancellations and updates.  In the current design, we
-will need to pass the guest object to frontdesk every time we call
-methods such as `cancel_booking` and `update_booking`.
-
-..
-    We can avoid this requirement by implementing FrontDesk such that the
-    guest object is set as an attribute::
+functionalities such as cancellations and updates.  In the current
+design, we will need to pass the guest object to frontdesk every time
+we call methods such as `cancel_booking` and `update_booking`.
 
 We can avoid this requirement if we pass the guest object to
 FrontDesk.__init__(), making it an attribute of the instance.
@@ -490,6 +486,15 @@ FrontDesk.__init__(), making it an attribute of the instance.
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
+  ...
+  ...     def cancel_booking(self):
+  ...         guest = self.guest
+  ...         #code for cancellations goes here ...
+  ...
+  ...     def update_booking(self):
+  ...         guest = self.guest
+  ...         #code for updatiion goes here ...
+
 
 .. include this bit at the front of the `Adapters` section when I get
     the equivalent quote from the Patterns book to start the 
@@ -514,10 +519,10 @@ In general, an adapter *contains* an *adaptee*::
 This pattern will be useful in dealing with implementation details
 which depend on considerations such as:
 
- - changing customer requirements
- - storage requirements (ZODB, RDBM, XML ...)
- - output requirements (HTML, PDF, plain text ...)
- - markup rendering (ReST, Markdown, Textile ...) 
+- changing customer requirements
+- storage requirements (ZODB, RDBM, XML ...)
+- output requirements (HTML, PDF, plain text ...)
+- markup rendering (ReST, Markdown, Textile ...) 
 
 ZCA uses adapters and a *component registry* to provide the capability
 to change implementation details of code via *configuration*.
@@ -525,9 +530,9 @@ to change implementation details of code via *configuration*.
 As we will see in the section on ZCA adapters, the ability to
 configure implementation details provides useful capability:
 
- - the ability to switch between implementations
- - the ability to add implementations as needed
- - increased re-use of both legacy and ZCA code
+- the ability to switch between implementations
+- the ability to add implementations as needed
+- increased re-use of both legacy and ZCA code
 
 These capabilities lead to code that is flexible, scalable and
 re-usable. There is a cost however, maintaining the component registry
@@ -740,21 +745,21 @@ define the interface of the frontdesk object::
   ...
 
 Here, first you imported ``Interface`` class from ``zope.interface``
-module.  If you define a subclass of this ``Interface`` class, it will
-be an interface from Zope component architecture point of view.  An
-interface can be implemented, as you already noted, in a class or any
-other callable object.
+module.  If you define a subclass of this ``Interface`` class, it
+will be an interface from Zope Component Architecture point of view.
+An interface can be implemented, as you have already seen, in a class
+or any other callable object.
 
-The frontdesk interface defined here is ``IDesk``.  The
-documentation string for interface gives an idea about the object.  By
-defining a method in the interface, you made a contract for the
-component, that there will be a method with same name available.  For
-the method definition interface, the first argument should not be
-`self`, because an interface will never be instantiated nor will its
-methods ever be called.  Instead, the interface class merely documents
-what methods and attributes should appear in any normal class that
-claims to implement it, and the `self` parameter is an implementation
-detail which doesn't need to be documented.
+The frontdesk interface defined here is ``IDesk``.  The documentation
+string for interface gives an idea about the object.  By defining a
+method in the interface, you made a contract for the component, that
+there will be a method with same name available.  For the method
+definition interface, the first argument should not be `self`,
+because an interface will never be instantiated nor will its methods
+ever be called.  Instead, the interface class merely documents what
+methods and attributes should appear in any normal class that claims
+to implement it, and the `self` parameter is an implementation detail
+which doesn't need to be documented.
 
 As you know, an interface can also specify normal attributes::
 
@@ -853,9 +858,9 @@ Now use `validateInvariants` method of the interface to validate::
   ...
   Exception: At least one contact info is required
 
-As you can see `jack` object validated without raising any
-exception. But `jill` object didn't validated the invariant
-constraint, so it raised exception.
+As you can see `jack` object validated without raising any exception.
+But `jill` object didn't validated the invariant constraint, so it
+raised exception.
 
 
 Adapters
@@ -865,10 +870,10 @@ Adapters
 Implementation
 ~~~~~~~~~~~~~~
 
-This section will describe adapters in detail.  Zope component
-architecture, as you noted, helps to effectively use Python objects.
+This section will describe adapters in detail.  Zope Component
+Architecture, as you noted, helps to effectively use Python objects.
 Adapter components are one of the basic components used by Zope
-component architecture for effectively using Python objects.  Adapter
+Component Architecture for effectively using Python objects.  Adapter
 components are Python objects, but with well defined interface.
 
 To declare a class is an adapter use `adapts` function defined in
@@ -1557,17 +1562,22 @@ ZCML
 
 The **Zope Configuration Markup Language (ZCML)** is an XML based
 configuration system for registration of components.  So, instead of
-using Python API for registration, you can use ZCML.  But to use ZCML,
-unfortunately, you will be required to install more dependency
-packages.
+using Python API for registration, you can use ZCML.  But to use
+ZCML, you will be required to install more dependency packages.
 
-To install these packages::
+You can install ``zope.component`` with ZCML support using
+easy_install like this::
 
   $ easy_install "zope.component [zcml]"
 
-To register an adapter::
+A ZCML file should start with ``configure`` directive with
+appropriate namespace declaration::
 
   <configure xmlns="http://namespaces.zope.org/zope">
+  ...
+  </configure>
+
+The `adapter` directive can be used to register adapters::
 
   <adapter
       factory=".company.EmployeeSalary"
@@ -1578,28 +1588,20 @@ To register an adapter::
 The `provides` and `for` attributes are optional, provided you have
 declared it in the implementation::
 
-  <configure xmlns="http://namespaces.zope.org/zope">
-
   <adapter
       factory=".company.EmployeeSalary"
       />
 
-If you want to register the component as named adapter, you can give a
-`name` attribute::
-
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+If you want to register the component as a named adapter, you can use
+the `name` attribute::
 
   <adapter
       factory=".company.EmployeeSalary"
       name="salary"
       />
 
-Utilities are also registered similarly.
-
-To register an utility::
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+A utility can be registered using `utility` directive.  To register
+an utility::
 
   <utility
       component=".database.connection"
@@ -1615,20 +1617,15 @@ the implementation::
       component=".database.connection"
       />
 
-If you want to register the component as named utility, you can give a
-`name` attribute::
-
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+If you want to register the component as a named utility, you can use
+the `name` attribute::
 
   <utility
       component=".database.connection"
-      name="Database Connection"
+      name="db_connection"
       />
 
 Instead of directly using the component, you can also give a factory::
-
-  <configure xmlns="http://namespaces.zope.org/zope">
 
   <utility
       factory=".database.Connection"
@@ -1897,13 +1894,13 @@ The application we are going to discuss here is a library management
 system with minimal features.  The requirements can be summarized like
 this:
 
-  - Add members with a unique number and name.
+- Add members with a unique number and name.
 
-  - Add books with barcode, author & title
+- Add books with barcode, author & title
 
-  - Issue books
+- Issue books
 
-  - Return books
+- Return books
 
 
 The application can be designed in such a way that major features can
