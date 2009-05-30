@@ -17,36 +17,36 @@ Copyright (C) 2007,2008,2009 Baiju M <baiju.m.mail AT gmail.com>.
 Разрешается копировать, распространять и/или вносить изменения в этот документ
 при соблюдении условий лицензии GNU Free Documentation License, версия 1.2 или
 (по вашему желанию) какой-либо поздней версии, официально опубликованной Фондом
-свободного программного обеспечения (Free Software Foundation).
+свободного программного обеспечения (Free Software Foundation).  
 
 Исходный код программ, приведенный в этом документе, распространяется при
-соблюдении положений лицензии Zope Public License, версии 2.1 (ZPL).
+соблюдении положений лицензии Zope Public License, версии 2.1 (ZPL).  
 
 ИСХСХОДНЫЙ КОД ПРОГРАММ В ЭТОМ ДОКУМЕНТЕ И САМ ДОКУМЕНТ IS PROVIDED "AS IS" AND
 ANY AND ALL EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST
-INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
+INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.  
 
 .. sidebar:: Благодарности
 
-  Много людей помогли мне написать эту книгу. Первоначальный манускрипт 
-  отрецензирован моим коллегой Брэдом Алленом (Brad Allen). Когда я объявил 
-  о книге в моем блоге, общественность вдохновила меня продолжить ее совершенствование. 
+  Много людей помогли мне написать эту книгу.  Первоначальный манускрипт 
+  отрецензирован моим коллегой Брэдом Алленом (Brad Allen).  Когда я объявил 
+  о книге в моем блоге, общественность вдохновила меня продолжить ее совершенствование.  
   Кент Тенни (Kent Tenney)  принял активное участие в редактировании книги, 
-  кроме того, он переписал основной пример - приложение. Другие присылали 
+  кроме того, он переписал основной пример - приложение.  Другие присылали 
   мне замечания и исправления ошибок и недочетов, включая Лоренсо Санчеса 
   (Lorenzo Gil Sanchez), Михаэля Гаубенвалнера (Michael Haubenwallner), 
   Нандо Куинтана (Nando Quintana), Стефани Кляйн (Stephane Klein), Тима Кука 
-  (Tim Cook), Камала Джилла (Kamal Gill)  и Томаса Герве (Thomas Herve). 
-  Лоренсо перевел книгу на испанский язык, а Стефани на французский. 
+  (Tim Cook), Камала Джилла (Kamal Gill)  и Томаса Герве (Thomas Herve).  
+  Лоренсо перевел книгу на испанский язык, а Стефани на французский.  
   Огромное всем спасибо!
 
 .. contents::
 .. .. sectnum::
 
 
-Самое начало
-------------
+Приступая к работе
+------------------
 
 
 Введение
@@ -55,112 +55,112 @@ INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 Разработка больших программных систем практически всегда является сложным и
 трудоемким занятием, где объектно-ориентированный подход к анализу,
 проектированию и реализации (программированию) достаточно хорошо себя
-зарекомендовал. Проектирование и разработка программного обеспечения,
-основывающиеся на компонентах, становятся популярными в настоящее время.
+зарекомендовал.  Проектирование и разработка программного обеспечения,
+основывающиеся на компонентах, становятся популярными в настоящее время.  
 Компонентный подход и unit-тестирование позволяет достаточно просто
-разрабатывать и поддерживать программные системы. Существует много различных
+разрабатывать и поддерживать программные системы.  Существует много различных
 программных инфраструктур (frameworks, фреймворков), реализующих компонентное
 проектирование в разных языках и средах программирования, некоторые даже не
-зависят от какой-либо конкретной среды разработки. Примерами выступают COM,
-разработанный Microsoft, и XPCOM - Mozilla.
+зависят от какой-либо конкретной среды разработки.  Примерами выступают COM,
+разработанный Microsoft, и XPCOM - Mozilla.  
 
 **Компонентная архитектура Zope (Zope Component Architecture, ZCA)** - это один
 из фреймворков для в среды программирования Python, реализующих компонентный
-подход к проектированию и программированию. Он позволяет разрабатывать большие
-программные системы в среде программирования Python. И делает это хорошо.
+подход к проектированию и программированию.  Он позволяет разрабатывать большие
+программные системы в среде программирования Python.  И делает это хорошо.  
 Компонентная архитектура ZCA не требует для своего использования сервера
-приложений Zope, ZCA может использоваться в разработке любого Python-приложения.
+приложений Zope, ZCA может использоваться в разработке любого Python-приложения.  
 Справедливо было бы назвать ZCA
-`компонентной архитекртуой Python` (Python Component Architecture).
+`компонентной архитекртуой Python` (Python Component Architecture).  
 
-ZCA позволяет использовать объекты Python эффективно. `Компоненты` - это
+ZCA позволяет использовать объекты Python эффективно.  `Компоненты` - это
 объекты, которые легко использовать повторно, а к их интерфейсам можно получить
-полный доступ во время исполнения программы (introspaction). `Интерфейс` - это
+полный доступ во время исполнения программы (introspection).  `Интерфейс` - это
 объект, который описывает как следует взаимодействовать с конкретной
-компонентой. Другими словами, компонента `обеспечивает сервисы` (provide),
-определенные в интерфейсе. Компонента `реализуется` (implemented) в виде класса
-(class) или другого call-объекта (callable object). И не важно, как реализована
+компонентой.  Другими словами, компонента `обеспечивает сервисы` (provide),
+определенные в интерфейсе.  Компонента `реализуется` (implemented) в виде класса
+(class) или другого call-объекта (callable object).  И не важно, как реализована
 эта компонента, а вот что важно - это то, что она соответствует `требованиям`,
-определенным в интерфейсе (interface contract). При помощи ZCA сложность системы
-распределяется между множеством кооперирующихся компонент. Механизм такой
+определенным в интерфейсе (interface contract).  При помощи ZCA сложность системы
+распределяется между множеством кооперирующихся компонент.  Механизм такой
 кооперации обеспечивается двумя базовыми разновидностями компонент в ZCA:
-`адаптером` (adapter) и `утилитой` (utility).
+`адаптером` (adapter) и `утилитой` (utility).  
 
 ZCA распределен между тремя базовыми пакетами:
 
-  - ``zope.interface``, исплользуемый для определения (задания) интерфейсов
-    компонент. 
+  - ``zope.interface``, используемый для определения (задания) интерфейсов
+    компонент.  
 
   - ``zope.event``, обеспечивающего поддержку простого механизма инициирования и
-    обработки событий. 
+    обработки событий.  
 
   - ``zope.component``, обеспечивающего создание (генерирование) и регистрацию
-    копонент, а также их извлечение по запросу.
+    компонент, а также их извлечение по запросу.  
 
 Обращаю внимание, что ZCA сам по себе не является компонентой и не состоит из
 них, ZCA скорее механизм и библиотека для создания, регистрации и обеспечения
-доступа к зарегистрированным компонентам. В продолжение к предыдущему замечанию,
+доступа к зарегистрированным компонентам.  В продолжение к предыдущему замечанию,
 `Адаптер` - это, как правило, обычный класс Python (или фабрика классов
 (factory), в общем случае), а `утилита` - это обычный call-объект в среде
-исполнения Python.
+исполнения Python.  
 
-Фреймворк ZCA рарабатывается как одно из направлений развития проекта Zope 3.
+Фреймворк ZCA разрабатывается как одно из направлений развития проекта Zope 3.  
 Как сказано выше ZCA является чисто питоновским фреймворком, и может
-использоваться в любых приложениях Python. В настоящее время ZCA активно
-используется в проектах Zope 3, Zope 2 и Grok. Существуют и другие приложения, в
-т.ч. и неинтернет приложения, использующие ZCMA [#projects]_.
+использоваться в любых приложениях Python.  В настоящее время ZCA активно
+используется в проектах Zope 3, Zope 2 и Grok.  Существуют и другие приложения, в
+т.ч. и неинтернет приложения, использующие ZCMA [#projects]_.  
 
 .. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
 
 
-Основные вехи в истории проекта
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Краткая история проекта
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Проект ZCA начался в 2001 году и был частью проекта Zope 3. Причиной появления
+Проект ZCA начался в 2001 году и был частью проекта Zope 3.  Причиной появления
 проекта послужил анализ опыта, полученного при разработке комплексных
-программных систем на основе Zope 2. Джим Фултон (Jim Fulton) стал лидером
-проекта. Много разработчиков внесли свой вклад в дизайн и реализацию ZCA: Стефан
+программных систем на основе Zope 2.  Джим Фултон (Jim Fulton) стал лидером
+проекта.  Много разработчиков внесли свой вклад в дизайн и реализацию ZCA: Стефан
 Рихтер (Stephan Richter), Филипп фон Вайтершаусен (Philipp von Weitershausen),
 Гвидо ван Россум (Guido van Rossum), известный также как *Python BDFL*, Трес
 Сивер (Tres Seaver), Филипп Дж Эби (Phillip J Eby) и Мартин Фаассен (and Martijn
-Faassen) и др.
+Faassen) и др.  
 
 В самом начале в ZCA были определены дополнительные компоненты - `сервисы`
 (services) и `представления` (views), но в процессе разработки оказалось, что
-утилиты заменяют полностью `сервисы`, а мультиадаптеры - `представления`. В
+`утилиты` заменяют полностью сервисы, а `мультиадаптеры` - представления.  В
 настоящее время ZCA включает в себя совсем небольшое количество базовых
 разновидностей компонент: `утилиты`, `адаптеры`, `подписчики` (абоненты)
-(subscribers) и `обработчики` (handlers). На самом деле `подписчики` и
-`обработчики` - это два особых вида адаптеров.
+(subscribers) и `обработчики` (handlers).  На самом деле `подписчики` и
+`обработчики` - это два особых вида адаптеров.  
 
-В процессе подготовки релиза Zope 3.2 Джим Фултон предложил значительно
-упростить фреймыорк ZCA [#proposal]_. В результате этого упрощения появился
+В процессе подготовки версии Zope 3.2 Джим Фултон предложил значительно
+упростить фреймворк ZCA [#proposal]_.  В результате этого упрощения появился
 новый общий интерфейс `IComponentRegistry`, позволяющий регистрировать как
-локальные так и глобальные компоненты.
+локальные так и глобальные компоненты.  
 
 .. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
 
-В результате пакет ``zope.component`` перестал зависеть от достаточно длинного
-списка других пакетов, при этом оставшиеся зависимости не относились напрямую к
-разработке приложений Zope 3. На конференции PyCon 2007 Джим Фултон предложил
+В результате от пакета ``zope.component`` перестал зависеть достаточно длинный
+список других пакетов, при этом оставшиеся зависимости не относились напрямую к
+разработке приложений Zope 3.  На конференции PyCon 2007 Джим Фултон предложил
 включить [в пакет], используемое в пакете setuptools [фичу] `extras_require`,
 чтобы дополнительно изолировать базовый набор функций ZCA от дополнительных
-(add-on) [фич] [#extras]_.
+(add-on) [фич] [#extras]_.  
 
 .. [#extras] http://peak.telecommunity.com/DevCenter/setuptools#declaring-dependencies
 
 В марте 2009, Трес Сивер окончательно устранил зависимости пакета от
-``zope.deferredimport`` и ``zope.proxy``.
+``zope.deferredimport`` и ``zope.proxy``.  
 
 Теперь проект ZCA является независимым проектом со своим собственным планом
-[релизов] и хранилищем (репозиторием) Subversion. Проект как и прежде является
-составляющей частью фреймфорка Zope [#framework]_. При этом ошибки и недочеты,
-выявляемые в ZCA, все еще  публикуются на сайтае системы ослеживания ошибок
-проекта Zope 3 [#bugs]_. Кроме того, основной список рассылки `zope-dev` все еще
-используется для информационного обмена разработчиками ZCA [#discussions]_. Есть
+[релизов] и хранилищем (репозиторием) Subversion.  Проект как и прежде является
+составляющей частью фреймфорка Zope [#framework]_.  При этом ошибки и недочеты,
+выявляемые в ZCA, все еще  публикуются на сайте системы отслеживания ошибок
+проекта Zope 3 [#bugs]_.  Кроме того, основной список рассылки `zope-dev` все еще
+используется для информационного обмена разработчиками ZCA [#discussions]_.  Есть
 еще другой список рассылки, предназначенный для пользователей Zope 3,
 `zope3-users`, в котором можно получить ответы на вопросы относительно
-фреймворка ZCA [#z3users]_.
+фреймворка ZCA [#z3users]_.  
 
 .. [#framework] http://docs.zope.org/zopeframework/
 .. [#bugs] https://bugs.launchpad.net/zope3
@@ -171,123 +171,127 @@ Faassen) и др.
 Установка
 ~~~~~~~~~
 
-The ``zope.component``, package together with the ``zope.interface``
-and ``zope.event`` packages are the core of Zope Component
-Architecture.  They provide facilities for defining, registering and
-looking up components.  The ``zope.component`` package and its
-dependencies are available in egg format from the Python Package
-Index (PyPI) [#pypi]_.
+Пакеты ``zope.component``, ``zope.interface`` и
+``zope.event`` являются ядром Компонентной архитектуры Zope.  Они обеспечивают
+технические средства для определения, регистрации и поиска компонент.  Пакет 
+``zope.component`` и пакеты, зависящие от него, доступны в формате egg на сайте
+Python Package Index (PyPI) [#pypi]_.
 
 .. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
 
-You can install ``zope.component`` and it's dependencies using
+Удобней всего устанавливать ``zope.component`` и его зависимые пакеты используя
 `easy_install` [#easyinstall]_ ::
 
   $ easy_install zope.component
 
 .. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
 
-This command will download ``zope.component`` and its dependencies
-from PyPI and install it in your Python path.
+Эта команда загружает ``zope.component`` и зависимые пакеты с сайта PyPI и
+устанавливает все как библиотеки интерпретатора Python.
 
-Alternately, you can download ``zope.component`` and its dependencies
-from PyPI and then install them.  Install packages in the order given
-below.  On Windows, you may need binary packages of ``zope.interface``.
+С другой стороны можно загрузить ``zope.component`` и зависящие от него пакеты с
+сайта PyPI и, затем, самостоятельно установить их.  Установку пакетов следует
+производить в порядке, описанном далее.  В операционной системе Windows
+необходимо загрузить двоичные (binary) сборки следующих пакетов.
 
   1. ``zope.interface``
   2. ``zope.event``
   3. ``zope.component``
 
-To install these packages, after downloading them, you can use
-``easy_install`` command with argument as the eggs.  (You may also
-give all these eggs in the same line.)::
+Для установки загруженных пакетов можно, как и раньше, использовать
+команду ``easy_install``, при этом передавая в качестве параметра
+устанавливаемые пакеты, аналогично двоичным egg-пакетам.  (Можно передать в
+качестве параметров все пакеты одновременно в одной командной строке.)::
 
   $ easy_install /path/to/zope.interface-3.x.x.tar.gz
   $ easy_install /path/to/zope.event-3.x.x.tar.gz
   $ easy_install /path/to/zope.component-3.x.x.tar.gz
 
 
-You can also install these packages after extracting each one
-separately.  For example::
+Кроме того, все пакеты можно разархивировать и установить по одному, например::
 
   $ tar zxvf /path/to/zope.interface-3.x.x.tar.gz
   $ cd zope.interface-3.x.x
   $ python setup.py build
   $ python setup.py install
 
-These methods will install the ZCA to the `system Python`, in the
-``site-packages`` directory, which can cause problems.  In a Zope 3
-mailing list post, Jim Fulton recommends against using the system
-Python [#systempython]_.  You can use ``virtualenv`` and/or
-``zc.buildout`` for playing with any Python packages, also good for
-deployments.
+Эта последовательность позволяет устанавливать ZCA как общесистемную библиотеку 
+Python в директорий (папку) ``site-packages``, что, иногда, создает некоторые
+проблемы.  Джим Фултон в списке рассылки Zope 3 не рекомендовал устанавливать
+пакеты в общесистемной библиотеке 
+Python [#systempython]_.  Рекомендуется устанавливать виртуальное окружение при
+помощи программы ``virtualenv`` и/или пакета
+``zc.buildout``, что создает больше возможностей для экспериментов с пакетами
+Python. Кроме того, в виртуальном окружении удобно развертывать готовые
+приложения (deployments).
 
 .. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
 
-Experimenting with code
-~~~~~~~~~~~~~~~~~~~~~~~
+Подготовка виртуального окружения
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two popular approaches in Python for setting up isolated
-working environments for developing applications.  The most popular
-one is ``virtualenv`` package created by Ian Biking and
-``zc.buildout`` created by Jim Fulton.  You can also use these
-packages together.  These packages helps you to install
-``zope.component`` and other dependencies into an isolated working
-environment.  It is a good practice to use these packages for
-experimenting with any Python code.  Familiarity with these tools
-will be beneficial when developing and deploying any Python
-application.
+Существует множество популярных подходов к настройке изолированного виртуального
+окружения для среды программирования Python, удобного для разработки приложений.
+ Наиболее популярные — это пакет ``virtualenv``, разработанный Яном Бикингом
+(Ian Biking) и 
+пакет ``zc.buildout``, разработанный Джимом Фултоном.  Оба этих пакета можно
+использовать одновременно.  
 
 
 **virtualenv**
 
-You can install ``virtualenv`` using ``easy_install``::
+Пакет ``virtualenv`` устанавливается при помощи команды ``easy_install``::
 
   $ easy_install virtualenv
 
-Then create a new environment like this::
+Затем создается новое окружение::
 
   $ virtualenv --no-site-packages myve
 
-This will create a new virtual environment in the ``myve`` directory.
-Now, from inside the ``myve`` directory, you can install
-``zope.component`` and dependencies using ``easy_install`` inside
-``myve/bin`` directory::
+Команда создаст новое окружение в директории ``myve``.
+Теперь в директории ``myve`` можно установить 
+``zope.component`` и зависимые пакеты при помощи команды ``easy_install``, если
+запустить ее в директории
+``myve/bin``::
 
   $ cd myve
   $ ./bin/easy_install zope.component
 
-Now you can import ``zope.interface`` and ``zope.component`` from the
-new ``python`` interpreter inside ``myve/bin`` directory::
+Теперь можно импортировать пакеты ``zope.interface`` и ``zope.component`` из
+интерпретатора ``python``, который находится в директории ``myve/bin``::
 
   $ ./bin/python
 
-This command will give you a Python prompt which you can use to run
-the code in this book.
+После запуска Python покажет обычное приглашение (prompt) для ввода команд и
+выражений, в котором можно выполнять приводимый далее в книге программный код.
 
 
 **zc.buildout**
 
-Using ``zc.buildout`` with ``zc.recipe.egg`` recipe you can create
-Python interpreter with specified Python eggs.  First, install
-``zc.buildout`` using ``easy_install`` command.  (You may also do it
-inside virtual environment).  To create new buildout to experiment
-with Python eggs, first create a directory and initialize it using
-``buildout init`` command::
+Используя пакет ``zc.buildout`` и `рецепт` (recipe) ``zc.recipe.egg`` можно
+создавать специализированные версии интерпретатора
+Python с встроенными egg-пакетами.  Для этого необходимо установить пакет
+``zc.buildout`` при помощи команды ``easy_install``, что также можно сделать
+внутри виртуального окружения.  
+
+Чтобы создать новое buildout-окружение для проведения экспериментов с
+egg-пакетами Python, сначала создайте для него новый директорий, и, затем,
+создайте в нем собственно buildout-окружение его при помощи команды 
+``buildout init``::
 
   $ mkdir mybuildout
   $ cd mybuildout
   $ buildout init
 
-Now the new ``mybuildout`` directory is a buildout.  The default
-configuration file for buildout is `buildout.cfg` .  After
-initializing, it will be having this content::
+Теперь директорий ``mybuildout`` новое buildout-окружение.  Настройки окружения
+по умолчанию хранятся в файле `buildout.cfg` .  В самом начале
+в нем будет содержаться следующий текст::
 
   [buildout]
   parts =
 
-You can change it like this::
+Надо внести в настройки следующие изменения::
 
   [buildout]
   parts = py
@@ -297,35 +301,37 @@ You can change it like this::
   interpreter = python
   eggs = zope.component
 
-Now run ``buildout`` command available inside ``mybuildout/bin``
-directory without any argument.  This will create a new Python
-interpreter inside ``mybuildout/bin`` directory::
+Запуск команды ``buildout`` из директория ``mybuildout/bin`` (без аргументов)
+создаст новый интерпретатор Python в директории
+``mybuildout/bin``::
 
   $ ./bin/buildout
   $ ./bin/python
 
-This command will give you a Python prompt which you can use to run
-the code in this book.
+Последняя команда создаст приглашение Python, в котором можно запускать
+приводимый далее в книге программный код.
 
 
-An example
-----------
+Пример задачи
+-------------
 
 
-Introduction
-~~~~~~~~~~~~
+Введение
+~~~~~~~~
 
-Consider a business application for registering guests staying in a
-hotel.  Python can implement this in a number of ways.  We will start
-with a brief look at a procedural implementation, and then move to a
-basic object oriented approach.  As we examine the object oriented
-approach, we will see how we can benefit from the classic design
-patterns, `adapter` and `interface`.  This will bring us into the
-world of the Zope Component Architecture.
+Рассмотрим приложение, предназначенное для регистрации постояльцев в гостинице.
+В среде Python его можно реализовать множеством способов.  
+Сначала кратко рассмотрим процедурный подход, затем перейдем к
+объектно-ориентированному программированию.  После анализа результатов дизайна и
+реализации задачи при помощи объектно-ориентированного подхода, рассмотрим как
+данная задача решается при помощи классических шаблонов проектирования
+(паттернов проектирования, design patterns) `адаптер` и `интерфейс`.  Таким
+образом появится начальное представление о возможностях Компонентой архитектуры
+Zope.
 
 
-Procedural approach
-~~~~~~~~~~~~~~~~~~~
+Процедурный подход
+~~~~~~~~~~~~~~~~~~
 
 In any business application, data storage is very critical.  For
 simplicity, this example use a Python dictionary as the storage.  We

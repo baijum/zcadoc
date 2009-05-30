@@ -1,4 +1,5 @@
 rm -fr zca.*
+rm -fr zca-??.*
 
 # English
 rst2html.py --stylesheet=zope3.css izca.txt > zca.html 
@@ -20,6 +21,6 @@ pdflatex zca-fr.tex
 
 # Russian translation
 rst2html.py --stylesheet=zope3.css izca-ru.txt > zca-ru.html 
-rst2latex.py --use-latex-docinfo --use-latex-toc --stylesheet=style.tex --documentclass=book --use-latex-footnotes --output-encoding=utf8 --documentoptions=10pt,a4paper,russian,english --font-encoding=T2A izca-ru.txt > zca-ru.tex
+rst2latex.py --use-latex-docinfo --use-latex-toc --stylesheet=style.tex --documentclass=book --use-latex-footnotes --output-encoding=utf8 --documentoptions=10pt,a4paper,english,russian --font-encoding=T2A izca-ru.txt > zca-ru.tex
 pdflatex zca-ru.tex
 pdflatex zca-ru.tex
