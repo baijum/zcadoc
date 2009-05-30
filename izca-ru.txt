@@ -1,146 +1,166 @@
-====================================================
-A Comprehensive Guide to Zope Component Architecture
-====================================================
+==========================================================
+Обстоятельное руководство по компонентной архитектуре Zope
+==========================================================
 
-:Author: Baiju M
-:Version: 0.5.8
-:Printed Book: `http://www.lulu.com/content/1561045
+:Автор: Baiju M
+:Версия: 0.5.8
+:Печатный экземпляр на англ. языке: `http://www.lulu.com/content/1561045
                     <http://www.lulu.com/content/1561045>`_
-:Online PDF: `http://www.muthukadan.net/docs/zca.pdf
+:PDF-версия оригинала на англ.: `http://www.muthukadan.net/docs/zca.pdf
                   <http://www.muthukadan.net/docs/zca.pdf>`_
+:Перевод: Черкашин Е.А.
+:Версия перевода : 0.1
+
 
 Copyright (C) 2007,2008,2009 Baiju M <baiju.m.mail AT gmail.com>.
 
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.3 or
-any later version published by the Free Software Foundation.
+Разрешается копировать, распространять и/или вносить изменения в этот документ
+при соблюдении условий лицензии GNU Free Documentation License, версия 1.2 или
+(по вашему желанию) какой-либо поздней версии, официально опубликованной Фондом
+свободного программного обеспечения (Free Software Foundation).
 
-The source code in this document is subject to the provisions of the
-Zope Public License, Version 2.1 (ZPL).
+Исходный код программ, приведенный в этом документе, распространяется при
+соблюдении положений лицензии Zope Public License, версии 2.1 (ZPL).
 
-THE SOURCE CODE IN THIS DOCUMENT AND THE DOCUMENT ITSELF IS PROVIDED
-"AS IS" AND ANY AND ALL EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF TITLE,
-MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS FOR A PARTICULAR
-PURPOSE.
+ИСХСХОДНЫЙ КОД ПРОГРАММ В ЭТОМ ДОКУМЕНТЕ И САМ ДОКУМЕНТ IS PROVIDED "AS IS" AND
+ANY AND ALL EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST
+INFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
 
-.. sidebar:: Acknowledgements
+.. sidebar:: Благодарности
 
-  Many people have helped me to write this book.  The initial draft
-  was reviewed by my colleague Brad Allen.  When I announced this
-  book through my blog, I received many encouraging comments to
-  proceed with this work.  Kent Tenney edited most parts of the book,
-  he also rewrote the example application.  Many others sent me fixes
-  and comments including, Lorenzo Gil Sanchez, Michael Haubenwallner,
-  Nando Quintana, Stephane Klein, Tim Cook, Kamal Gill and Thomas
-  Herve.  Lorenzo translated this work to Spanish and Stephane
-  translated it to French.  Thanks to all !
+  Много людей помогли мне написать эту книгу. Первоначальный манускрипт 
+  отрецензирован моим коллегой Брэдом Алленом (Brad Allen). Когда я объявил 
+  о книге в моем блоге, общественность вдохновила меня продолжить ее совершенствование. 
+  Кент Тенни (Kent Tenney)  принял активное участие в редактировании книги, 
+  кроме того, он переписал основной пример - приложение. Другие присылали 
+  мне замечания и исправления ошибок и недочетов, включая Лоренсо Санчеса 
+  (Lorenzo Gil Sanchez), Михаэля Гаубенвалнера (Michael Haubenwallner), 
+  Нандо Куинтана (Nando Quintana), Стефани Кляйн (Stephane Klein), Тима Кука 
+  (Tim Cook), Камала Джилла (Kamal Gill)  и Томаса Герве (Thomas Herve). 
+  Лоренсо перевел книгу на испанский язык, а Стефани на французский. 
+  Огромное всем спасибо!
 
 .. contents::
 .. .. sectnum::
 
 
-Getting started
----------------
+Самое начало
+------------
 
 
-Introduction
-~~~~~~~~~~~~
+Введение
+~~~~~~~~
 
-Developing a large software system is always very complicated.  An
-object oriented approach to analysis, design and programming has been
-shown to be well suited for dealing with large systems.  Component
-based design, and programming using components are becoming very
-popular these days.  Component based approach helps you to write and
-maintain easily unit-testable software systems.  There are many
-frameworks for supporting component based design in different
-languages, some are even language neutral.  Examples of these are
-Microsoft's COM and Mozilla's XPCOM.
+Разработка больших программных систем практически всегда является сложным и
+трудоемким занятием, где объектно-ориентированный подход к анализу,
+проектированию и реализации (программированию) достаточно хорошо себя
+зарекомендовал. Проектирование и разработка программного обеспечения,
+основывающиеся на компонентах, становятся популярными в настоящее время.
+Компонентный подход и unit-тестирование позволяет достаточно просто
+разрабатывать и поддерживать программные системы. Существует много различных
+программных инфраструктур (frameworks, фреймворков), реализующих компонентное
+проектирование в разных языках и средах программирования, некоторые даже не
+зависят от какой-либо конкретной среды разработки. Примерами выступают COM,
+разработанный Microsoft, и XPCOM - Mozilla.
 
-**Zope Component Architecture (ZCA)** is a Python framework for
-supporting component based design and programming.  It is very well
-suited to developing large Python software systems.  The ZCA is not
-specific to the Zope web application server: it can be used for
-developing any Python application.  Maybe it should be called as
-`Python Component Architecture`.
+**Компонентная архитектура Zope (Zope Component Architecture, ZCA)** - это один
+из фреймворков для в среды программирования Python, реализующих компонентный
+подход к проектированию и программированию. Он позволяет разрабатывать большие
+программные системы в среде программирования Python. И делает это хорошо.
+Компонентная архитектура ZCA не требует для своего использования сервера
+приложений Zope, ZCA может использоваться в разработке любого Python-приложения.
+Справедливо было бы назвать ZCA
+`компонентной архитекртуой Python` (Python Component Architecture).
 
-The ZCA is all about using Python objects effectively.  Components
-are reusable objects with introspectable interfaces.  An interface is
-an object that describes how you work with a particular component.
-In other words, component provides an interface implemented in a
-class, or any other callable object.  It doesn't matter how the
-component is implemented, the important part is that it comply with
-its interface contracts.  Using ZCA, you can spread the complexity of
-systems over multiple cooperating components.  It helps you to create
-two basic kinds of components: `adapter` and `utility`.
+ZCA позволяет использовать объекты Python эффективно. `Компоненты` - это
+объекты, которые легко использовать повторно, а к их интерфейсам можно получить
+полный доступ во время исполнения программы (introspaction). `Интерфейс` - это
+объект, который описывает как следует взаимодействовать с конкретной
+компонентой. Другими словами, компонента `обеспечивает сервисы` (provide),
+определенные в интерфейсе. Компонента `реализуется` (implemented) в виде класса
+(class) или другого call-объекта (callable object). И не важно, как реализована
+эта компонента, а вот что важно - это то, что она соответствует `требованиям`,
+определенным в интерфейсе (interface contract). При помощи ZCA сложность системы
+распределяется между множеством кооперирующихся компонент. Механизм такой
+кооперации обеспечивается двумя базовыми разновидностями компонент в ZCA:
+`адаптером` (adapter) и `утилитой` (utility).
 
-There are three core packages related to the ZCA:
+ZCA распределен между тремя базовыми пакетами:
 
-  - ``zope.interface`` is used to define the interface of a
-    component.
+  - ``zope.interface``, исплользуемый для определения (задания) интерфейсов
+    компонент. 
 
-  - ``zope.event`` provides a simple event system.
+  - ``zope.event``, обеспечивающего поддержку простого механизма инициирования и
+    обработки событий. 
 
-  - ``zope.component`` deals with creation, registration and
-    retrieval of components.
+  - ``zope.component``, обеспечивающего создание (генерирование) и регистрацию
+    копонент, а также их извлечение по запросу.
 
-Remember, the ZCA is not the components themselves, rather it is
-about creating, registering, and retrieving components.  Remember
-also, an `adapter` is a normal Python class (or a factory in general)
-and `utility` is a normal Python callable object.
+Обращаю внимание, что ZCA сам по себе не является компонентой и не состоит из
+них, ZCA скорее механизм и библиотека для создания, регистрации и обеспечения
+доступа к зарегистрированным компонентам. В продолжение к предыдущему замечанию,
+`Адаптер` - это, как правило, обычный класс Python (или фабрика классов
+(factory), в общем случае), а `утилита` - это обычный call-объект в среде
+исполнения Python.
 
-The ZCA framework is developed as part of the Zope 3 project.  As
-noted earlier, it is a pure Python framework, so it can be used in
-any kind of Python application.  Currently Zope 3, Zope 2 and Grok
-projects use this framework extensively.  There are many other
-projects including non-web applications using it [#projects]_.
+Фреймворк ZCA рарабатывается как одно из направлений развития проекта Zope 3.
+Как сказано выше ZCA является чисто питоновским фреймворком, и может
+использоваться в любых приложениях Python. В настоящее время ZCA активно
+используется в проектах Zope 3, Zope 2 и Grok. Существуют и другие приложения, в
+т.ч. и неинтернет приложения, использующие ZCMA [#projects]_.
 
 .. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
 
 
-A brief history
-~~~~~~~~~~~~~~~
+Основные вехи в истории проекта
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ZCA framework project began in 2001 as part of Zope 3 project.  It
-grew out of lessons learned while developing large software systems
-using Zope 2.  Jim Fulton was the project leader of this project.
-Many people contributed to the design and implementation, including
-but not limited to, Stephan Richter, Philipp von Weitershausen, Guido
-van Rossum (*aka. Python BDFL*), Tres Seaver, Phillip J Eby and
-Martijn Faassen.
+Проект ZCA начался в 2001 году и был частью проекта Zope 3. Причиной появления
+проекта послужил анализ опыта, полученного при разработке комплексных
+программных систем на основе Zope 2. Джим Фултон (Jim Fulton) стал лидером
+проекта. Много разработчиков внесли свой вклад в дизайн и реализацию ZCA: Стефан
+Рихтер (Stephan Richter), Филипп фон Вайтершаусен (Philipp von Weitershausen),
+Гвидо ван Россум (Guido van Rossum), известный также как *Python BDFL*, Трес
+Сивер (Tres Seaver), Филипп Дж Эби (Phillip J Eby) и Мартин Фаассен (and Martijn
+Faassen) и др.
 
-Initially ZCA defined additional components; `services` and `views`,
-but the developers came to realize that utility can replace `service`
-and multi-adapter can replace `view`.  Now ZCA has a very small
-number of core component types: `utilities`, `adapters`,
-`subscribers` and `handlers`.  In fact, `subscribers` and `handlers`
-are two special types of adapters.
+В самом начале в ZCA были определены дополнительные компоненты - `сервисы`
+(services) и `представления` (views), но в процессе разработки оказалось, что
+утилиты заменяют полностью `сервисы`, а мультиадаптеры - `представления`. В
+настоящее время ZCA включает в себя совсем небольшое количество базовых
+разновидностей компонент: `утилиты`, `адаптеры`, `подписчики` (абоненты)
+(subscribers) и `обработчики` (handlers). На самом деле `подписчики` и
+`обработчики` - это два особых вида адаптеров.
 
-During the Zope 3.2 release cycle, Jim Fulton proposed a major
-simplification of ZCA [#proposal]_.  With this simplification, a new
-single interface (`IComponentRegistry`) for registration of both
-global and local component was created.
+В процессе подготовки релиза Zope 3.2 Джим Фултон предложил значительно
+упростить фреймыорк ZCA [#proposal]_. В результате этого упрощения появился
+новый общий интерфейс `IComponentRegistry`, позволяющий регистрировать как
+локальные так и глобальные компоненты.
 
 .. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
 
-The ``zope.component`` package had a long list of dependencies, many
-of which were not required for a non Zope 3 application.  During PyCon
-2007, Jim Fulton added setuptools' `extras_require` feature to allow
-separating out core ZCA functionality from add-on features [#extras]_.
+В результате пакет ``zope.component`` перестал зависеть от достаточно длинного
+списка других пакетов, при этом оставшиеся зависимости не относились напрямую к
+разработке приложений Zope 3. На конференции PyCon 2007 Джим Фултон предложил
+включить [в пакет], используемое в пакете setuptools [фичу] `extras_require`,
+чтобы дополнительно изолировать базовый набор функций ZCA от дополнительных
+(add-on) [фич] [#extras]_.
 
 .. [#extras] http://peak.telecommunity.com/DevCenter/setuptools#declaring-dependencies
 
-In March 2009, Tres Seaver removed dependcencies of
-``zope.deferredimport`` and ``zope.proxy``.
+В марте 2009, Трес Сивер окончательно устранил зависимости пакета от
+``zope.deferredimport`` и ``zope.proxy``.
 
-Now, The ZCA project is an independent project with it's own release
-cycle and Subversion repository.  This project is coming as part the
-bigger the Zope framework project [#framework]_.  However, issues and
-bugs are still tracked as part of the Zope 3 project [#bugs]_, and
-the main zope-dev list is used for development discussions
-[#discussions]_.  There is also another general user list for Zope 3
-(`zope3-users`) which can be used for any queries about the ZCA
-[#z3users]_.
+Теперь проект ZCA является независимым проектом со своим собственным планом
+[релизов] и хранилищем (репозиторием) Subversion. Проект как и прежде является
+составляющей частью фреймфорка Zope [#framework]_. При этом ошибки и недочеты,
+выявляемые в ZCA, все еще  публикуются на сайтае системы ослеживания ошибок
+проекта Zope 3 [#bugs]_. Кроме того, основной список рассылки `zope-dev` все еще
+используется для информационного обмена разработчиками ZCA [#discussions]_. Есть
+еще другой список рассылки, предназначенный для пользователей Zope 3,
+`zope3-users`, в котором можно получить ответы на вопросы относительно
+фреймворка ZCA [#z3users]_.
 
 .. [#framework] http://docs.zope.org/zopeframework/
 .. [#bugs] https://bugs.launchpad.net/zope3
@@ -148,8 +168,8 @@ the main zope-dev list is used for development discussions
 .. [#z3users] http://mail.zope.org/mailman/listinfo/zope3-users
 
 
-Installation
-~~~~~~~~~~~~
+Установка
+~~~~~~~~~
 
 The ``zope.component``, package together with the ``zope.interface``
 and ``zope.event`` packages are the core of Zope Component
