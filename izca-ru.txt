@@ -9,7 +9,7 @@
 :PDF-версия оригинала на англ.: `http://www.muthukadan.net/docs/zca.pdf
                   <http://www.muthukadan.net/docs/zca.pdf>`_
 :Перевод: Черкашин Е.А.
-:Версия перевода : 0.1
+:Версия перевода: 0.1
 
 
 Copyright (C) 2007,2008,2009 Baiju M <baiju.m.mail AT gmail.com>.
