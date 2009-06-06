@@ -179,7 +179,7 @@ Python Package Index (PyPI) [#pypi]_.
 
 .. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
 
-Удобней всего устанавливать ``zope.component`` и его зависимые пакеты используя
+Лучше всего устанавливать ``zope.component`` и его зависимые пакеты, используя
 `easy_install` [#easyinstall]_ ::
 
   $ easy_install zope.component
@@ -333,18 +333,20 @@ Zope.
 Процедурный подход
 ~~~~~~~~~~~~~~~~~~
 
-In any business application, data storage is very critical.  For
-simplicity, this example use a Python dictionary as the storage.  We
-will generate unique IDs for the dictionary, the associated value
-will be a dictionary of details about the booking.
+Система храненияя данных - очень важный момент в рпзработке приложений.  
+Будем использовать в рассматриваемом примере словарь (dictionary) языка Python в 
+качестве такой системы хранения данных.  
+Каждой записи соответствует сгенерированный уникальный ключ (ID).
+Ключ ассоциируется со значением, которое будет словарем, содержащим
+данные о бронировании комнаты в гостинице.  
 
-  >>> bookings_db = {} #key: unique ID, value: details in a dictionary
+  >>> bookings_db = {} #key - уникальный идентификатор (ID), value - данные брони
 
-A minimal implementation requires a function which we pass the
-details of the booking, and a supporting function which provides the
-the unique ID for the storage dictionary key.
+В реализации системы будет, как минимум, функция, которой передаются
+данные о бронировании, и функция, которая генерирует уникальное
+значение ID ключа для ассоциации с данными брони.
 
-We can get the unique ID like this::
+Генерировать значения ключа можно следующим образом::
 
   >>> def get_next_id():
   ...     db_keys = bookings_db.keys()
@@ -354,14 +356,14 @@ We can get the unique ID like this::
   ...         next_id = max(db_keys) + 1
   ...     return next_id
 
-As you can see, the `get_next_id` function implementation is very
-simple.  The function gets a list of keys and checks for an empty
-list.  If the list is empty, this is our first booking, so we return
-`1`.  If the list is not empty, we add `1` to the maximum value in
-the list and return it.
+Как видно из программы, реализация функции `get_next_id` достаточно простая.  
+Функция получает из словаря список ключей. Если список пуст, то это значит, 
+что произошло первое бронирование комнаты в гостинице,
+функция возвращает `1`.  Если список не пуст, то добавить `1` к 
+максмальному значению ключей и вернуть полученное значение.
 
-Now we will use the above function to create entries in the
-bookings_db dictionary::
+Теперь созданную выше функцию встроим в программы код, создающий
+записи в словаре bookings_db::
 
   >>> def book_room(name, place):
   ...     next_id = get_next_id()
@@ -370,35 +372,37 @@ bookings_db dictionary::
   ...     'room': place
   ...     }
 
-The requirements of a hotel booking management application require
-considering additional data:
+В хранилище необходимо учесть, что может потребоваться хранить 
+другие данные, такие как нижеперечисленные:
 
-  - phone numbers
-  - room options
-  - payment methods
+  - номера телефонов,
+  - особенности бронирования,
+  - способы платежей клиентов,
   - ...
 
-And code to manage the data:
+Необходимо реализовать следующие функции:
 
-  - cancel a reservation
-  - update a reservation
-  - pay for a room
-  - persist the data
-  - insure security of the data
+  - отмена бронирования,
+  - уточнение бронирования,
+  - оплата проживания,
+  - постоянное хранение данных и доступ к ним,
+  - обеспечение хащиты информации в хранилище,
   - ...
 
-Were we to continue with the procedural example, we would create many
-functions, passing data back and forth between them.  As requirements
-change and are added, the code becomes harder to maintain and bugs
-become harder to find and fix.
+Процедурная реализация данного примера требует создания большого 
+числа функций, обменивающихся информацией друг с другом.  Изменения
+требований к дизайну и реализации, добавление новых функций, создает 
+условия к усложнению процесса поддержки программного кода.  
+Кроме того, становится сложнее выявлять и исправлять ошибки.  
 
-We will end our discussion of the procedural approach here.  It will
-be much easier to provide data persistence, design flexibility and
-code testability using objects.
+На этом закончим обсуждение процедурного подхода. Обеспечивать 
+постоянное хранение данных, гибкость дизайна и 
+возможность тестирования программного кода, будет проще, 
+используя объекты.
 
 
-Object oriented approach
-~~~~~~~~~~~~~~~~~~~~~~~~
+Объектно-ориентированный подход
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. ??? should this paragraph talk about "creating an object for
  handling registration" or "creating a class to handle registration"?
