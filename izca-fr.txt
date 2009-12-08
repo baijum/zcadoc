@@ -1,246 +1,269 @@
-===========================
-Zope Component Architecture
-===========================
+========================================================
+Le guide complet de l'Architecture de Composants de Zope
+========================================================
 
+:Author: Baiju M
+:Version: 0.5.8
+:Printed Book: `http://www.lulu.com/content/1561045
+                    <http://www.lulu.com/content/1561045>`_
+:Online PDF: `http://www.muthukadan.net/docs/zca.pdf
+                  <http://www.muthukadan.net/docs/zca.pdf>`_
+:Traducteur: Christophe Combelles <ccomb@free.fr>, Stéphane Klein <stephane@harobed.org>
 
-:Auteur: Baiju M
-:Version: 0.4.1
-:URL: `http://www.muthukadan.net/docs/zca.pdf
-       <http://www.muthukadan.net/docs/zca.pdf>`_
-:Traducteur: Stéphane Klein <stephane@harobed.org>
-
-Copyright (C) 2007 Baiju M <baiju.m.mail AT gmail.com>.
+Copyright (C) 2007,2008,2009 Baiju M <baiju.m.mail AT gmail.com>.
 
 Chacun est autorisé à copier, distribuer et/ou modifier ce document
-suivant les termes de la "GNU Free Documentation License", version 1.2
-ou (à votre gré) toute version ultérieur publiée par la Free Software
+suivant les termes de la « GNU Free Documentation License », version 1.3
+ou toute version ultérieure publiée par la Free Software
 Foundation.
 
 Le code source présent dans ce document est soumis aux conditions de
-la licence Zope Public License, Version 2.1 (ZPL).
+la « Zope Public License », Version 2.1 (ZPL).
 
-LE CODE SOURCE DE CE DOCUMENT EST FOURNI "EN L'ETAT" SANS AUCUNE
-GARANTIE.
+THE SOURCE CODE IN THIS DOCUMENT AND THE DOCUMENT ITSELF IS PROVIDED
+"AS IS" AND ANY AND ALL EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF TITLE,
+MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS FOR A PARTICULAR
+PURPOSE.
 
-.. note::
+.. sidebar:: Acknowledgements
 
-  Merci à Kent Tenney (Wisconsin, USA) et Brad Allen (Dallas, USA)
-  pour leurs suggestions.
-
+  De nombreuses personnes m'ont aidé à écrire ce livre. Le brouillon initial a été
+  relu par mon collègue Brad Allen. Quand j'ai annoncé ce livre sur mon blog, j'ai
+  reçu de nombreux encouragements pour poursuivre ce travail. Kent Tenney a
+  modifié de nombreuses partie du livre et a également réécrit l'application
+  servant d'example. De nombreuses autres personnes m'ont envoyé des corrections
+  et des commentaires, dont Lorenzo Gil Sanchez, Michael Haubenwallner, Nando
+  Quintana, Stephane Klein, Tim Cook, Kamal Gill et Thomas Herve. Lorenzo a
+  traduit ce travail en espagnol et Stephane initié la traduction en français. Merci à
+  toutes ces personnes !
 
 .. contents::
 .. .. sectnum::
 
 
-Premiers pas
-------------
+Getting started
+---------------
 
 
 Introduction
 ~~~~~~~~~~~~
 
-Le développement de logiciels de grandes tailles (grande quantité de
-lignes de code...) est toujours une tâche très complexe.  L'expérience
-montre que l'utilisation d'une approche orienté objet simplifie
-l'analyse, la modélisation et l'implémentation de programmes
-complexes. Les logiciels informatiques basés sur une architecture et
-une programmation oriénté composant sont de nos jours de plus en plus
-populaire. Une grande partie des langages de programmations disposent
-de framework qui permettent ou simplifient la programmation orienté
-composant. Certain de ces frameworks sont même compatibles avec
-plusieurs langages. Parmi ces frameworks orientés composants on trouve
-par exemple la technologie COM de Microsoft ou alors la technologie
+Le développement de grands systèmes logiciels est toujours une tâche très
+compliquée. L'expérience montre que l'approche orientée objet est bien appropriée à
+l'analyse, à la modélisation et à la programmation des systèmes complexes. La
+conception orientée composants et la programmation basée sur des composants
+deviennent actuellement très populaires. L'approche basée composants est d'une
+grande aide pour l'écriture et la maintenance de systèmes logiciels et 
+de leurs tests unitaires. Il existe de nombreux frameworks permettant la
+conception basée sur des composants dans différents langages, certains étant
+même indépendants du langage. On peut citer comme example : COM de Microsoft, ou
 XPCOM de Mozilla.
 
-L'architecture composant de Zope (nommé ZCA : Zope Component
-Architecture) est un framework qui permet d'écrire des programmes
-orientés composants en langage Python. ZCA est très bien adapté pour
-écrire des programmes Python complexes. Ce framework n'est pas limité
-au serveur web d'application Zope, il peut être utilisé pour
-l'écriture de tout type d'application Python, peut être même qu'il
-devrait être nommé `Python Component Architecture` plutôt que Zope
-Component Architecture.
+La **Zope Component Architecture (ZCA)** est un framework en Python qui autorise
+la conception et la programmation basée sur des composants. Elle est très bien
+adaptée au développement de grands systèmes logiciels en Python. La ZCA n'est
+pas liée au serveur d'application Zope : elle peut être utilisée pour développer
+n'importe quelle application en Python. Peut-être devrait-elle être appelée la «
+Python Component Architecture ».
 
-ZCA dépend principalement de deux paquets:
+Le but de la ZCA est d'utiliser des objets Python de manière efficace. Les
+composants sont des objets réutilisables fournissant une interface que l'on peut
+introspecter. Une interface est un objet qui décrit comment vous pouvez
+travailler avec un composant particulier. Autrement dit, un composant fournit
+une interface implémentée dans une classe ou tout autre objet *callable*. La
+façon dont le composant est implémenté n'a pas d'importance : ce qui compte est
+que celui-ci soit en accord avec l'interface. Grâce à la ZCA, vous pouvez
+éclater la complexité d'un système dans plusieurs composants travaillant
+ensemble. Elle vous aide à créer notamment deux types de composants : les «
+adapters » et les « utilities ».
 
-  - ``zope.interface`` utilisé pour définir l'interface des
+Trois paquets composent la ZCA :
+
+  - ``zope.interface`` est utilisé pour la définition d'une interface.
+
+  - ``zope.event`` fournit un système d'événements simples.
+
+  - ``zope.component`` sert à la création, l'inscription et la récupération des
     composants.
 
-  - ``zope.component`` pour réaliser les opérations d'enregistrements
-    et de recherches de composants.
+Souvenez-vous que la ZCA ne fournit pas de composants par elle-même. Elle n'a
+pour but que de créer, inscrire et récupérer des composants. Gardez également à
+l'esprit qu'un *adapter* est une classe Python tout à fait normale (en général
+une *factory*) et qu'un *utility* est un simple objet Python *callable*.
 
-ZCA dispose de tout ce qu'il faut pour utiliser efficacement des
-objets Python. Les composants sont des objets réutilisables disposant
-d'interface est introspectable. Un composant est un objet disposant
-d'une interface implémenté par une classe ou tout autre objet
-exécutable. L'implémentation d'un composant n'est pas l'élément le
-plus important, ce qui compte avant tout c'est sa conformité avec le
-"contrat" défini par son interface.  L'utilisation d'une architecture
-orienté composant vous permet de diviser la compléxité d'un système à
-travers de multiples composants coopératifs. L'architecture composant
-de Zope vous aide à créer deux types de composants de base : des
-`adapter` et des `utility`.
+Le framework ZCA est développé comme une partie du projet Zope 3. Comme
+mentionné plus haut, c'est un framework purement Python et il peut être utilisé
+dans n'importe quelle application Python. Actuellement, Zope 3, Zope 2 et Grok
+l'utilisent abondamment. De nombreux autres projets l'utilisent, y compris des
+applications non liées au web [#projects]_.
 
-Notez bien que l'architecture composant de Zope ne vous aide pas à
-écrire les composants eux-mêmes mais elle vous permet la création,
-l'enregistrement et la recherche de composants.Notez aussi qu'un
-composant `adapter` est une classe Python tout à fait normal (ou en
-général une fabrique d'objet (factory)) et qu'un composant `utility`
-est un objet Python exécutable standard.
-
-L'architecture composant Zope est développé comme une partie distincte
-du projet Zope 3. ZCA, comme indiqué plus tôt, est un framework
-purement Python, il peut être utilisé pour développer n'importe quel
-type d'application.  Actuellement à la fois Zope 3 et Zope 2 utilisent
-très fortement ce framework mais il existe de nombreux autres projets
-et même des applications non orientés Internet qui utilisent
-l'architecture composant de Zope [#projects]_.
+.. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
 
 
 Petit historique
 ~~~~~~~~~~~~~~~~
 
-Le développement de la ZCA a débuté en 2001 dans le cadre du projet
-Zope 3. Ce framework est le fruit de l'expérience aquise durant le
-développement d'application d'envergure en Zope 2. Jim Fulton est le
-père de ce projet. De nombreuses personnes ont participé à la
-conception de ce framework, parmit eux on peut citer : Stephan
-Richter, Philipp von Weitershausen, Guido van Rossum (créateur du
-langage Python), Tres Seaver, Phillip J Eby et Martijn Faassen.
+Le développement de la ZCA a débuté en 2001 dans le cadre du projet Zope 3. Ce
+framework est le fruit de l'expérience acquise pendant le développement
+d'applications d'envergure avec Zope 2. Jim Fulton est le père de ce projet. De
+nombreuses personnes ont participé à sa conception et à son implémentation,
+notamment Stephan Richter, Philipp von Weitershausen, Guido van Rossum (*aka.
+Python BDFL*), Tres Seaver, Phillip J Eby et Martijn Faassen.
 
-Par rapport à la version actuel, les premières versions de ZCA
-disposaient de quelques composants supplémentaires : les composants
-`services` et les composants `views`.  Ils ont été supprimé car les
-développeurs ont réalisé que le composant `utility` pouvait remplacer
-le composant `service` et le composant `multi-adapter` pouvait
-remplacer le composant `view`. La ZCA comporte actuellement un nombre
-réduit de type de type de composant :les `utility`, les `adapter`, les
-`subscribers` et les `handler`. En fait, les composants `subscriber`
-et `handler` sont tous deux des adaptateurs spécialisés.
+À ses débuts, la ZCA définissait des types de composants supplémentaires : les
+*services* et les *vues*, mais les développeurs ont fini par réaliser qu'un
+*utility* peut remplacer un *service* et qu'un *multi-adapter* peut remplacer
+une *view*. Aujourd'hui, la ZCA comporte un nombre très réduit de types de
+composants de base : les *utilities*, les *adapters*, les *subscribers* et les
+*handlers*. En fait, les *subscribers* et les *handlers* sont des cas
+particuliers de l'*adapter*.
 
-Pendant le cycle de développement de Zope 3.2, Jim Fulton a proposé
-une importante simplification de l'achitecture composant de Zope
-[#proposal]_. Parmit ces simplications, on trouve la possibilité en
-passant par une interface unique de déclarer à la fois des composants
-globaux et locaux.
+Pendant le cycle de développement de Zope 3.2, Jim Fulton a proposé une
+importante simplification de la ZCA [#proposal]_. Grâce à cette simplification,
+une nouvelle interface unique (`IComponentRegistry`) a été créée pour
+l'inscription des composants globaux et locaux.
 
-Le paquet ``zope.component`` a une longue liste de dépendances, parmit
-elles beaucoup ne sont pas nécessaire aux applications non Zope 3.
-Pendant le PyCon 2007, Jim Fulton a ajouté à setuptools une nouvelle
-fonctionnalité nommée `extras_require`. Elle permet de séparer les
-fonctionnalités constituant le coeur de ZCA des fonctionnalités
+.. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
+
+Le paquet ``zope.component`` avait une longue liste de dépendances, dont une
+grande partie n'était pas nécessaire pour une application non liée à Zope 3.
+Pendant PyCon 2007, Jim Fulton a ajouté la fonctionnalité `extras_require` à
+setuptools pour permettre d'extraire le coeur de la ZCA des fonctionnalités
 annexes [#extras]_.
 
-Maintenant, le projet Zope Component Architecture est un projet
-indépendant avec son propre cycle de version et son propre dépôt
-Subversion. Toutefois, les bugs et problèmes sont encore traités à
-l'intérieur du projet Zope 3 [#bugs]_, et la liste de diffusion
-zope-dev est utilisé pour les discussions liées aux développements
-[#discussions]_.
+.. [#extras] http://peak.telecommunity.com/DevCenter/setuptools#declaring-dependencies
+
+En mars 2009, Tres Seaver a supprimé les dépendances à ``zope.deferredimport`` et
+``zope.proxy``.
+
+Aujourd'hui, le projet ZCA est indépendant et possède son propre cycle de
+publications et son propre dépôt Subversion. Il est fourni avec le framework
+Zope. [#framework]_. Cependant, les anomalies et les bogues sont toujours pris
+en charge au travers du projet Zope 3 [#bugs]_ ete la liste de diffusion
+zope-dev est utilisée pour débattre du développement [#discussions]_. Il existe
+également une liste pour les utilisateurs de Zope 3 (`zope3-users`) qui peut
+être utilisée pour toute demande au sujet de la ZCA [#z3users]_.
+
+.. [#framework] http://docs.zope.org/zopeframework/
+.. [#bugs] https://bugs.launchpad.net/zope3
+.. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
+.. [#z3users] http://mail.zope.org/mailman/listinfo/zope3-users
 
 
 Installation
 ~~~~~~~~~~~~
 
-Les paquets ``zope.component`` et ``zope.interface`` forment
-ensemble le coeur de l'architecture composant de Zope. Ils fournissent
-les fonctionnalités permettant de définir, déclarer et retrouver des
-composants. Le paquet ``zope.component`` et ses dépendances sont
-disponibles sous forme de PythonEggs dans le dépôt PyPI (Python Package
-Index) [#pypi]_.
+Les paquets ``zope.component``, ``zope.interface`` et ``zope.event`` constituent
+le coeur de la *Zope Component Architecture*. Ils fournissent des outils
+permettant de définir, inscrire et rechercher des composants. Le paquet
+``zope.component`` et ses dépendances sont disponibles sous forme d'*egg* dans
+l'index des paquetes Python (PyPI) [#pypi]_.
 
-Vous pouvez utiliser `easy_install` [#easyinstall]_ pour installer
-``zope.component`` et ses dépendances :
+.. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
+
+Vous pouvez installer ``zope.component`` et ses dépendances avec `easy_install` 
+[#easyinstall]_ ::
 
   $ easy_install zope.component
 
-Cette commande télécharge ``zope.component`` et ses depandances depuis
-le dépôt PyPI et les installe sur votre système.
+.. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
 
-D'une manière alternative, vous pouvez télécharger manuellement le
-paquet ``zope.component`` et ses dépendances depuis PyPi puis les
-installer manuellement. L'ordre d'installation des paquets vous est
-donné ci-dessous. Sous Windows, vous aurais besoin du paquet binaire
-de ``zope.interface`` et ``zope.proxy``.
+Cette commande télécharge ``zope.component`` et ses dépendances depuis PyPI et
+l'installe dans votre *Python path*.
+
+Une autre manière de procéder est de télécharger ``zope.component`` et ses
+dépendances depuis PyPI et de les installer. Il faut installer les paquets dans
+l'ordre donné ci-dessous. Sous Windows, vous aurez probablement besoin du paquet
+binaire de ``zope.interface``.
 
   1. ``zope.interface``
-  2. ``zope.proxy``
-  3. ``zope.deferredimport``
-  4. ``zope.event``
-  5. ``zope.deprecation``
-  6. ``zope.component``
+  2. ``zope.event``
+  3. ``zope.component``
 
-Pour installer ces paquets après les avoir téléchagré, vous pouvez
-utiliser la commande ``easy_install`` avec le nom des paquets comme
-argument (vous pouvez aussi donner la totalité des noms des paquets
-en argument sur la même ligne)::
+Pour installer ces paquet, après téléchargement, vous pouvez utiliser la
+commande ``easy_install`` avec les eggs comme argument (éventuellement en
+fournissant tous les eggs sur la même ligne de commande) ::
 
-  $ easy_install /path/to/zope.interface-3.4.x.tar.gz
-  $ easy_install /path/to/zope.proxy-3.4.x.tar.gz
-  ...
+  $ easy_install /path/to/zope.interface-3.x.x.tar.gz
+  $ easy_install /path/to/zope.event-3.x.x.tar.gz
+  $ easy_install /path/to/zope.component-3.x.x.tar.gz
 
-Cette méthode install le framework ZCA dans votre `system Python`, dans
-le répertoire ``site-packages``... ce qui peut poser certain soucis.
-Dans un poste présent dans la liste de diffusion Zope 3, Jim Fulton
-est défavorable à l'utilisation du `system Python` [#systempython]_
-(c'est à dire à l'installation dans ``site-packages``).
+Vous pouvez aussi installer ces paquets en les décompressant séparément. Par
+exemple ::
+
+  $ tar zxvf /path/to/zope.interface-3.x.x.tar.gz
+  $ cd zope.interface-3.x.x
+  $ python setup.py build
+  $ python setup.py install
+
+Ces méthodes installeront la ZCA dans votre *Python système*, dans le dossier
+``site-packages``, ce qui peut être problématique. Dans un message sur la liste
+de diffusion Zope 3, Jim Fulton déconseille d'utiliser le Python système
+[#systempython]_. Vous pouvez utiliser ``virtualenv`` ou ``zc.buildout`` pour
+jouer avec n'importe quel paquet Python, et également pour les déploiements.
+
+.. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
 
 
-Environement d'expérimentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Méthode pour expérimenter
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``virtualenv`` et ``zc.buildout`` sont des outils qui permettent
-l'installation de la ZCA dans un environement isolé. L'utilisation de
-ces outils est conseillé lors l'expérimentation de code. De plus, il
-est bénéfique de se familiariser avec eux car ils sont très pratiques autant
-lors de la phase de développement que lors du déploiement d'applications.
+Il existe deux approches populaires en Python pour construire un environnement
+de travail isolé. La première est ``virtualenv`` créé par Ian
+Biking, la deuxième est ``zc.buildout`` créé par Jim Fulton. Il est même
+possible d'utiliser ces paquets ensemble. Ils vous aideront à installer 
+``zope.component`` et d'autres dépendances dans un environnement de
+développement isolé. Passer un peu de temps à se familiariser avec
+ces outils vous sera bénéfique lors des développements et des déploiements. 
 
-Vous pouvez installer``virtualenv`` via ``easy_install``::  
+**virtualenv**
+
+Vous pouvez installer ``virtualenv`` grâce à ``easy_install`` ::
 
   $ easy_install virtualenv
 
-Vous pouvez créez ensuite un nouvel environement comme ceci::
+Puis vous pouvez créer un nouvel environnement de cette façon ::
 
-  $ virtualenv myve
+  $ virtualenv --no-site-packages myve
 
-Cette command a pour effet de créer un nouvel environement virtuel dans le
-dossier ``myve``. Maintenant, à partir du dossier ``myve``, vous
-pouvez installer ``zope.component`` et ses dépendances en utilisant
-l'exécutable ``easy_install`` qui se trouve dans le dossier
-``myve/bin``::
+Ceci crée un nouvel environnement virtuel dans le dossier ``myve``.
+Maintenant, depuis ce dossier, vous pouvez installer ``zope.component`` et ses
+dépendances avec le script ``easy_install`` situé dans ``myve/bin`` ::
 
   $ cd myve
   $ ./bin/easy_install zope.component
 
-Vous pouvez maintenant importer les modules ``zope.interface`` et
-``zope.component`` a partir de votre nouvel interpréteur ``python``
-qui se trouve dans le dossier ``myve/bin||::
+Ensuite vous pouvez importer ``zope.interface`` et ``zope.component`` dans
+le nouvel interprète ``python`` situé dans ``myve/bin`` ::
 
   $ ./bin/python
 
-Cette commande vous donnera une invite de commande Python que vous
-pouvez utiliser pour exécuter les codes sources de ce livre.
+Cette commande démarre un interprète Python que vous pourrez utiliser pour
+lancer le code de ce livre.
 
-L'utilisation de la recette ``zc.recipe.egg`` du paquet
-``zc.buildout`` vous permet de créer un interpréteur python avec des
-PythonEggs spécifique. Premièrement, installez ``zc.buildout`` en
-utilisant la commande ``easy_install`` (Vous pouvez aussi faire cela à
-l'intérieur d'un environement virtuel). Pour créer un nouveau buildout
-pour expériement des PythonEggs, commencez par créer un nouveau
-dossier et initialisez le en utilisant la command ``buildout init``::
+
+**zc.buildout**
+
+En combinant ``zc.buildout`` et la recette ``zc.recipe.egg``, vous pouvez créer
+un interprète Python ayant accès aux eggs Python spécifiés. Tout d'abord,
+installez ``zc.buildout`` grâce à la commande ``easy_install`` (vous pouvez le
+faire à l'intérieur de l'environnement virtuel). Pour créer un nouveau
+*buildout* servant à expérimenter des eggs Python, commencez par créer un
+dossier, puis initialisez-le grâce à la commande ``buildout init`` ::
 
   $ mkdir mybuildout
   $ cd mybuildout
   $ buildout init
 
-Maintenant, le nouveau dossier ``mybuildout`` est un buildout. Le
-fichier de configuration par défaut du buildout est `buildout.cfg`.
-Après l'initilisation, il a pour contenu::
+De cette façon, le dossier ``mybuildout`` devient un « buildout ». Le fichier de
+configuration de buildout est par défaut `buildout.cfg`. Après initialisation,
+il doit contenir les lignes suivantes ::
 
   [buildout]
   parts =
 
-Vous pouvez le modifier comme ceci::
+Vous pouvez le modifier pour qu'il corresponde à ceci ::
 
   [buildout]
   parts = py
@@ -250,319 +273,312 @@ Vous pouvez le modifier comme ceci::
   interpreter = python
   eggs = zope.component
 
-Maintenant exécutez la commande ``buildout`` disponible dans le
-dossier ``mybuildout/bin`` sans aucun argument. Cela a pour effet de
-créer un nouvel interpréteur à l'intérieur du dossier
-``mybuildout/bin``::
+Si maintenant vous lancez la commande ``buildout`` disponible à l'intérieur du
+dossier ``mybuildout/bin``, vous obtiendrez un nouvel interprète Python dans le
+dossier ``mybuildout/bin`` ::
 
   $ ./bin/buildout
   $ ./bin/python
 
-Cette commande vous donnera un invite de commande Python que vous
-pourrez utiliser pour tester le code source de ce livre.
-
-.. [#projects] http://wiki.zope.org/zope3/ComponentArchitecture
-.. [#proposal] http://wiki.zope.org/zope3/LocalComponentManagementSimplification
-.. [#extras] http://peak.telecommunity.com/DevCenter/setuptools#declaring-dependencies
-.. [#bugs] https://bugs.launchpad.net/zope3
-.. [#discussions] http://mail.zope.org/mailman/listinfo/zope-dev
-.. [#pypi] Repository of Python packages: http://pypi.python.org/pypi
-.. [#easyinstall] http://peak.telecommunity.com/DevCenter/EasyInstall
-.. [#systempython] http://article.gmane.org/gmane.comp.web.zope.zope3/21045
+Cette commande démarre un interprète Python que vous pourrez utiliser pour
+lancer le code de ce livre.
 
 
-An example
+Un example
 ----------
 
 
 Introduction
 ~~~~~~~~~~~~
 
-Consider a business application for registering guests staying in a
-hotel.  Python can implement this in a number of ways.  We will start
-with a brief look at a procedural implementation, and then move to a
-basic object oriented approach.  As we examine the object oriented
-approach, we will see how we can benefit from the classic design
-patterns, `adapter` and `interface`.  This will bring us into the
-world of the Zope Component Architecture.
+Imaginez une application servant à enregistrer les clients d'un hôtel. En
+Python, il est possible de faire ceci de différentes manières. Nous allons
+commencer par étudier rapidement la méthode procédurale, puis nous orienter vers
+une approche basique orientée objet. En examinant l'approche orientée objet,
+nous verrons comment nous pouvons bénéficier des motifs de conception
+`adaptateur` et `interface`. Cela nous fera entrer dans le monde de la Zope
+Component Architecture.
 
 
-Procedural approach
-~~~~~~~~~~~~~~~~~~~
+Approche procédurale
+~~~~~~~~~~~~~~~~~~~~
 
-In any business application, data storage is very critical.  For
-simplicity, this example use a Python dictionary as the storage.  Key
-of the dictionary will be the unique Id for a particular guest.  And
-value will be another dictionary with key as the property name::
+Dans toute application professionnelle, le stockage des données est un point
+critique. Pour une question de simplicité, cet exemple utilise un simple
+dictionnaire Python comme méthode de stockage. Nous allons générer des
+identifiants uniques pour le dictionnaire, la valeur associée sera elle-même un
+dictionnaire contenant les détails de l'enregistrement.
 
-  >>> guests_db = {} #key: unique Id, value: details in a dictionary
+  >>> bookings_db = {} #key: unique ID, value: details in a dictionary
 
-In a simplistic method, a function which accepts details as arguments
-is enough to do the registration.  You also required a supporting
-function to get the next Id for your data storage.
+Une implémentation minimaliste nécessite une fonction à laquelle on transmet les
+détails de l'enregistrement et une fonction utilitaire qui fournit les
+identifiants uniques utilisés comme clés du dictionnaire de stockage.
 
-The supporting function, for getting the next Id can be implemented
-like this::
+Nous pouvons obtenir un identifiant unique de cette façon ::
 
   >>> def get_next_id():
-  ...     db_keys = guests_db.keys()
+  ...     db_keys = bookings_db.keys()
   ...     if db_keys == []:
   ...         next_id = 1
   ...     else:
   ...         next_id = max(db_keys) + 1
   ...     return next_id
 
-As you can see, the `get_next_id` function implementation is very
-simple.  Well, this is not the ideal way, but it is sufficient to
-explain concepts.  The function first get all keys of storage as list
-and check whether it is empty or not.  If the list is empty, so no
-item is stored, it return `1` as the next Id.  And if the list is not
-empty, the next Id is calculated by adding `1` to the maximum value of
-list.
+Comme vous pouvez voir, l'implémentation de la fonction `get_next_id` est très
+simple. La fonction récupère une liste de clés et vérifie si la liste est vide.
+Si c'est le cas, nous savons que nous en sommes au premier enregistrement et
+nous renvoyons `1`. Sinon, nous ajoutons `1` à la valeur maximale de la liste et
+nous renvoyons la nouvelle valeur en résultant.
 
-The function to register guest can get next unique Id using
-`get_next_id` function, then assign the details of guest using a
-dictionary.  Here is the function to get details and store in the
-database::
+Ensuite, pour créer des enregistrements dans le dictionnaire bookings_db, nous
+utilisons la fonction suivante ::
 
-  >>> def register_guest(name, place):
+  >>> def book_room(name, place):
   ...     next_id = get_next_id()
-  ...     guests_db[next_id] = {
+  ...     bookings_db[next_id] = {
   ...     'name': name,
-  ...     'place': place
+  ...     'room': place
   ...     }
 
-We will end our discussion of the procedural approach here.
-It will be much easier to add required features such as data
-persistence, design flexibility, and code testability using objects.
+Une application de gestion des enregistrements d'hôtel nécessite d'envisager des
+données supplémentaires:
+
+  - les numéros de téléphone
+  - les options des chambres
+  - les méthodes de paiement
+  - ...
+
+Et de code pour gérer les données:
+
+  - annuler une réservation
+  - Modifier une réservation
+  - payer une chambre
+  - stocker les données
+  - assurer la sécurité des données
+  - ...
+
+Si nous devions continuer l'exemple procédural, il faudrait créer plusieurs
+fonctions, en renvoyant les données de l'une à l'autre. Au fur à mesure que les
+fonctionnalités seraient ajoutées, le code deviendrait de plus en plus difficile
+à maintenir et les bogues deviendraient difficiles à trouver et à corriger.
+
+Nous n'irons pas plus loin dans l'approche procédurale. Il sera beaucoup plus
+facile d'assurer la persistence des données, la flexibilité de la conception et
+l'écriture de tests unitaires en utilisant des objets.
 
 
-Object oriented approach
-~~~~~~~~~~~~~~~~~~~~~~~~
+Approche orientée objet
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. ??? should this paragraph talk about "creating an object for
- handling registration" or "creating a class to handle registration"?
+Notre discussion sur la conception orientée objet nous amène à la notion de
+« classe » qui sert à encapsuler les données et le code qui les gère.
 
-In object oriented methodology, you can think of a registrar object
-handling the registration.  There are many advantages for creating an
-object for handling registration.  Most importantly, the abstraction
-provided by the registrar object makes the code easier to understand.
-It offers a way to group related functionality, and can be extended
-via inheritance. As features are added, such as canceling and updating
-registration, the registrar object can grow to provide them, or
-delegate them to another object.
+Notre classe principale sera « FrontDesk ». Le FrontDesk et d'autres classes
+auxquelles il délèguera du traitement, sauront comment gérer les données de
+l'hôtel. Nous allons créer des instances de FrontDesk pour appliquer cette
+connaissance au métier de la gestion d'hôtel.
 
-Lets look at the implementation details of a registrar object
-implemented as a class::
+L'expérience a montré qu'en consolidant le code et les contraintes sur les
+données via des objets, on aboutit à un code qui est plus facile à comprendre, à
+tester et à modifier.
 
-  >>> class guestRegistrar(object):
+Boservons les détails d'implémentation de la classe FrontDesk::
+
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, name, place):
+  ...     def book_room(self, name, place):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': name,
   ...         'place': place
   ...         }
 
-In this implementation, the registrar object (an instance of
-`GuestRegistrar` class) is handling the registration.  With this
-design, a particular registrar object can perform multiple
-registrations.
+Dans cette implémentation, l'objet `frontdesk` (une instance de la classe
+FrontDesk) est capable de prendre en charge les réservations. Nous pouvons
+l'utiliser de la façon suivante::
 
-This is how you can use the current registrar implementation::
+  >>> frontdesk = FrontDesk()
+  >>> frontdesk.book_room("Jack", "Bangalore")
 
-  >>> registrar = GuestRegistrar()
-  >>> registrar.register("Jack", "Bangalore")
+Dans tout projet, on est confronté à des changements de besoins. Dans notre cas,
+la direction a décidé que chaque client devait fournit un numéro de téléphone,
+donc nous devons changer le code.
 
-Requirement changes are unavoidable in any real world project.
-Consider this case, after some time, a new requirement is arising: the
-guests also required to provide phone number to admit them.  You will
-be required to change the implementation of registrar object to
-support it.
+Nous pouvons satisfaire ce nouveau besoin en ajoutant un argument à la méthode
+`book_room` qui sera ajouté au dictionnaire des valeurs::
 
-You can achieve this requirement by adding one argument to `registrar`
-method and use that argument in the dictionary of values.  Here is the
-new implementation for this requirement::
-
-  >>> class GuestRegistrar(object):
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, name, place, phone):
+  ...     def book_room(self, name, place, phone):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': name,
   ...         'place': place,
   ...         'phone': phone
   ...         }
 
-Other than migrating the data to new schema, now you have to change
-the usage of `GuestRegistrar` in all places.  If you can abstract the
-details of guest into an object and use it for registration, the code
-changes can be minimized.  If you follow this design, you have to pass
-that guest object instead of more arguments to the function.  The new
-implementation with guest object will look like this::
+En plus de devoir migrer les données vers le nouveau schéma, nous devons changer
+tous les appels à la classe ``FrontDesk``. Si nous incorporons les coordonnées
+de chaque client dans un objet et que nous utilisons cet objet pour les
+réservations, les modifications de code pourront être minimisées. Nous pouvons
+maintenant changer les détails de l'objet client sans avoir à changer les appels
+à FrontDesk.
 
-  >>> class GuestRegistrar(object):
+Nous avons donc::
+
+  >>> class FrontDesk(object):
   ...
-  ...     def register(self, guest):
+  ...     def book_room(self, guest):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
 
-Well, even in this implementation you have to change code.  Code
-change for requirement is unavoidable, your goal should be to minimize
-changes and make it maintainable.
+Nous devons toujours modifier le code pour répondre aux nouvelles demandes.
+C'est inévitable, cependant notre but est de minimiser ces changements et donc
+d'améliorer la maintenabilité.
 
 .. note::
 
-  You should have the courage to make any change, major or minor, at
-  any time.  Immediate feedback is the only way you can get the
-  courage.  Using automated testing, you can get the immediate
-  feedback and so the courage to make changes.  For more details about
-  this subject, you can read the book called `Extreme Programming
-  Explained` by Kent Beck.
+  Lors du développement il ne faut jamais hésiter à faire des changements sans
+  craindre de casser l'application. Le feedback nécessaire doit être immédiatement
+  obtenu grâce à des tests automatisés. Avec des tests bien écrits (et un bon
+  ontrôle de versions), vous pouvez faire impunément des changements aussi importants que
+  vous souhaitez. Une bonne source d'informations à propos de cette philosophie de
+  programmation est l'ouvrage `Extreme Programming Explained` par Kent Beck.
 
-By introducing the guest object, you saved some typing.  More than
-that, the abstraction of guest object made the system much simpler and
-easy to understand.  The better understanding leads to better
-restructuring and hence maintainable code.
+En introduisant l'objet guest, vous avez économisé un peu de temps. Mais plus
+important, l'abstraction apportée par l'objet guest a rendu le système plus
+simple et mieux compréhensible. Par conséquent, le code est plus facile à
+restructurer et à maintenir.
 
 
-The adapter pattern
-~~~~~~~~~~~~~~~~~~~
+Le motif `adaptateur`
+~~~~~~~~~~~~~~~~~~~~~
 
-In a real application, as you noted earlier, the registrar object may
-have cancellation and/or updation functionalities.  Suppose there are
-two more methods like, `cancel_registration` and
-`update_registration`.  In the new design you will be required to pass
-the guest object for each methods.  You can solve this problem by
-setting guest object as an attribute of registrar object.
+Dans une vraie application, l'objet frontdesk devra gérer des fonctionnalités
+comme les annulations et les modifications. Avec la conception actuelle, nous
+devons transmettre l'objet guest au frontdesk à chaque fois que nous appelons
+les méthodes `cancel_booking` et `update_booking`.
 
-Here is the new implementation of registrar object which set guest
-object as an attribute::
+Nous pouvons éviter ceci si nous transmettons l'objet guest à
+FrontDesk.__init__() et si nous le stockons en attribut de l'instance.
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
   ...     def __init__(self, guest):
   ...         self.guest = guest
   ...
-  ...     def register(self):
+  ...     def book_room(self):
   ...         guest = self.guest
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
+  ...
+  ...     def cancel_booking(self):
+  ...         guest = self.guest
+  ...         #code for cancellations goes here ...
+  ...
+  ...     def update_booking(self):
+  ...         guest = self.guest
+  ...         #code for updatiion goes here ...
 
-The solution you reached is a common design pattern called, `Adapter`.
-With this design, now you can add more methods, so more functionality,
-if required.
 
-In this implementation, while creating the instance you have to pass
-the guest object which has the values as attributes.  Now you also
-required to create separate instances of `GuestRegistrarNG` for each
-guest object.
+  La solution que nous avons obtenue est un motif de conception courant appelé
+  `adaptateur`. Le `Gang of Four` [#patternbook]_ résume ainsi l'*esprit* de
+  l'adaptateur::
 
-Now just step back and think differently.  Suppose you are the creator
-of this software and selling it to many hotel customers.  Consider a
-case where your different clients requires different storages.  For
-example, one registrar might store the details in a relational
-database and another one might store them in Zope Object Database
-(ZODB).  It would be better if you can replace the registrar object
-with another one which store guest details in a different way.  So, a
-mechanism to change implementation based on some configuration would
-be useful.
+    « Convertir l'interface d'une classe en une autre interface à laquelle le client
+    s'attend. L'adaptateur permet à des classes de fonctionner ensemble même si
+    elles ont des interfaces incompatibles. »
 
-Zope component architecture provides a mechanism to replace components
-based on configuration.  Using Zope component architecture you can
-register components in a registry called component registry.  Later,
-retrieve component based on the configuration.
-
-The `GuestRegistrarNG` class follows, as you noted, a pattern called
-`Adapter`.  The `GuestRegistrarNG` is the adapter which adapts the
-guest object (adaptee).  As you can see, the adapter should contain
-the component it adapts (adaptee).  This is a typical implementation
-of adapter::
+En général, un objet adaptateur *contient* un objet adapté::
 
   >>> class Adapter(object):
   ...
   ...     def __init__(self, adaptee):
   ...         self.adaptee = adaptee
 
-Now the adapter can make use adaptee (call its methods or access
-attributes).  An adapter may adapt more than one component.  Zope
-component architecture provides a mechanism to effectively use these
-kind of objects.  So, which component should be used will become a
-matter of configuration.
+Ce motif sera utile lorsqu'on sera confronté à des détails d'implémentation qui
+dépendent de considérations telles que:
 
-This is a common scenario where you want to use different objects
-doing same things, but the details may change.  There are many
-situations in programming where you want to use different
-implementations for same type of objects.  Here is a small list of
-other common scenarios:
+- modification des besoins client
+- modification des méthodes de stockage (ZODB, RDBM, XML)
+- modification des méthodes de sortie (HTML, PDF, texte pur)
+- modification de la source utilisée (ReST, Markdown, Textile)
 
- - A wiki engine with support for multiple markups (STX, reST, Plain
-   text, etc.)
+La ZCA utilise des adaptateurs et un *registre de composants* pour fournir la
+capacité de changer les détails d'implémentation du code via de la
+*configuration*.
 
- - An object browser which shows size of different types of objects.
+Comme nous pouvons le constater dans la section sur les adaptateurs de la ZCA,
+la capacité de configurer les détails d'implémentation fournit des avantages
+intéressants:
 
- - Different types of output formats for text data (PDF, HTML etc.)
+- on peut interchanger les implémentations
+- on peut ajouter de nouvelles implémentations si besoin
+- on améliore les possibilités de réutilisation, aussi bien d'un code existant que
+  du code utilisant la ZCA.
 
- - When developing an application for multiple clients, their
-   requirements may change.  Maintaining separate code bases of the
-   same application for different clients is difficult.  A better
-   approach would be to create reusable components and configure them
-   based on client-specific requirements.
+Ces possibilités mènent à du code qui est flexible, évolutif et réutilisable. Il
+y a un cependant un coût : maintenir le registre de composants ajoute un niveau
+de complexité à l'application. Si une application n'a pas besoin de ces
+avantages, la ZCA n'est pas pas nécessaire.
 
-All these examples points to situations where you want to make
-applications extensible or pluggable.  Do not use `adapter`
-components where you do not want extensibility or pluggability.
-
-Zope component architecture provides `adapter` components to solve
-these kinds of problems.  In fact, `GuestRegistrarNG` is an adapter
-without explicit interface declaration.  This tutorial will discuss
-adapters after introducing the concept of interfaces.  Interfaces are
-one of the foundations of Zope components, so understanding the
-concept and usage of interfaces is very important.
+Nous sommes maintenant prêts à étudier la Zope Component Architecture, en
+commençant avec les interfaces.
 
 
 Interfaces
 ----------
 
-
 Introduction
 ~~~~~~~~~~~~
 
-`Design Patterns` is a classic book in software engineering by the
-`Gang of Four` [#patternbook]_.  In this book they recommend: "Program
-to an interface, not an implementation".  Defining formal interfaces
-helps you better understand system.  Moreover interface brings you all
-the benefits of ZCA.
+Le fichier README.txt [#readmes]_ dans chemin/vers/zope/interface définit les
+interfaces de cette manière::
 
-Interface define the behavior and state of objects.  An interface
-describes how you work with the object.  If you like metaphor, think
-of interface as a `contract for object`.  Another metaphor which may
-help is `blueprint for objects`.  In the code, methods and attributes
-are forming the object's interface.
+    Les interfaces sont des objets qui spécifient (documentent) le comportement
+    externe des objets qui les « fournissent ». Un interface spécifie un
+    comportement au travers :
 
-The notion of interface is very explicit in modern languages like
-Java, C#, VB.NET etc.  Also these languages provide some syntax for
-defining interfaces.  Python has the notion interfaces, but it is not
-very explicit.  To simulate a formal definition of interfaces in C++,
-`Gang of Four` used classes with virtual functions in `Design
-Patterns` book.  In a similar fashion, Zope component architecture use
-``zope.interface.Interface`` inherited meta-class for defining an
-interface.
+    - de documentation informelle dans une docstring
 
-The base of object-orientation is the communication between objects.
-Messages are used for the communication between objects.  In Python,
-functions, methods or any other callable can be used to handle
-messages.
+    - de définitions d'attributs
 
-For example, consider this class::
+    - d'invariants qui sont des conditions posées sur les objets fournissant
+      l'interface.
+
+L'ouvrage de référence `Design Patterns` [#patternbook]_ par le `Gang of Four`
+recommande que vous devez « programmer pour une interface, pas pour une
+implémentation ». Définir une interface formelle est utile dans la compréhension
+d'un système. De plus, les interfaces vous apportent tous les bénéfices de la
+ZCA.
+
+.. [#readmes] L'arborescence du code de Zope contient de nombreux fichiers README.txt
+    qui offrent une très bonne documentation.
+.. [#patternbook] http://en.wikipedia.org/wiki/Design_Patterns
+
+Une interface spécifie les caractéristiques d'un objet, son comportement et ses
+capacités. Elle décrit le « quoi » d'un objet. Pour apprendre le « comment »,
+vous devez regarder l'implémentation.
+
+Les métaphores couremment utilisées pour les interfaces sont `contrat` ou
+`plan`, les termes légaux et architecturaux pour représenter un jeu de
+spécifications.
+
+Dans certains langages de programmation modernes: Java, C#, VB.NET, etc., les
+interfaces sont un aspect explicite du langage. Étant donné que Python ne
+possède pas nativement d'interfaces, la ZCA les implémente comme des
+meta-classes desquelles on hérite.
+
+Voici un exemple classique de Hello World::
 
   >>> class Host(object):
   ...
@@ -571,24 +587,23 @@ For example, consider this class::
   ...
   ...         return "Good morning, %s!" % name
 
-In the above class, you defined a `goodmorning` method.  If you call
-the `goodmorning` method from an object created using this class, it
-will return `Good morning, ...!` ::
+Dans la classe ci-dessus, on a défini une méthode `goodmorning`. Si vous appelez
+cette méthode depuis un objet créé en utilisant cette classé, vous obtiendrez un
+`Good morning, ...!` ::
 
   >>> host = Host()
   >>> host.goodmorning('Jack')
   'Good morning, Jack!'
 
-Here ``host`` is the actual object.  The implementation details of
-this object is the class ``Host``.  Now, how to find how the object
-looks like, that is, what are the methods and attributes of the
-object.  For this, either you have go through the implementation
-details (``Host`` class) of the object or a separate API documentation
-[#api]_ will be required.
+Ici, ``host`` est l'objet effectif que votre code utilise. Si vous voulez
+examiner les détails d'implémentation, vous devez accéder à la classe ``Host``,
+soit via le code source, soit au travers d'un outil de documentation d'API
+[#api]_.
 
-You can use the ``zope.interface`` package to define the interface of
-objects.  For the class given above you can specify the interface like
-this::
+.. [#api] http://en.wikipedia.org/wiki/Application_programming_interface
+
+Maintenant nous allons commencer à utiliser les interfaces de la ZCA. Pour la
+classe ci-dessus, vous pouvez définir l'interface comme suit ::
 
   >>> from zope.interface import Interface
 
@@ -597,21 +612,18 @@ this::
   ...     def goodmorning(guest):
   ...         """Say good morning to guest"""
 
-As you can see, the interface is defined using Python class statement.
-We use (abuse?) Python's class statement to define interfaces.  To
-make a class an interface, it must be inherited from
-``zope.interface.Interface`` .  The ``I`` prefix for interface name is
-a convention.
+Vous pouvez constater que l'interface hérite de zope.interface.Interface. C'est
+de cette façon (abusive ?) que la ZCA définit des interfaces. Le préfixe « I »
+pour le nom de la classe est une convention utile.
 
 
-Declaring interfaces
-~~~~~~~~~~~~~~~~~~~~
+Déclarer des interfaces
+~~~~~~~~~~~~~~~~~~~~~~~
 
-You have already seen how to declare an interface using
-``zope.interface`` in previous section.  This section will explain the
-concepts in detail.
+Vous avez déjà vu comment déclarer une interface en utilisant ``zope.interface``
+dans la section précédente. Cette section va expliquer les concepts en détail.
 
-Consider this example interface::
+Prenez cette exemple d'interface::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -624,60 +636,57 @@ Consider this example interface::
   ...     def goodmorning(guest):
   ...         """Say good morning to guest"""
 
-The interface, ``IHost`` has two attributes, ``name`` and
-``goodmorning``.  Recall that, at least in Python, methods are also
-attributes of classes.  The ``name`` attribute is defined using
-``zope.interface.Attribute`` class.  When you add the attribute
-``name`` to the ``IHost`` interface, you don't set an initial value.
-The purpose of defining the attribute ``name`` here is merely to
-indicate that any implementation of this interface will feature an
-attribute named ``name``.  In this case, you don't even say what type
-of attribute it has to be!.  You can pass a documentation string as a
-first argument to ``Attribute``.
+L'interface ``IHost`` possède deux attributs, ``name`` et ``goodmorning``.
+Rappelez-vous qu'en Python les méthodes des classes sont aussi des attributs.
+L'attribut ``name`` est défini en utilisant la classe
+``zope.interface.Attribute``. Quand vous ajoutez l'attribut ``name`` à
+l'interface ``IHost``, vous ne définissez pas de valeur initiale. La raison de
+définir l'attribut ``name`` ici est simplement d'indiquer que toute
+implémentation de cette interface doit fournir un attribut nommé ``name``. Dans
+ce cas, vous ne dites même pas de quel type l'attribut doit être ! Vous pouvez
+juste fournir une chaîne de documentation comme premier argument à ``Attribute``.
 
-The other attribute, ``goodmorning`` is a method defined using a
-function definition.  Note that `self` is not required in interfaces,
-because `self` is an implementation detail of class.  For example, a
-module can implement this interface.  If a module implement this
-interface, there will be a ``name`` attribute and ``goodmorning``
-function defined.  And the ``goodmorning`` function will accept one
-argument.
+L'autre attribut, ``goodmorning`` est une méthode définie en utilisant une
+fonction. Notez bien que ``self`` n'est pas nécessaire dans les interfaces, car
+``self`` est un détail d'implémentation de la classe. Il est possible pour un
+module d'implémenter cette interface. Si un module implémente cette interface, cela
+signifiera qu'un attribut ``name`` et une fonction ``goodmorning`` seront
+définis. Et la fonction ``goodmorning`` devra accepter un argument.
 
-Now you will see how to connect `interface-class-object`.  So object
-is the real living thing, objects are instances of classes.  And
-interface is the actual definition of the object, so classes are just
-the implementation details.  This is why you should program to an
-interface and not to an implementation.
+Nous allons maintenant voir comment effectuer le lien entre les objets, les
+classes et les interfaces. Seuls les objets sont vivants : ce sont des instances
+de classes. Et les interfaces représentent la définition des objets, donc les
+classes ne sont qu'un détail d'implémentation. C'est pour cette raison que vous
+devez programmer pour une interface, pas pour une implémentation.
 
-Now you should familiarize two more terms to understand other
-concepts.  First one is `provide` and the other one is `implement`.
-Object provides interfaces and classes implement interfaces.  In other
-words, objects provide interfaces that their classes implement.  In
-the above example ``host`` (object) provides ``IHost`` (interface) and
-``Host`` (class) implement ``IHost`` (interface).  One object can
-provide more than one interface also one class can implement more than
-one interface.  Objects can also provide interfaces directly, in
-addition to what their classes implement.
+Nous devons nous familiariser avec deux termes supplémentaires pour comprendre
+les autres concepts. Le premier est `fournir`, le deuxième est `implémenter`.
+Les objets fournissent des interfaces, tandis que les classes implémentent des
+interfaces. Autrement dit, les objets fournissent les interfaces que les classes
+implémentent. Dans l'exemple ci-dessus, l'objet ``host`` fournit l'interface
+``IHost`` et la classe ``Host`` implémente l'interface ``IHost``. Un objet peut
+fournir plusieurs interfaces. Les objets peuvent également fournir directement des
+interfaces, en plus de celles implémentées par leur classe.
 
 .. note::
 
-  Classes are the implementation details of objects.  In Python,
-  classes are callable objects, so why other callable objects can't
-  implement an interface.  Yes, it is possible.  For any `callable
-  object` you can declare that it produces objects that provide some
-  interfaces by saying that the `callable object` implements the
-  interfaces.  The `callable objects` are generally called as
-  `factories`.  Since functions are callable objects, a function can
-  be an `implementer` of an interface.
+  Les classes sont les détails d'implémentation des objets. En Python, les
+  classes sont des objets appelables (`callable`). Pourquoi un autre objet appelable ne
+  pourrait-il pas implémenter une interface ? En fait c'est possible. Pour
+  n'importe quel objet appelable, vous pouvez déclarer qu'il produit des objets
+  qui fournissent une interface donnée, en disant simplement que cet objet
+  appelable implémente l'interface. Ces objets appelables sont généralement
+  appelés des « fabriques ». Étant donné que les fonctions sont des objets
+  appelables, une fonction peut implémenter une interface.
 
 
-Implementing interfaces
-~~~~~~~~~~~~~~~~~~~~~~~
+Implémentation des interfaces
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To declare a class implements a particular interface, use the function
-``zope.interface.implements`` in the class statement.
+Pour déclarer qu'une classe implémente une interface donnée, utilisez la
+fonction ``zope.interface.implements`` dans la déclaration de classe.
 
-Consider this example, here ``Host`` implements ``IHost``::
+Considérons cet exemple. Ici, ``Host`` implémente ``IHost``::
 
   >>> from zope.interface import implements
 
@@ -694,55 +703,54 @@ Consider this example, here ``Host`` implements ``IHost``::
 
 .. note::
 
-  If you wonder how ``implements`` function works, refer the blog post
-  by James Henstridge
+  Si vous vous demandez comment ``implements`` fonctionne, faites un tour sur
+  l'article de blog de James Henstridge
   (http://blogs.gnome.org/jamesh/2005/09/08/python-class-advisors/) .
-  In the adapter section, you will see an ``adapts`` function, it is
-  also working similarly.
+  Dans la section sur les adaptateurs, vous allez voir une fonction ``adapts``,
+  celle-ci fonctionne de manière similaire.
 
-Since ``Host`` implements ``IHost``, instances of ``Host`` provides
-``IHost``.  There are some utility methods to introspect the
-declarations.  The declaration can write outside the class also.  If
-you don't write ``interface.implements(IHost)`` in the above example,
-then after defining the class statement, you can write like this::
+Comme ``Host`` implémente ``IHost``, les instances de ``Host`` fournissent
+``IHost``. Il existe des méthodes permettant d'introspecter les déclarations. La
+déclaration peut également s'écrire en dehors de la classe. Au lieu d'écrire
+``interface.implements(IHost)`` comme dans l'exemple ci-dessus, vous pouvez
+écrire la chose suivante après la déclaration de classe::
 
   >>> from zope.interface import classImplements
   >>> classImplements(Host, IHost)
 
 
-Example revisited
-~~~~~~~~~~~~~~~~~
+L'exemple revisité
+~~~~~~~~~~~~~~~~~~
 
-Now, return to the example application.  Here you will see how to
-define the interface of the registrar object::
+Maintenant retournons à notre application example. Voici comment définir
+l'interface de l'objet frontdesk::
 
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
   ...
 
-Here, first you imported ``Interface`` class from ``zope.interface``
-module.  If you define a subclass of this ``Interface`` class, it will
-be an interface from Zope component architecture point of view.  An
-interface can be implemented, as you already noted, in a class or any
-other callable object.
+Nous avons d'abord importé la classe ``Interface`` depuis le module
+``zope.interface``. Si vous définissez une sous-classe de cette classe
+``Interface``, ce sera considéré comme une interface, du point de vue de
+l'Architecture de Composants. Une interface peut être implémentée, comme nous
+l'avons vu, dans une classe ou tout autre objet appelable.
 
-The registrar interface defined here is ``IRegistrar``.  The
-documentation string for interface gives an idea about the object.  By
-defining a method in the interface, you made a contract for the
-component, that there will be a method with same name available.  For
-the method definition interface, the first argument should not be
-`self`, because an interface will never be instantiated nor will its
-methods ever be called.  Instead, the interface class merely documents
-what methods and attributes should appear in any normal class that
-claims to implement it, and the `self` parameter is an implementation
-detail which doesn't need to be documented.
+L'interface de frontdesk ici définie est ``IDesk``. La chaîne de documentation
+de l'interface donne une idée sur la nature de l'objet. En définissant une
+méthode dans l'interface, vous avez passé un contrat avec le composant, imposant
+la présence d'une méthode du même nom. Dans la déclaration de la méthode côté
+interface, le premier argument ne doit pas être `self`, car une interface ne
+sera jamais instanciée et ses méthodes ne seront jamais appelées. Le rôle d'une
+interface est simplement de documenter quels arguments et quelles méthodes
+doivent apparaître dans une classe qui l'implémente, et le paramètre `self`
+n'est qu'un détail d'implémentation qui n'a pas besoin d'être documenté.
 
-As you know, an interface can also specify normal attributes::
+Comme vous le savez, une interface peut aussi spécifier des attributes normaux::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -752,26 +760,25 @@ As you know, an interface can also specify normal attributes::
   ...     name = Attribute("Name of guest")
   ...     place = Attribute("Place of guest")
 
-In this interface, guest object has two attributes specified with
-documentation.  An interface can also specify both attributes and
-methods together.  An interface can be implemented in a class, module
-or any other objects.  For example a function can dynamically create
-the component and return, in this case the function is an implementer
-for the interface.
+Dans cette interface, l'objet guest a deux attributs spécifiés avec de la
+documentation. Une interface peut spécifier à la fois des méthodes et des
+attributs. Une interface peut être implémentée dans une classe, un module ou
+tout autre objet. Par exemple une fonction peut créer dynamiquement le composant
+et le renvoyer, auquel cas la fonction implémente l'interface.
 
-Now you know what is an interface and how to define and use it.  In
-the next chapter you can see how an interface is used to define an
-adapter component.
+Vous savez maintenant ce qu'est une interface, comment la créer et l'utiliser.
+Dans le chapitre suivant nous allons voir comment une interface peut être
+utilisée pour définir un composant adaptateur.
 
 
-Marker interfaces
-~~~~~~~~~~~~~~~~~
+Interfaces marqueurs
+~~~~~~~~~~~~~~~~~~~~
 
-An interface can be used to declare that a particular object belongs
-to a special type.  An interface without any attribute or method is
-called `marker interface`.
+Une interface peut être utilisée pour déclarer qu'un objet appartient à un
+type donné. Une interface sans aucun attribut ni aucune méthode est appelée une
+« interface marqueur ».
 
-Here is a `marker interface`::
+Voici une `interface marqueur`::
 
   >>> from zope.interface import Interface
 
@@ -779,24 +786,25 @@ Here is a `marker interface`::
   ...     """A special guest"""
 
 
-This interface can be used to declare an object is a special guest.
+Cette interface peut être utilisée pour déclarer qu'un objet est un client
+spécial.
 
 
 Invariants
 ~~~~~~~~~~
 
-Sometimes you will be required to use some rule for your component
-which involve one or more normal attributes.  These kind of rule is
-called `invariants`.  You can use ``zope.interface.invariant`` for
-setting `invariants` for your objects in their interface.
+Parfois vous aurez besoin de définir des règles ou des contraintes sur les
+attributs de vos composants. Ces types de règles sont appelés des `invariants`.
+Vous pouvez utiliser ``zope.interface.invariant`` pour définir des
+``invariants`` sur vos objets dans leur interface.
 
-Consider a simple example, there is a `person` object.  A person
-object has `name`, `email` and `phone` attributes.  How do you
-implement a validation rule that says either email or phone have to
-exist, but not necessarily both.
+Considérons un exemple simple, avec un objet `person`. Une objet `person` a un
+attribut `nom`, un attribut `email` et un attribut `phone`. Comment peut-on
+implémenter une règle de validation qui oblige à définir au choix le `phone` ou
+l'`email` mais pas forcément les deux ?
 
-First you have to make a callable object, either a simple function or
-callable instance of a class like this::
+Créez tout d'abord un objet appelable, soit une simple fonction soit une
+instance appelable d'une classe de la façon suivante::
 
   >>> def contacts_invariant(obj):
   ...
@@ -804,8 +812,8 @@ callable instance of a class like this::
   ...         raise Exception(
   ...             "At least one contact info is required")
 
-Then define the `person` object's interface like this.  Use the
-``zope.interface.invariant`` function to set the invariant::
+Ensuite définissez l'interface de l'objet `person` en utilisant la fonction
+``zope.interface.invariant`` pour définir l'invariant::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -819,7 +827,8 @@ Then define the `person` object's interface like this.  Use the
   ...
   ...     invariant(contacts_invariant)
 
-Now use `validateInvariants` method of the interface to validate::
+Maintenant, utilisez la méthode `validateInvariants` de l'interface pour
+effectuer la validation::
 
   >>> from zope.interface import implements
 
@@ -839,37 +848,34 @@ Now use `validateInvariants` method of the interface to validate::
   ...
   Exception: At least one contact info is required
 
-As you can see `jack` object validated without raising any
-exception. But `jill` object didn't validated the invariant
-constraint, so it raised exception.
-
-.. [#patternbook] http://en.wikipedia.org/wiki/Design_Patterns
-.. [#api] http://en.wikipedia.org/wiki/Application_programming_interface
+Vous constatez que l'ojet `jack` est validé sans erreur. Mais l'objet `jill` n'a
+pas pu valider la contrainte de l'invariant, il a donc levé une exception.
 
 
-Adapters
---------
+Adaptateurs
+-----------
 
 
-Implementation
+Implémentation
 ~~~~~~~~~~~~~~
 
-This section will describe adapters in detail.  Zope component
-architecture, as you noted, helps to effectively use Python objects.
-Adapter components are one of the basic components used by Zope
-component architecture for effectively using Python objects.  Adapter
-components are Python objects, but with well defined interface.
+Cette section décrit les adaptateurs en détail. L'Architecture de Composants,
+comme vous l'avez remarqué, fournit une aide dans l'utilisation efficace des objets
+Python. Les composants adaptateurs sont l'un des composants basiques utilisés
+par l'Architecture de Composants de Zope pour utiliser efficacement des objets
+Python. Les adaptateurs sont aussi des objets Python, mais avec une interface bien
+définie.
 
-To declare a class is an adapter use `adapts` function defined in
-``zope.component`` package.  Here is a new `GuestRegistrarNG` adapter
-with explicit interface declaration::
+Pour déclarer qu'une classe est un adaptateur, utilisez la fonction `adapts`
+définie dans le paquet ``zope.component``. Voici un nouvel adaptateur
+`FrontDeskNG` avec une déclaration explicite d'interface::
 
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -878,17 +884,16 @@ with explicit interface declaration::
   ...     def register(self):
   ...         guest = self.guest
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
 
 
-What you defined here is an `adapter` for `IRegistrar`, which adapts
-`IGuest` object.  The `IRegistrar` interface is implemented by
-`GuestRegistrarNG` class.  So, an instance of this class will provide
-`IRegistrar` interface.
+Ce que nous avons défini ici est un `adaptateur` pour `IDesk`, qui s'adapte à
+l'objet `IGuest`. L'interface `IDesk` est implémentée par la classe
+`FrontDeskNG`. Donc une instance de cette classe fournira l'interface `IDesk`.
 
 ::
 
@@ -901,252 +906,254 @@ What you defined here is an `adapter` for `IRegistrar`, which adapts
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
-The `GuestRegistrarNG` is just one adapter you created, you can also
-create other adapters which handles guest registration differently.
+`FrontDeskNG` est juste un adaptateur que nous avons créé. Vous pouvez créer
+d'autres adaptateurs qui prendront en charge le bureau d'enregistrement différemment.
 
 
-Registration
-~~~~~~~~~~~~
+Inscription
+~~~~~~~~~~~
 
-To use this adapter component, you have to register this in a
-component registry also known as site manager.  A site manager
-normally resides in a site.  A site and site manager will be more
-important when developing a Zope 3 application.  For now you only
-required to bother about global site and global site manager ( or
-component registry).  A global site manager will be in memory, but a
-local site manager is persistent.
+Pour utiliser ce composant adaptateur, vous devez l'inscrire dans un registre de
+composants (appelé également « gestionnaire de site »). Un gestionnaire de site
+réside normalement à l'intérieur d'un site. Le site et le gestionnaire de site
+prendront leur importance lors du développement d'une application Zope 3. Pour
+l'instant vous avez juste besoin de connaître les notions de site global et de
+gestionnaire global de site (ou registre de composant). Un gestionnaire global
+de site est situé en mémoire, alors qu'un gestionnaire de site local est
+persistent.
 
-To register your component, first get the global site manager::
+Pour inscrire votre composant, commencez par récupérer le gestionnaire global de
+site::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
-To get the global site manager, you have to call
-``getGlobalSiteManager`` function available in ``zope.component``
-package.  In fact, the global site manager is available as an
-attribute (``globalSiteManager``) of ``zope.component`` package.  So,
-you can directly use ``zope.component.globalSiteManager`` attribute.
-To register the adapter in component, as you can see above, use
-``registerAdapter`` method of component registry.  The first argument
-should be your adapter class/factory.  The second argument is a tuple
-of `adaptee` objects, i.e, the object which you are adapting.  In this
-example, you are adapting only `IGuest` object.  The third argument is
-the interface provided by the adapter component.  The fourth argument
-is optional, that is the name of the particular adapter.  Since you
-gave a name for this adapter, this is a `named adapter`.  If name is
-not given, it will default to an empty string ('').
+Pour récupérer le gestionnaire global de site, vous devez appeler la fonction
+``getGlobalSiteManager` disponible dans le paquet ``zope.component``.
+En fait, le gestionnaire global de site est disponible dans un attribut
+(``globalSiteManager``) du paquet ``zope.component``. Vous pouvez donc utiliser
+directement l'attribut ``zope.component.globalSiteManager``.
+Pour inscrire l'adaptateur comme un composant, utilisez la méthode
+``registerAdapter`` du registre de composants. Le premier argument doit être
+votre class ou fabrique d'adaptateur. Le deuxième argument est un tuple d'objets
+adaptés, c'est à dire les objets sur lesquels vous vous adaptez. Dans cet
+exemple, vous vous adaptez seulement à l'objet `IGuest`. Le troisième argument
+est l'interface implémentée par le composant adaptateur. Le quatrième argument
+est optionnel, il s'agit du nom de cet adaptateur particulier. Si vous donnez un
+nom à l'adaptateur, celui devient un `adaptateur nommé`. Si aucun nom n'est
+donné, la valeur transmise par défaut est une chaîne vide ('').
 
-In the above registration, you have given the adaptee interface and
-interface to be provided by the adapter.  Since you have already given
-these details in adapter implementation, it is not required to specify
-again.  In fact, you could have done the registration like this::
+Dans l'inscription ci-dessus, vous avez donné l'interface de l'objet adapté et
+l'interface fournie par l'adaptateur. Comme vous avez déjà donné ces
+informations dans l'implémentation de l'adaptateur, il est inutile de les
+spécifier à nouveau. En réalité, vous pouvez effectuer l'inscription de la
+manière suivante ::
 
-  >>> gsm.registerAdapter(GuestRegistrarNG, name='ng')
+  >>> gsm.registerAdapter(FrontDeskNG, name='ng')
 
-There are some old API to do the registration, which you should avoid.
-The old API functions starts with `provide`, eg: ``provideAdapter``,
-``provideUtility`` etc.  While developing a Zope 3 application you can
-use Zope configuration markup language (ZCML) for registration of
-components.  In Zope 3, local components (persistent components) can
-be registered from Zope Management Interface (ZMI) or you can do it
-programmatically also.
+Il existe des anciennes API pour effectuer l'inscription, que vous devriez
+éviter. Les fonctions de l'ancienne API commencent par `provide`, par exemple :
+``provideAdapter``, ``provideUtility``, etc. Si vous développez une application
+Zope 3, vous pouvez utiliser le langage ZCML (Zope Configuration Markup
+Language) pour effectuer les inscriptions des composants. Avec Zope 3, les
+composants locaux (persistents) peut être inscrits depuis la ZMI (Zope
+Management Interface), ou bien par programmation.
 
-You registered `GuestRegistrarNG` with a name `ng`.  Similarly you can
-register other adapters with different names.  If a component is
-registered without name, it will default to an empty string.
+Vous avez inscrit `FrontDeskNG` avec le nom `ng`. De la même manière, vous
+pouvez inscrire d'autre adaptateurs avec différents noms. Si un composant est
+inscrit sans nom, son nom sera la chaîne vide par défaut.
 
 .. note::
 
-  Local components are persistent components but global components are
-  in memory.  Global components will be registered based on the
-  configuration of application.  Local components are taken to memory
-  from database while starting the application.
+  Les composants locaux sont persistants mais les composants globaux sont en
+  mémoire. Les composants globaux sont inscrits en fonction de la configuration de
+  l'application. Les composants locaux sont récupérés dans la base de données au
+  démarrage de l'application.
 
 
-Querying adapter
-~~~~~~~~~~~~~~~~
+récupération d'un adaptateur
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Retrieving registered components from component registry is achieved
-through two functions available in ``zope.component`` package.  One of
-them is ``getAdapter`` and the other is ``queryAdapter`` .  Both
-functions accepts same arguments.  The ``getAdapter`` will raise
-``ComponentLookupError`` if component lookup fails on the other hand
-``queryAdapter`` will return `None`.
+La récupération des composants inscrits dans le registre est effectuée grâce à
+deux fonctions disponibles dans le paquet ``zope.component``. La première est
+``getAdapter``, la deuxième ``queryAdapter``. Les deux fonctions prennent les
+mêmes arguments. ``getAdapter`` lève une exception ``ComponentLookupError`` si
+la recherche de composant échoue, tandis que ``queryAdapter`` renvoie `None`.
 
-You can import the methods like this::
+Vous pouvez importer ces fonctions comme ceci::
 
   >>> from zope.component import getAdapter
   >>> from zope.component import queryAdapter
 
-In the previous section you have registered a component for guest
-object (adaptee) which provides `IRegistrar` interface with name as
-'ng'.  In the first section of this chapter, you have created a guest
-object named `jack` .
+Dans la section précédente, nous avons inscrit un composant qui founit
+l'interface `IDesk` avec un nom `ng`, et qui s'adapte à l'objet guest.
+Dans la première section nous avons créé un objet nommé `jack`.
 
-This is how you can retrieve a component which adapts the interface of
-`jack` object (`IGuest`) and provides `IRegistrar` interface also with
-name as 'ng'.  Here both ``getAdapter`` and ``queryAdapter`` works
-similarly::
+Voici maintenant comment récupérer un composant qui s'adapte à l'interface de l'objet
+`jack` (`IGuest`) et qui fournit l'interface `IDesk` également avec le nom `ng`.
+Ici, ``getAdapter`` et ``queryAdapter`` fonctionnent de la même manière::
 
-  >>> getAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
-  >>> queryAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> getAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
-As you can see, the first argument should be adaptee then, the
-interface which should be provided by component and last the name of
-adapter component.
+Vous pouvez constater que le premier argument doit être l'objet adapté, puis
+l'interface qui doit être fournie par le composant et finalement le nom du
+composant adaptateur.
 
-If you try to lookup the component with an name not used for
-registration but for same adaptee and interface, the lookup will fail.
-Here is how the two methods works in such a case::
+Si vous essayez de récupérer le composant grâce à un nom non utilisé pour
+l'inscription mais pour le même objet adapté et la même interface, la recherche
+échouera. Voici comment fonctionnent les deux méthodes dans ce cas::
 
-  >>> getAdapter(jack, IRegistrar, 'not-exists') #doctest: +ELLIPSIS
+  >>> getAdapter(jack, IDesk, 'not-exists') #doctest: +ELLIPSIS
   Traceback (most recent call last):
   ...
   ComponentLookupError: ...
   >>> reg = queryAdapter(jack,
-  ...           IRegistrar, 'not-exists') #doctest: +ELLIPSIS
+  ...           IDesk, 'not-exists') #doctest: +ELLIPSIS
   >>> reg is None
   True
 
-As you can see above, ``getAdapter`` raised a ``ComponentLookupError``
-exception, but ``queryAdapter`` returned `None` when lookup failed.
+``getAdapter`` a levé une exception ``ComponentLookupError`` mais
+``queryAdapter`` a renvoyé `None`.
 
-The third argument, the name of registration, is optional.  If the
-third argument is not given it will default to empty string ('').
-Since there is no component registered with an empty string,
-``getAdapter`` will raise ``ComponentLookupError`` .  Similarly
-``queryAdapter`` will return `None`, see yourself how it works::
+Le troisième argument, le nom d'inscription, est optionnel. Si le troisième
+argument n'est pas fourni, sa valeur par défaut est la chaîne vide (''). Comme
+il n'y a aucun composant inscrit avec la chaîne vide comme nom, ``getAdapter``
+lève l'exception ``ComponentLookupError``. De la même manière, ``queryAdapter``
+renvoie `None`. Voyez vous-même comment cela fonctionne::
 
-  >>> getAdapter(jack, IRegistrar) #doctest: +ELLIPSIS
+  >>> getAdapter(jack, IDesk) #doctest: +ELLIPSIS
   Traceback (most recent call last):
   ...
   ComponentLookupError: ...
-  >>> reg = queryAdapter(jack, IRegistrar) #doctest: +ELLIPSIS
+  >>> reg = queryAdapter(jack, IDesk) #doctest: +ELLIPSIS
   >>> reg is None
   True
 
-In this section you have learned how to register a simple adapter and
-how to retrieve it from component registry.  These kind of adapters is
-called single adapter, because it adapts only one adaptee.  If an
-adapter adapts more that one adaptee, then it is called multi
-adapter.
+Dans cette section, vous avez appris à inscrire un simple adaptateur et à le
+récupérer depuis le registre de composants. Ce type d'adaptateurs est appelé un
+adaptateur simple, car il ne s'adapte qu'à un seul objet. Si un adaptateur
+s'adapte à plusieurs objets, on l'appelle un multi-adaptateur.
 
 
-Retrieving adapter using interface
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Récupérer un adaptateur en utilisant l'interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Adapters can be directly retrieved using interfaces, but it will only
-work for non-named single adapters.  The first argument is the adaptee
-and the second argument is a keyword argument.  If adapter lookup
-fails, second argument will be returned.
+Les adaptateurs peuvent être récupérés directement en utilisant les interfaces,
+mais cela ne fonctionne qu'avec les adaptateurs simples. Le premier argument est
+l'objet adapté, le deuxième argument est un argument à clé. Si la recheche
+d'adaptateur échoue, le deuxième argument est renvoyé.
 
-  >>> IRegistrar(jack, alternate='default-output')
+  >>> IDesk(jack, alternate='default-output')
   'default-output'
 
-  Keyword name can be omitted:
+  Le nom clé peut être omis:
 
-  >>> IRegistrar(jack, 'default-output')
+  >>> IDesk(jack, 'default-output')
   'default-output'
 
-  If second argument is not given, it will raise `TypeError`:
+  Si le deuxième argument n'est pas fourni, une erreur `TypeError` est levée:
 
-  >>> IRegistrar(jack) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+  >>> IDesk(jack) #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
   Traceback (most recent call last):
   ...
   TypeError: ('Could not adapt',
     <Guest object at ...>,
-    <InterfaceClass __builtin__.IRegistrar>)
+    <InterfaceClass __builtin__.IDesk>)
 
-  Here `GuestRegistrarNG` is registered without name:
+  Ici, `FrontDeskNG` est inscrit sans nom:
 
-  >>> gsm.registerAdapter(GuestRegistrarNG)
+  >>> gsm.registerAdapter(FrontDeskNG)
 
-  Now the adapter lookup should succeed:
+  Maintenant la récupération de l'adaptateur doit réussir:
 
-  >>> IRegistrar(jack, 'default-output') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> IDesk(jack, 'default-output') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
-For simple cases, you may use interface to get adapter components.
+Pour les cas simples, vous pouvez utiliser l'interface pour récupérer des
+adaptateurs.
 
 
-Adapter pattern
-~~~~~~~~~~~~~~~
+Motif adaptateur
+~~~~~~~~~~~~~~~~
 
-The adapter concept in Zope Component Architecture and the classic
-`adapter pattern` as described in Design Patterns book are very
-similar.  But the intent of ZCA adapter usage is more wider than the
-`adapter pattern` itself.  The intent of `adapter pattern` is to
-convert the interface of a class into another interface clients
-expect.  This allows classes work together that couldn't otherwise
-because of incompatible interfaces.  But in the `motivation` section
-of Degisgn Patterns book, GoF says: "Often the adapter is responsible
-for functionality the adapted class doesn't provide".  ZCA adapter has
-more focus on adding functionalities than creating a new interface for
-an adapted object (adaptee).  ZCA adapter lets adapter classes extend
-functionality by adding methods.  (It would be interesting to note
-that `Adapter` was known as `Feature` in earlier stage of ZCA
-design. ) [#feature]_
-
-The above paragraph has a quote from Gang of Four book, it ends like
-this: " ...adapted class doesn't provide".  But in the next sentence I
-used "adapted object" instead of "adapted class", because GoF
-describes about two variants of adapters based on implementations.
-The first one is called `class adapter` and the other one is called
-`object adapter`.  A class adapter uses multiple inheritance to adapt
-one interface to another, on the other hand an object adapter relies
-on object composition.  ZCA adapter is following object adapter
-pattern, which use delegation as a mechanism for composition.  GoF's
-second principle of object-oriented design goes like this: "Favor
-object composition over class inheritance".  For more details about
-this subject please read Design Patterns book.
-
-The major attraction of ZCA adapter are the explicit interface for
-components and the component registry.  ZCA adapter components are
-registered in component registry and looked up by client objects using
-interface and name when required.
+Le principe de l'adaptateur dans l'Architecture de Composants de Zope est très
+similaire au `motif adaptateur` classique, tel que décrit dans le livre « Design
+Patterns ». Mais l'objectif visé par l'utilisation des adaptateurs dans la ZCA
+est plus large que le principe de l'adaptateur lui-même. Le but de l'adaptateur
+est de convertir l'interface d'une classe en une autre interface attendue par le
+client. Ceci permet de faire fonctionner des classes ensemble même si elles ont
+des interfaces incompatibles entre elles. Mais dans la section `motivations` du
+livre « Design Patterns », le GoF dit : « souvent, l'adaptateur est responsable
+d'une fonctionnalité que la classe adaptée ne fournit pas ». Un adaptateur de la
+ZCA se concentre effectivement plus sur l'ajout de fonctionnalités que sur la
+création d'une nouvelle interface pour un objet adapté. L'adaptateur de la ZCA
+permet aux classes adaptateurs d'étendre des fonctionnalités par ajout de
+méthodes. (Il peut être intéressant de remarquer que l'adaptateur était appelé
+`Fonctionnalité` dans les premières étapes de conception de la ZCA.) [#feature]_
 
 .. [#feature] Thread discussing renaming of `Feature` to `Adapter`:
    http://mail.zope.org/pipermail/zope3-dev/2001-December/000008.html
 
+La citation du Gang of Four dans le paragraphe ci-dessus se termine de la façon
+suivante : « ... que la classe adaptée ne fournit pas ». Mais dans la phrase
+suivante nous avons utilisé « objet adapté » plutôt que « classe adaptée », car
+le GoF décrit deux variantes d'adaptateurs basés sur des implémentations.
+Le premier est appelé `adaptateur de classe`, le deuxième `adaptateur d'objet`.
+Un adaptateur de classe utilise l'héritage multiple pour adapter une interface à
+une autre, alors que l'adaptateur d'objet se base sur la composition d'objet.
+L'adaptateur de la ZCA utilise le principe de l'adaptateur d'objet, qui utilise
+la délégation comme mécanisme de composition. Le second principe du GoF à propos
+de la conception orientée objets est la suivante : « favorisez la composition
+d'objets plutôt que l'héritage de classes ». Pour approfondir le sujet,
+reportez-vous au livre « Design Patterns ».
 
-Utility
--------
+Les principaux atouts des adaptateurs de la ZCA sont les interfaces explicites
+et le registre de composants. Les composants adaptateurs de la ZCA sont inscrits
+dans le registre de composants et sont récupérés par les objets clients via leur
+interface et leur nom si besoin.
+
+
+Utilitaires
+-----------
 
 
 Introduction
 ~~~~~~~~~~~~
 
-Now you know the concept of interface, adapter and component registry.
-Sometimes it would be useful to register an object which is not
-adapting anything.  Database connection, XML parser, object returning
-unique Ids etc. are examples of these kinds of objects.  These kind of
-components provided by Zope component architecture are called
-``utility`` components.
+Maintenant vous connaissez le principe des interfaces, des adaptateurs et du
+registre de composants. Parfois, il peut être utile d'inscrire un objet qui ne
+s'adapte à rien du tout, par exemple une connexion à une base de données, un analyseur XML,
+ou un objet retournant des identifiants uniques. Ces types de composants
+fournis par la ZCA sont appelés des composants utilitaires.
 
-Utilities are just objects that provide an interface and that are
-looked up by an interface and a name.  This approach creates a global
-registry by which instances can be registered and accessed by
-different parts of your application, with no need to pass the
-instances around as parameters.
+Les utilitaires sont juste des objets qui fournissent une interface et qui sont
+récupérés à partir d'une interface et d'un nom. Cette approche permet de créer
+un registre global dans lequel des instances peuvent être inscrites et
+récupérées à différents endroits de votre application, sans avoir besoin de
+transmettre les instances comme paramètres.
 
-You need not to register all component instances like this.  Only
-register components which you want to make replaceable.
+Vous n'avez pas besoin d'inscrire toutes les instances de composants de cette
+façon. Inscrivez seulement les composants que vous voulez rendre
+interchangeables.
 
 
-Simple utility
-~~~~~~~~~~~~~~
+Utilitaire simple
+~~~~~~~~~~~~~~~~~
 
-Before implementing the utility, as usual, define its interface.  Here
-is a `greeter` interface::
+Un utilitaire peut être inscrit avec ou sans nom. Un utilitaire inscrit avec nom
+est appelé un `utilitaire nommé`, que vous allez voir dans la prochaine section.
+Avant d'implémenter l'utilitaire, comme d'habitude, définissez son interface.
+Voici l'interface `greeter`::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -1154,9 +1161,10 @@ is a `greeter` interface::
   >>> class IGreeter(Interface):
   ...
   ...     def greet(name):
-  ...         "say hello"
+  ...         """Say hello"""
 
-Here is a possible implementation of the above interface::
+Comme un adaptateur, un utilitaire peut avoir plusieurs implémentations. Voici
+une implémentation possible de l'interface ci-dessus::
 
   >>> class Greeter(object):
   ...
@@ -1165,7 +1173,10 @@ Here is a possible implementation of the above interface::
   ...     def greet(self, name):
   ...         return "Hello " + name
 
-You can register an instance of this class using ``registerUtility``::
+L'utilitaire réel sera une instance de cette classe. Pour utiliser cet
+utilitaire, vous devez l'inscrire, puis vous pourrez la récupérer en
+utilisant l'API de la ZCA. Vous pouvez inscrire une instance de cette classe
+(`utilitaire`) grâce à ``registerUtility``::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
@@ -1173,9 +1184,9 @@ You can register an instance of this class using ``registerUtility``::
   >>> greet = Greeter()
   >>> gsm.registerUtility(greet, IGreeter)
 
-In this example you registered the utility as providing the `IGreeter`
-interface.  You can look the interface up with either `queryUtility`
-or `getUtility`::
+Dans cet exemple, vous avez inscrit l'utilitaire en fournissant l'interface
+`IGreeter`. Vous pouvez récupérer l'utilitaire avec `queryUtility` ou
+`getUtility`::
 
   >>> from zope.component import queryUtility
   >>> from zope.component import getUtility
@@ -1186,24 +1197,27 @@ or `getUtility`::
   >>> getUtility(IGreeter).greet('Jack')
   'Hello Jack'
 
-As you can see, adapters are normally classes, but utilities are
-normally instances of classes.
+Comme vous pouvez le constater, alors que les adaptateurs sont habituellement
+des classes, les utilitaires sont habituellement des instances de classes. vous
+ne créez une instance d'utilitaire qu'une fois alors que les instances
+d'adaptateurs sont créées à chaque fois que vous les récupérez.
 
 
-Named utility
-~~~~~~~~~~~~~
+Utilitaire nommé
+~~~~~~~~~~~~~~~~
 
-When registering a utility component, like adapter, you can use a
-name.
+Lorsque vous inscrivez un composant utilitaire, de la même manière que pour les
+adaptateurs, vous pouvez utiliser un nom. Comme mentionné dans la section
+précédente, un utilitaire inscrit avec un nom est appelé un `utilitaire nommé`.
 
-For example consider this:
+Voici comment inscrire l'utilitaire `greeter` avec un nom::
 
   >>> greet = Greeter()
   >>> gsm.registerUtility(greet, IGreeter, 'new')
 
-In this example you registered the utility with a name as providing
-the `IGreeter` interface.  You can look the interface up with either
-`queryUtility` or `getUtility`::
+Dans cet exemple, nous avons inscrit l'utilitaire avec un nom en fournissant
+l'interface `IGreeter`. Vous pouvez récupérer l'utilitaire avec `queryUtility`
+ou `getUtility`::
 
   >>> from zope.component import queryUtility
   >>> from zope.component import getUtility
@@ -1214,28 +1228,25 @@ the `IGreeter` interface.  You can look the interface up with either
   >>> getUtility(IGreeter, 'new').greet('Jill')
   'Hello Jill'
 
-As you can see here, while querying you have to use the `name` as
-second argument.
+Remarquez que vous devez utiliser le nom de l'utilitaire comme second argument
+pour que la récupération fonctionne.
 
-.. note::
-
-  Calling `getUtility` function without a name (second argument) is
-  equivalent to calling with an empty string ('') as the name.
-  Because, the default value for second (keyword) argument is an empty
-  string.  Then, component lookup mechanism will try to find the
-  component with name as empty string (''), and it will fail.  When
-  component lookup fails it will raise `ComponentLookupError`
-  exception.  Remember, it will not return some random component
-  registered with some other name.
+Appeler `getUtility` sans nom (comme second argument) est équivalent à l'appeler
+avec un nom vide (''), car la valeur par défaut pour ce second argument est
+justement la chaîne vide. Donc le mécanisme de recherche de composant essaiera
+de trouver le composant ayant une chaîne vide comme nom et il échouera.
+Lorsqu'une recherche de composant échoue, le résultat est une exception
+``ComponentLookupError``. Souvenez-vous qu'aucun composant aléatoire avec un
+autre nom ne sera renvoyé. Les fonctions de récupération d'adaptateurs,
+`getAdapter` et `queryUtility` fonctionnent de manière similaire.
 
 
-Factory
-~~~~~~~
+Fabrique
+~~~~~~~~
 
-A ``Factory`` is a utility component which provides ``IFactory``
-interface.
+Une ``fabrique`` est un composant utilitaire qui fournit l'interface ``IFactory``.
 
-To create a factory, first define the interface of the object::
+Pour créer une fabrique, commencez par définir l'interface de l'objet::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -1246,7 +1257,7 @@ To create a factory, first define the interface of the object::
   ...     def getConnection():
   ...         """Return connection object"""
 
-Here is fake implementation of `IDatabase` interface::
+Voici une implémentation factice de l'interface `IDatabase`::
 
   >>> class FakeDb(object):
   ...
@@ -1255,13 +1266,13 @@ Here is fake implementation of `IDatabase` interface::
   ...     def getConnection(self):
   ...         return "connection"
 
-You can create a factory using ``zope.component.factory.Factory``::
+Vous pouvez créer une fabrique en utilisant ``zope.component.factory.Factory``::
 
   >>> from zope.component.factory import Factory
 
   >>> factory = Factory(FakeDb, 'FakeDb')
 
-Now you can register it like this::
+Maintenant vous pouvez l'inscrire de cette façon::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
@@ -1269,29 +1280,32 @@ Now you can register it like this::
   >>> from zope.component.interfaces import IFactory
   >>> gsm.registerUtility(factory, IFactory, 'fakedb')
 
-To use the factory, you may do it like this::
+Pour utiliser la fabrique, vous pouvez faire comme ceci::
 
   >>> from zope.component import queryUtility
   >>> queryUtility(IFactory, 'fakedb')() #doctest: +ELLIPSIS
   <FakeDb object at ...>
 
-There is a shortcut to use factory::
+Voici l'écriture simplifiée pour utiliser une fabrique::
 
   >>> from zope.component import createObject
   >>> createObject('fakedb') #doctest: +ELLIPSIS
   <FakeDb object at ...>
 
 
-Advanced adapters
------------------
+Adaptateurs avancés
+-------------------
+
+Ce chapître traite de concepts avancés comme les multi-adaptateurs, les
+adaptateurs d'abonnement (subscribers) et les gestionnaires (handles).
 
 
-Multi adapter
-~~~~~~~~~~~~~
+Multi-adaptateur
+~~~~~~~~~~~~~~~~
 
-A simple adapter normally adapts only one object, but an adapter can
-adapt more than one object.  If an adapter adapts more than one
-objects, it is called as multi-adapter.
+Un adaptateur simple s'adapte normalement à un seul objet, mais un adaptateur
+peut s'adapter à plusieurs objets. Si un adaptateur s'adapte à plus d'un objet,
+il s'appelle un multi-adaptateur.
 
 ::
 
@@ -1342,16 +1356,16 @@ objects, it is called as multi-adapter.
   <Two object at ...>
 
 
-Subscription adapter
-~~~~~~~~~~~~~~~~~~~~
+Adaptateur d'abonnement
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Unlike regular adapters, subscription adapters are used when we want
-all of the adapters that adapt an object to a particular adapter.
-Subscription adapter is also known as `subscriber` .
+À la différence des adaptateurs habituels, les adaptateurs d'abonnement sont
+utilisés quand on veut récupérer tous les adaptateurs qui adaptent un objet à
+une interface donnée. Un adaptateur d'abonnement est également appelé `abonné`.
 
-Consider a validation problem.  We have objects and we want to assess
-whether they meet some sort of standards.  We define a validation
-interface::
+Considérons un problème de validation. Nous avons des objets et nous voulons
+vérifier s'ils satisfont à un certain standard. Nous définissons une interface
+de validation::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -1367,7 +1381,7 @@ interface::
   ...         object is valid.
   ...         """
 
-Perhaps we have documents::
+Nous avons également des documents::
 
   >>> class IDocument(Interface):
   ...
@@ -1381,9 +1395,9 @@ Perhaps we have documents::
   ...     def __init__(self, summary, body):
   ...         self.summary, self.body = summary, body
 
-Now, we may want to specify various validation rules for
-documents. For example, we might require that the summary be a single
-line:
+Maintenant, nous pouvons avoir besoin de préciser différentes règles de
+validation pour les documents. Par exemple, nous voulons que le résumé tienne
+sur une seule ligne::
 
   >>> from zope.component import adapts
 
@@ -1401,7 +1415,7 @@ line:
   ...         else:
   ...             return ''
 
-Or we might require the body to be at least 1000 characters in length:
+Ou bien nous voulons que le corps du document fasse au moins 1000 caractères::
 
   >>> class AdequateLength(object):
   ...
@@ -1417,7 +1431,7 @@ Or we might require the body to be at least 1000 characters in length:
   ...         else:
   ...             return ''
 
-We can register these as subscription adapters:
+Nous pouvons inscrire ces deux composants comme des adaptateurs d'abonnement::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
@@ -1425,7 +1439,7 @@ We can register these as subscription adapters:
   >>> gsm.registerSubscriptionAdapter(SingleLineSummary)
   >>> gsm.registerSubscriptionAdapter(AdequateLength)
 
-We can then use the subscribers to validate objects:
+Nous pouvons ensuite utiliser ces abonnés pour valider les objets::
 
   >>> from zope.component import subscribers
 
@@ -1448,36 +1462,38 @@ We can then use the subscribers to validate objects:
   ['too short']
 
 
-Handler
-~~~~~~~
+Gestionnaire
+~~~~~~~~~~~~
 
-Handlers are subscription adapter factories that don't produce
-anything.  They do all of their work when called.  Handlers are
-typically used to handle events.  Handlers are also known as event
-subscribers or event subscription adapters.
+Les gestionnaires sont des fabriques d'adaptateurs d'abonnement qui ne
+produisent rien du tout. Ils font la totalité de leur travail lorsqu'ils sont
+appelés. Les gestionnaires sont typiquement utilisés pour gérer des événements.
+Les gestionnaires sont aussi connus sous le nom d'``abonnés
+à des événements`` ou ``adaptateurs d'abonnement à des événements``.
 
-Event subscribers are different from other subscription adapters in
-that the caller of event subscribers doesn't expect to interact with
-them in any direct way.  For example, an event publisher doesn't
-expect to get any return value.  Because subscribers don't need to
-provide an API to their callers, it is more natural to define them
-with functions, rather than classes.  For example, in a
-document-management system, we might want to record creation times for
-documents::
+Les abonnés à des événements sont différents des autres adaptateurs
+d'abonnement car l'objet qui appelle les abonnés ne s'attend pas à interagir
+avec eux d'une quelconque façon. Par exemple, un publicateur d'événements ne
+s'attend pas à récupérer une valeur de retour. Comme les abonnés n'ont pas
+besoin de fournir une API aux objets qui les appellent, il est plus naturel de
+les définir avec des fonctions, plutôt qu'avec des classes. Par exemple, dans un
+système de gestion de documents, nous pouvons avoir besoin de gérer les heures
+de création des documents::
 
   >>> import datetime
 
   >>> def documentCreated(event):
   ...     event.doc.created = datetime.datetime.utcnow()
 
-In this example, we have a function that takes an event and performs
-some processing.  It doesn't actually return anything.  This is a
-special case of a subscription adapter that adapts an event to
-nothing.  All of the work is done when the adapter "factory" is
-called.  We call subscribers that don't actually create anything
-"handlers".  There are special APIs for registering and calling them.
+Dans cet exemple, nous avont une fonction qui prend un événement et effectue un
+traitement. La fonction ne retourne en fait rien du tout. C'est un cas
+particulier de l'adaptateur d'abonnement qui s'adapte à un événement et ne
+fournit rien. Tout le travail est effectué lorsque la fabrique de l'adaptateur
+est appelée. Nous appelons les abonnés qui ne fabriquent rien des « gestionnaires ».
+Il existe des APIs spécialisées dans leur inscription et leur récupération.
 
-To register the subscriber above, we define a document-created event::
+Pour inscrire l'abonné ci-dessus, nous définissons un événement « document créé
+»::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -1494,7 +1510,7 @@ To register the subscriber above, we define a document-created event::
   ...     def __init__(self, doc):
   ...         self.doc = doc
 
-We'll also change our handler definition to:
+Nous modifions également notre définition du gestionnaire::
 
   >>> def documentCreated(event):
   ...     event.doc.created = datetime.datetime.utcnow()
@@ -1505,17 +1521,18 @@ We'll also change our handler definition to:
   ... def documentCreated(event):
   ...     event.doc.created = datetime.datetime.utcnow()
 
-This marks the handler as an adapter of `IDocumentCreated` events.
+Ceci marque le gestionnaire comme étant un adaptateur des événements
+`IDocumentCreated`.
 
-Now we'll register the handler::
+Maintenant nous inscrivons le gestionnaire::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
   >>> gsm.registerHandler(documentCreated)
 
-Now, if we can create an event and use the `handle` function to call
-handlers registered for the event::
+Il est maintenant possible de créer un événement et d'utiliser la fonction
+`handle` pour appeler les gestionnaires inscrits à l'événement::
 
   >>> from zope.component import handle
 
@@ -1524,29 +1541,34 @@ handlers registered for the event::
   'datetime'
 
 
-ZCA usage in Zope
------------------
+Usage de la ZCA dans Zope
+-------------------------
 
-Zope Component Architecture is used in both Zope 3 and Zope 2.  This
-chapter go through ZCA usage in Zope.
+La Component Architecture de Zope est utilisée dans Zope 2 et dans Zope 3. Ce
+chapitre traite de l'usage de la ZCA dans Zope.
 
 
 ZCML
 ~~~~
 
-The Zope Configuration Markup Language (ZCML) is an XML based
-configuration system for registration of components.  So, instead of
-using Python API for registration, you can use ZCML.  But to use ZCML,
-unfortunately, you will be required to install more dependency
-packages.
+Le **Zope Configuration Markup Language (ZCML)** est un système de configuration
+pour l'inscription des composants. Au lieu d'utiliser l'API Python pour les
+inscriptions, vous pouvez utiliser le ZCML. Mais pour pouvoir utiliser le ZCML,
+vous devez installer des paquets supplémentaires.
 
-To install these packages::
+Vous pouvez instsaller ``zope.component`` avec la prise en charge du ZCML en
+utilisant easy_install comme ceci::
 
   $ easy_install "zope.component [zcml]"
 
-To register an adapter::
+Un fichier ZCML doit commencer par une directive ``configure`` avec la
+déclaration d'espace de nom appropriée::
 
   <configure xmlns="http://namespaces.zope.org/zope">
+  ...
+  </configure>
+
+La directive `adapter` peut être utilisée pour inscrire des adaptateurs::
 
   <adapter
       factory=".company.EmployeeSalary"
@@ -1554,39 +1576,30 @@ To register an adapter::
       for=".interfaces.IEmployee"
       />
 
-The `provides` and `for` attributes are optional, provided you have
-declared it in the implementation::
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+Les attributs `provides` et `for` sont optionnels, à condition que vous ayez
+fait les déclaration correspondantes dans l'implémentation::
 
   <adapter
       factory=".company.EmployeeSalary"
       />
 
-If you want to register the component as named adapter, you can give a
-`name` attribute::
-
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+Si vous voulez inscrire le composant comme un adaptateur nommé, vous pouvez
+utiliser l'attribut `name`::
 
   <adapter
       factory=".company.EmployeeSalary"
       name="salary"
       />
 
-Utilities are also registered similarly.
-
-To register an utility::
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+Un utilitaire peut être inscrit avec la directive `utility`::
 
   <utility
       component=".database.connection"
       provides=".interfaces.IConnection"
       />
 
-The `provides` attribute is optional, provided you have declared it in
-the implementation::
+L'attribut `provides` est optionnel, à condition que vous ayez fait la
+déclaration correspondante dans l'implémentation::
 
   <configure xmlns="http://namespaces.zope.org/zope">
 
@@ -1594,33 +1607,28 @@ the implementation::
       component=".database.connection"
       />
 
-If you want to register the component as named adapter, you can give a
-`name` attribute::
-
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+Si vous voulez inscrire le composant comme un utilitaire nommé, vous pouvez
+utiliser l'attribut `name`::
 
   <utility
       component=".database.connection"
-      name="Database Connection"
+      name="db_connection"
       />
 
-Instead of directly using the component, you can also give a factory::
-
-  <configure xmlns="http://namespaces.zope.org/zope">
+Plutôt que d'utiliser directement le composant, vous pouvez aussi fournir une
+fabrique::
 
   <utility
       factory=".database.Connection"
       />
 
 
-Overrides
-~~~~~~~~~
+Remplacements
+~~~~~~~~~~~~~
 
-When you register components using Python API (``register*`` methods),
-the last registered component will replace previously registered
-component, if both are registered with same type of arguments.  For
-example, consider this example::
+Lorsque vous inscrivez des composants avec l'API Python (méthodes
+``register*``), le dernier composant inscrit remplace le précédent, si les deux
+sont inscrits avec les même arguments. Considérons l'exemple suivant ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -1665,22 +1673,21 @@ example, consider this example::
   >>> getAdapter(a, IP) #doctest: +ELLIPSIS
   <AP object at ...>
 
-  If you register another adapter, the existing one will be replaced:
+Si vous inscrivez un autre adaptateur, celui existant sera remplacé ::
 
   >>> gsm.registerAdapter(AP2)
 
   >>> getAdapter(a, IP) #doctest: +ELLIPSIS
   <AP2 object at ...>
 
-But when registering components using ZCML, the second registration
-will raise a conflict error.  This is a hint for you, otherwise there
-is a chance for overriding registration by mistake.  This may lead to
-hard to track bugs in your system.  So, using ZCML is a win for the
-application.
+Mais lorsque vous inscrivez des composants en ZCML, la deuxième inscription
+provoquera un conflit. Ceci est fait pour éviter les surchargements accidentels
+d'inscriptions, qui sont difficiles à retrouver et corriger.
+L'utilisation de ZCML est donc un avantage pour votre application.
 
-Sometimes you will be required to override existing registration.
-ZCML provides ``includeOverrides`` directive for this.  Using this,
-you can write your overrides in a separate file::
+Parfois vous aurez besoin de surcharger une inscription existante. ZCML fournit
+une directive ``includeOverrides`` à cet effet. Avec la directive ci-dessous,
+vous pouvez écrire vos surcharges dans un fichier séparé::
 
   <includeOverrides file="overrides.zcml" />
 
@@ -1688,12 +1695,11 @@ you can write your overrides in a separate file::
 NameChooser
 ~~~~~~~~~~~
 
-Location: `zope.app.container.contained.NameChooser`
+Emplacement : `zope.app.container.contained.NameChooser`
 
-This is an adapter for choosing a unique name for an object inside a
-container.
+C'est un adaptateur qui choisit un nom unique pour un objet dans un conteneur.
 
-The registration of adapter is like this::
+L'inscription de l'adaptateur ressemble à ceci::
 
   <adapter
       provides=".interfaces.INameChooser"
@@ -1701,40 +1707,38 @@ The registration of adapter is like this::
       factory=".contained.NameChooser"
       />
 
-From the registration, you can see that the adaptee is a
-``IWriteContainer`` and the adapter provides ``INameChooser``.
+Dans cette inscription, vous pouvez observer qu'on s'adapte à un
+``IWriteContainer`` et que l'adaptateur fournit ``INameChooser``.
 
-This adapter provides a very convenient functionality for Zope
-programmers.  The main implementations of ``IWriteContainer`` in
-Zope 3 are ``zope.app.container.BTreeContainer`` and
-``zope.app.folder.Folder``.  Normally you will be inheriting from
-these implementations for creating your own container classes.
-Suppose there is no interface called ``INameChooser`` and
-adapter, then you will be required to implement this functionality
-for every implementations separately.
+Cet adaptateur fournit une fonctionnalité très pratique pour les développeurs
+Zope. Les implémentations principales de ``IWriteContainer`` dans Zope 3 sont
+`zope.app.container.BTreeContainer`` et ``zope.app.folder.Folder``. Normalement
+vous hériterez de ces implémentations pour créer vos propres classes de
+conteneurs. Supposez qu'il n'y ait pas d'interface ``INameChooser`` ni
+d'adaptateur : vous seriez obligé d'implémenter cette fonctionnalité séparément
+pour chaque implémentation.
 
 
 LocationPhysicallyLocatable
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Location:
+Emplacement :
 ``zope.location.traversing.LocationPhysicallyLocatable``
 
-This adapter is frequently used in Zope 3 applications, but
-normally it is called through an API in ``zope.traversing.api``.
-(Some old code even use ``zope.app.zapi`` functions, which is
-again one more indirection)
+Cet adaptateur est fréquemment utilisé dans les applications Zope 3, mais
+habituellement il est appelé au travers d'une API dans ``zope.traversing.api``.
+(Certains vieux codes utilisent même les fonctions ``zope.app.zapi`` qui ne sont
+qu'une indirection supplémentaire).
 
-The registration of adapter is like this::
+L'inscription de l'adaptateur ressemble à ceci::
 
   <adapter
       factory="zope.location.traversing.LocationPhysicallyLocatable"
       />
 
-The interface provided and adaptee interface is given in the
-implementation.
+L'interface fournie et l'interface adaptée sont donnés dans l'implémentation.
 
-Here is the beginning of implementation::
+Voici le début de l'implémentation::
 
   class LocationPhysicallyLocatable(object):
       """Provide location information for location objects
@@ -1743,43 +1747,41 @@ Here is the beginning of implementation::
       zope.interface.implements(IPhysicallyLocatable)
       ...
 
-Normally, almost all persistent objects in Zope 3 application
-will be providing the ``ILocation`` interface.  This interface
-has only two attribute, ``__parent__`` and ``__name__``.  The
-``__parent__`` is the parent in the location hierarchy.  And
-``__name__`` is the name within the parent.
+Normalement, presque tous les objets persistents d'une application Zope 3
+fournissent l'interface ``ILocation``. Cette interface n'a que deux attributs,
+``__parent__`` et ``__name__``. ``__parent__`` est le parent dans la hierarchie
+des objets et ``__name__`` est le nom vu du parent.
 
-The ``IPhysicallyLocatable`` interface has four methods:
-``getRoot``, ``getPath``, ``getName``, and ``getNearestSite``.
+L'interface ``IPhysicallyLocatable`` a quatre méthodes:
+``getRoot``, ``getPath``, ``getName``, et ``getNearestSite``.
 
-  - ``getRoot`` function will return the physical root object.
+  - ``getRoot`` renvoie l'objet racine physique.
 
-  - ``getPath`` return the physical path to the object as a
-    string.
+  - ``getPath`` renvoie une chaîne donnant le chemin physique vers l'objet.
 
-  - ``getName`` return the last segment of the physical path.
+  - ``getName`` renvoie le dernier segment du chemin physique.
 
-  - ``getNearestSite`` return the site the object is contained
-    in.  If the object is a site, the object itself is returned.
+  - ``getNearestSite`` renvoie le site dans lequel l'objet est contenu. Si
+    l'objet est lui-même un site, il est renvoyé.
 
-If you learn Zope 3, you can see that these are the important
-things which you required very often.  To understand the beauty
-of this system, you must see how Zope 2 actually get the physical
-root object and how it is implemented.  There is a method called
-``getPhysicalRoot`` virtually for all container objects.
+Si vous apprenez Zope 3, ce sont des choses importantes dont vous aurez besoin
+très souvent.  Pour comprendre la beauté de ce système, vous devez regarder
+comment Zope 2 récupère l'objet racine physique et comment ceci est implémenté.
+Il existe une méthode ``getPhysicalRoot`` virtuellement pour tous les objets
+conteneurs.
 
 
 DefaultSized
 ~~~~~~~~~~~~
 
-Location: ``zope.size.DefaultSized``
+Emplacement : ``zope.size.DefaultSized``
 
-This adapter is just a default implementation of ``ISized`` interface.
-This adapter is registered for all kind of objects.  If you want to
-register this adapter for a particular interface, then you have to
-override this registration for your implementation.
+Cet adaptateur n'est qu'une implémentation par défaut de l'interface ``ISized``.
+Il est inscrit pour tous les types d'objets. Si vous voulez inscrire cet
+adaptateur pour une interface particulière, vous devez surcharger cette
+inscription avec votre implémentation.
 
-The registration of adapter is like this::
+L'inscription de l'adaptateur ressemble à ceci::
 
   <adapter
       for="*"
@@ -1788,10 +1790,10 @@ The registration of adapter is like this::
       permission="zope.View"
       />
 
-As you can see, the adaptee interface is `*`, so it can adapt any kind
-of objects.
+Comme vous pouvez voir, l'interface adaptée est « * », pour pouvoir s'adapter à
+tous les types d'objets.
 
-The ``ISized`` is a simple interface with two method contracts::
+``ISized`` est une interface simple possédant deux méthodes::
 
   class ISized(Interface):
 
@@ -1806,112 +1808,793 @@ The ``ISized`` is a simple interface with two method contracts::
           """Returns a string giving the size.
           """
 
-You can see another ``ISized`` adapter registered for ``IZPTPage`` in
-``zope.app.zptpage`` package.
+Vous pouvez trouver un autre adaptateur ``ISized`` pour ``IZPTPage`` dans le
+paquet ``zope.app.zptpage``.
 
 
 ZopeVersionUtility
 ~~~~~~~~~~~~~~~~~~
 
-Location: ``zope.app.applicationcontrol.ZopeVersionUtility``
+Emplacement : ``zope.app.applicationcontrol.ZopeVersionUtility``
 
-This utility gives version of the running Zope.
+Cet utilitaire donne la version de Zope en fonctionnement.
 
-The registration goes like this::
+L'inscription est la suivante::
 
   <utility
       component=".zopeversion.ZopeVersionUtility"
       provides=".interfaces.IZopeVersion" />
 
-The interface provided, ``IZopeVersion``, has only one method named
-``getZopeVersion``.  This method return a string containing the Zope
-version (possibly including SVN information).
+L'interface fournie, ``IZopeVersion``, n'a qu'une méthode nommée
+``getZopeVersion``. Cette méthode renvoie une chaîne contenant la version de
+Zope (avec éventuellement un changeset SVN).
 
-The default implementation, ``ZopeVersionUtility``, get version info
-from a file ``version.txt`` in `zope/app` directory.  If Zope is
-running from subversion checkout, it will show the latest revision
-number.  If none of the above works it will set it to:
-`Development/Unknown`.
+L'implémentation par défaut, ``ZopeVersionUtility``, récupère le numéro de
+version dans un fichier ``version.txt`` du répertoire `zope/app`. Si Zope
+fonctionne depuis un espace de travail Subversion, il montre le dernier numéro
+de révision. Si aucun des deux ne fonctionne il renvoie `DevCenter/Unknown`.
 
+
+Étude de cas
+------------
+
+.. note::
+
+  Ce chapitre n'est pas terminé. Merci d'envoyer vos suggestion !
+
+Introduction
+~~~~~~~~~~~~
+
+Ce chapitre est un exemple de création d'une application lourde avec la
+bibliothèque d'interface graphique PyGTK et la ZCA. Cette application utilise
+également deux types différents de mécanismes de persistance des données : le
+premier est une base de données objet (ZODB), l'autre est une base de donnée
+relationnelle (SQLite). Cependant, en pratique, un seul des deux mécanisme peut
+être utilisé dans une installation donnée. La raison d'utiliser deux types de
+persistance est de démontrer comment utiliser la ZCA pour brancher des
+composants entre eux. La majorité de code de cette application est lié à PyGTK.
+
+Lorsque l'application grossit, vous pouvez utiliser les composants de la ZCA aux
+endroits où vous souhaitez fournir de la modularité ou de l'extensibilité.
+Utilisez des objets Python classiques quand vous l'avez pas besoin de ces
+propriétés.
+
+Il n'y a pas de différence entre l'utilisation de la ZCA pour une application
+web, pour une application graphique lourde, ou pour toute autre application
+ou framework. Il est préférable de suivre une convention pour l'emplacement où
+vous allez inscrire les composants. Cette application utilise une convention qui
+peut être étendue en plaçant des inscriptions ou des composants similaires dans
+des modules séparés et en les important plus tard depuis le module principal
+d'inscription. Dans cette application, le module principal pour l'inscription
+est `register.py`.
+
+Le code source de cette application peut être téléchargé sur:
+http://www.muthukadan.net/downloads/zcalib.tar.bz2
+
+
+Cas d'utilisation
+~~~~~~~~~~~~~~~~~
+
+L'application que nous allons créer ici est un système de gestion de
+bibliothèque avec des fonctionnalités minimales. Les besoins peuvent être
+résumés comme ceci:
+
+- Ajouter des membres avec un numéro et un nom uniques.
+
+- Ajouter des livres avec un code barre, un auteur et un titre.
+
+- Prêter des livres
+
+- Récupérer des livres
+
+
+L'application peut être conçue de telle façon que les grandes fonctionnalités
+peuvent être utilisées dans une fenêtre unique. La fenêtre principale permettant
+d'utiliser ces fonctionnalités peut être conçue de cette façon:
+
+.. image:: mainwindow.png
+   :align: center
+
+Depuis la fenêtre des membres, l'utilisateur devrait être capable de gérer des
+membres. Donc il devrait être possible d'*ajouter*, *modifier* et *effacer* des
+membres comme dans l'image ci-dessous:
+
+.. image:: memberwindow.png
+   :align: center
+
+Similaire à la fenêtre des membres, la fenêtre du catalogue permet aux
+utilisateurs d'*ajouter*, *modifier* et *effacer* des livres:
+
+.. image:: catalogwindow.png
+   :align: center
+
+La fenêtre de circulation doit avoir ce qu'il faut pour prêter et récupérer des
+livres:
+
+.. image:: circulationwindow.png
+   :align: center
+
+
+Survol du code PyGTK
+~~~~~~~~~~~~~~~~~~~~
+
+Vous pouvez constater que la majorité du code est en rapport avec PyGTK. La
+structure du code est très similaire pour les différentes fenêtres. Les fenêtres
+de cette application sont conçues avec le créateur d'interface graphiques Glade.
+Vous devriez donner des noms appropriés aux widgets que vous allez utiliser dans
+votre code. Dans la fenêtre principale, tous les éléments de menu ont des noms
+du type : circulation, catalog, member, quit et about.
+
+La classe ``gtk.glade.XML`` est utilisée pour analyser le fichier glade, et donc
+pour créer les objets widgets de l'interface graphique. Voici comment faire::
+
+  import gtk.glade
+  xmlobj = gtk.glade.XML('/path/to/file.glade')
+  widget = xmlobj.get_widget('widget_name')
+
+Dans mainwindow.py, vous pouvez voir le code suivant::
+
+  curdir = os.path.abspath(os.path.dirname(__file__))
+  xml = os.path.join(curdir, 'glade', 'mainwindow.glade')
+  xmlobj = gtk.glade.XML(xml)
+
+  self.mainwindow = xmlobj.get_widget('mainwindow')
+
+Le nom du widget fenêtre principal est `mainwindow`. Les autres widgets sont
+créés de la même manière::
+
+  circulation = xmlobj.get_widget('circulation')
+  member = xmlobj.get_widget('member')
+  quit = xmlobj.get_widget('quit')
+  catalog = xmlobj.get_widget('catalog')
+  about = xmlobj.get_widget('about')
+
+Ensuite ces widgets sont connectés à certains événements::
+
+  self.mainwindow.connect('delete_event', self.delete_event)
+  quit.connect('activate', self.delete_event)
+  circulation.connect('activate', self.on_circulation_activate)
+  member.connect('activate', self.on_member_activate)
+  catalog.connect('activate', self.on_catalog_activate)
+  about.connect('activate', self.on_about_activate)
+
+L'événement `delete_event` est celui correspondant à la fermeture de la fenêtre lors
+de l'appui sur le bouton de fermeture. L'événement `activate` est émis lorsque
+le menu est sélectionné. Les widgets sont connectés à des fonctions de rappel
+pour certains événements.
+
+Vous pouvez voir dans le code ci-dessus que la fenêtre principale est connectée
+à la méthode `on_delete_event` pour l'événement `delete_event`. Le widget `quit`
+est aussi connecté aux même méthodes pour l'événement `activate`::
+
+    def on_delete_event(self, *args):
+        gtk.main_quit()
+
+La fonction de rappel appelle juste la fonction `main_quit`.
+
+
+Le code
+~~~~~~~
+
+Voici `zcalib.py`::
+
+  import registry
+  import mainwindow
+
+  if __name__ == '__main__':
+      registry.initialize()
+      try:
+          mainwindow.main()
+      except KeyboardInterrupt:
+          import sys
+          sys.exit(1)
+
+Ici, deux modules sont importés : `registry` et `mainwindow`.
+Ensuite le registre est initialisé et la fonction `main` de la fenêtre
+principale est appelée. Si l'utilisateur essaye de fermer l'application en
+appuyant sur `Ctrl-C`, celle-ci s'arrête normalement car nous avons intercepté
+l'exception `KeyboardInterrupt`.
+
+Voici `registry.py`::
+
+  import sys
+  from zope.component import getGlobalSiteManager
+
+  from interfaces import IMember
+  from interfaces import IBook
+  from interfaces import ICirculation
+  from interfaces import IDbOperation
+
+
+  def initialize_rdb():
+      from interfaces import IRelationalDatabase
+      from relationaldatabase import RelationalDatabase
+      from member import MemberRDbOperation
+      from catalog import BookRDbOperation
+      from circulation import CirculationRDbOperation
+
+      gsm = getGlobalSiteManager()
+      db = RelationalDatabase()
+      gsm.registerUtility(db, IRelationalDatabase)
+
+      gsm.registerAdapter(MemberRDbOperation,
+                          (IMember,),
+                          IDbOperation)
+
+      gsm.registerAdapter(BookRDbOperation,
+                          (IBook,),
+                          IDbOperation)
+
+      gsm.registerAdapter(CirculationRDbOperation,
+                          (ICirculation,),
+                          IDbOperation)
+
+  def initialize_odb():
+      from interfaces import IObjectDatabase
+      from objectdatabase import ObjectDatabase
+      from member import MemberODbOperation
+      from catalog import BookODbOperation
+      from circulation import CirculationODbOperation
+
+      gsm = getGlobalSiteManager()
+      db = ObjectDatabase()
+      gsm.registerUtility(db, IObjectDatabase)
+
+      gsm.registerAdapter(MemberODbOperation,
+                          (IMember,),
+                          IDbOperation)
+
+      gsm.registerAdapter(BookODbOperation,
+                          (IBook,),
+                          IDbOperation)
+
+      gsm.registerAdapter(CirculationODbOperation,
+                          (ICirculation,),
+                          IDbOperation)
+
+  def check_use_relational_db():
+      use_rdb = False
+      try:
+          arg = sys.argv[1]
+          if arg == '-r':
+              return True
+      except IndexError:
+          pass
+      return use_rdb
+
+  def initialize():
+      use_rdb = check_use_relational_db()
+      if use_rdb:
+          initialize_rdb()
+      else:
+          initialize_odb()
+
+Observez la fonction `initialize` que nous appelons depuis le module principal
+`zcalib.py`. Cette fonction commence par vérifier quelle base de donnés
+utiliser, une base relationnelle (RDB) ou une base objet (ODB). Cette
+vérification est effectuée dans la fonction `check_use_relational_db`. Si
+l'option `-r` est passé dans la ligne de commandes, elle appelera la fonction
+`initialize_rdb`, sinon `initialize_odb`. Si la fonction RDB est appelée, elle
+configure tous les composants liés à la base relationnelle. Si la fonction ODB est appelée,
+elle configure tous les composants liés à la base objet.
+
+Voici `mainwindow.py`::
+
+  import os
+  import gtk
+  import gtk.glade
+
+  from circulationwindow import circulationwindow
+  from catalogwindow import catalogwindow
+  from memberwindow import memberwindow
+
+  class MainWindow(object):
+
+      def __init__(self):
+          curdir = os.path.abspath(os.path.dirname(__file__))
+          xml = os.path.join(curdir, 'glade', 'mainwindow.glade')
+          xmlobj = gtk.glade.XML(xml)
+
+          self.mainwindow = xmlobj.get_widget('mainwindow')
+          circulation = xmlobj.get_widget('circulation')
+          member = xmlobj.get_widget('member')
+          quit = xmlobj.get_widget('quit')
+          catalog = xmlobj.get_widget('catalog')
+          about = xmlobj.get_widget('about')
+
+          self.mainwindow.connect('delete_event', self.delete_event)
+          quit.connect('activate', self.delete_event)
+
+          circulation.connect('activate', self.on_circulation_activate)
+          member.connect('activate', self.on_member_activate)
+          catalog.connect('activate', self.on_catalog_activate)
+          about.connect('activate', self.on_about_activate)
+
+      def delete_event(self, *args):
+          gtk.main_quit()
+
+      def on_circulation_activate(self, *args):
+          circulationwindow.show_all()
+
+      def on_member_activate(self, *args):
+          memberwindow.show_all()
+
+      def on_catalog_activate(self, *args):
+          catalogwindow.show_all()
+
+      def on_about_activate(self, *args):
+          pass
+
+      def run(self):
+          self.mainwindow.show_all()
+
+  def main():
+      mainwindow = MainWindow()
+      mainwindow.run()
+      gtk.main()
+
+
+La fonction `main` crée une instance de la classe `MainWindow` qui initialise
+tous les widgets.
+
+Voici `memberwindow.py`::
+
+  import os
+  import gtk
+  import gtk.glade
+
+  from zope.component import getAdapter
+
+  from components import Member
+  from interfaces import IDbOperation
+
+
+  class MemberWindow(object):
+
+      def __init__(self):
+          curdir = os.path.abspath(os.path.dirname(__file__))
+          xml = os.path.join(curdir, 'glade', 'memberwindow.glade')
+          xmlobj = gtk.glade.XML(xml)
+
+          self.memberwindow = xmlobj.get_widget('memberwindow')
+          self.number = xmlobj.get_widget('number')
+          self.name = xmlobj.get_widget('name')
+          add = xmlobj.get_widget('add')
+          update = xmlobj.get_widget('update')
+          delete = xmlobj.get_widget('delete')
+          close = xmlobj.get_widget('close')
+          self.treeview = xmlobj.get_widget('treeview')
+
+          self.memberwindow.connect('delete_event', self.on_delete_event)
+          add.connect('clicked', self.on_add_clicked)
+          update.connect('clicked', self.on_update_clicked)
+          delete.connect('clicked', self.on_delete_clicked)
+          close.connect('clicked', self.on_delete_event)
+
+          self.initialize_list()
+
+      def show_all(self):
+          self.populate_list_store()
+          self.memberwindow.show_all()
+
+      def populate_list_store(self):
+          self.list_store.clear()
+          member = Member()
+          memberdboperation = getAdapter(member, IDbOperation)
+          members = memberdboperation.get()
+          for member in members:
+              number = member.number
+              name = member.name
+              self.list_store.append((member, number, name,))
+
+      def on_delete_event(self, *args):
+          self.memberwindow.hide()
+          return True
+
+      def initialize_list(self):
+          self.list_store = gtk.ListStore(object, str, str)
+          self.treeview.set_model(self.list_store)
+          tvcolumn = gtk.TreeViewColumn('Member Number')
+          self.treeview.append_column(tvcolumn)
+
+          cell = gtk.CellRendererText()
+          tvcolumn.pack_start(cell, True)
+          tvcolumn.add_attribute(cell, 'text', 1)
+
+          tvcolumn = gtk.TreeViewColumn('Member Name')
+          self.treeview.append_column(tvcolumn)
+
+          cell = gtk.CellRendererText()
+          tvcolumn.pack_start(cell, True)
+          tvcolumn.add_attribute(cell, 'text', 2)
+
+      def on_add_clicked(self, *args):
+          number = self.number.get_text()
+          name = self.name.get_text()
+          member = Member()
+          member.number = number
+          member.name = name
+          self.add(member)
+          self.list_store.append((member, number, name,))
+
+      def add(self, member):
+          memberdboperation = getAdapter(member, IDbOperation)
+          memberdboperation.add()
+
+      def on_update_clicked(self, *args):
+          number = self.number.get_text()
+          name = self.name.get_text()
+          treeselection = self.treeview.get_selection()
+          model, iter = treeselection.get_selected()
+          if not iter:
+              return
+          member = self.list_store.get_value(iter, 0)
+          member.number = number
+          member.name = name
+          self.update(member)
+          self.list_store.set(iter, 1, number, 2, name)
+
+      def update(self, member):
+          memberdboperation = getAdapter(member, IDbOperation)
+          memberdboperation.update()
+
+      def on_delete_clicked(self, *args):
+          treeselection = self.treeview.get_selection()
+          model, iter = treeselection.get_selected()
+          if not iter:
+              return
+          member = self.list_store.get_value(iter, 0)
+          self.delete(member)
+          self.list_store.remove(iter)
+
+      def delete(self, member):
+          memberdboperation = getAdapter(member, IDbOperation)
+          memberdboperation.delete()
+
+  memberwindow = MemberWindow()
+
+Voici `components.py`::
+
+  from zope.interface import implements
+
+  from interfaces import IBook
+  from interfaces import IMember
+  from interfaces import ICirculation
+
+  class Book(object):
+
+      implements(IBook)
+
+      barcode = ""
+      title = ""
+      author = ""
+
+  class Member(object):
+
+      implements(IMember)
+
+      number = ""
+      name = ""
+
+  class Circulation(object):
+
+      implements(ICirculation)
+
+      book = Book()
+      member = Member()
+
+Voici `interfaces.py`::
+
+  from zope.interface import Interface
+  from zope.interface import Attribute
+
+
+  class IBook(Interface):
+
+      barcode = Attribute("Barcode")
+      author = Attribute("Author of book")
+      title = Attribute("Title of book")
+
+
+  class IMember(Interface):
+
+      number = Attribute("ID number")
+      name = Attribute("Name of member")
+
+
+  class ICirculation(Interface):
+
+      book = Attribute("A book")
+      member = Attribute("A member")
+
+
+  class IRelationalDatabase(Interface):
+
+      def commit():
+          pass
+
+      def rollback():
+          pass
+
+      def cursor():
+          pass
+
+      def get_next_id():
+          pass
+
+
+  class IObjectDatabase(Interface):
+
+      def commit():
+          pass
+
+      def rollback():
+          pass
+
+      def container():
+          pass
+
+      def get_next_id():
+          pass
+
+
+  class IDbOperation(Interface):
+
+      def get():
+          pass
+
+      def add():
+          pass
+
+      def update():
+          pass
+
+      def delete():
+          pass
+
+Here is the `member.py`::
+
+  from zope.interface import implements
+  from zope.component import getUtility
+  from zope.component import adapts
+
+  from components import Member
+
+  from interfaces import IRelationalDatabase
+  from interfaces import IObjectDatabase
+  from interfaces import IMember
+  from interfaces import IDbOperation
+
+
+  class MemberRDbOperation(object):
+
+      implements(IDbOperation)
+      adapts(IMember)
+
+      def __init__(self, member):
+          self.member = member
+
+      def get(self):
+          db = getUtility(IRelationalDatabase)
+          cr = db.cursor()
+          number = self.member.number
+          if number:
+              cr.execute("""SELECT
+                              id,
+                              number,
+                              name
+                            FROM members
+                            WHERE number = ?""",
+                         (number,))
+          else:
+              cr.execute("""SELECT
+                              id,
+                              number,
+                              name
+                            FROM members""")
+          rst = cr.fetchall()
+          cr.close()
+          members = []
+          for record in rst:
+              id = record['id']
+              number = record['number']
+              name = record['name']
+              member = Member()
+              member.id = id
+              member.number = number
+              member.name = name
+              members.append(member)
+          return members
+
+      def add(self):
+          db = getUtility(IRelationalDatabase)
+          cr = db.cursor()
+          next_id = db.get_next_id("members")
+          number = self.member.number
+          name = self.member.name
+          cr.execute("""INSERT INTO members
+                          (id, number, name)
+                        VALUES (?, ?, ?)""",
+                     (next_id, number, name))
+          cr.close()
+          db.commit()
+          self.member.id = next_id
+
+      def update(self):
+          db = getUtility(IRelationalDatabase)
+          cr = db.cursor()
+          number = self.member.number
+          name = self.member.name
+          id = self.member.id
+          cr.execute("""UPDATE members
+                          SET
+                             number = ?,
+                             name = ?
+                        WHERE id = ?""",
+                     (number, name, id))
+          cr.close()
+          db.commit()
+
+      def delete(self):
+          db = getUtility(IRelationalDatabase)
+          cr = db.cursor()
+          id = self.member.id
+          cr.execute("""DELETE FROM members
+                        WHERE id = ?""",
+                     (id,))
+          cr.close()
+          db.commit()
+
+
+  class MemberODbOperation(object):
+
+      implements(IDbOperation)
+      adapts(IMember)
+
+      def __init__(self, member):
+          self.member = member
+
+      def get(self):
+          db = getUtility(IObjectDatabase)
+          zcalibdb = db.container()
+          members = zcalibdb['members']
+          return members.values()
+
+      def add(self):
+          db = getUtility(IObjectDatabase)
+          zcalibdb = db.container()
+          members = zcalibdb['members']
+          number = self.member.number
+          if number in [x.number for x in members.values()]:
+              db.rollback()
+              raise Exception("Duplicate key")
+          next_id = db.get_next_id('members')
+          self.member.id = next_id
+          members[next_id] = self.member
+          db.commit()
+
+      def update(self):
+          db = getUtility(IObjectDatabase)
+          zcalibdb = db.container()
+          members = zcalibdb['members']
+          id = self.member.id
+          members[id] = self.member
+          db.commit()
+
+      def delete(self):
+          db = getUtility(IObjectDatabase)
+          zcalibdb = db.container()
+          members = zcalibdb['members']
+          id = self.member.id
+          del members[id]
+          db.commit()
+
+
+PySQLite
+~~~~~~~~
+
+ZODB
+~~~~
+
+Conclusions
+~~~~~~~~~~~
 
 Reference
 ---------
 
 
-Attribute
+adaptedBy
 ~~~~~~~~~
 
-Using this class, you can define normal attribute in an interface.
+Cette fonction permet de trouver les interfaces adaptées.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.component``
 
- - Signature: `Attribute(name, doc='')`
+ - Signature : `adaptedBy(object)`
 
-Example::
+Exemple ::
+
+  >>> from zope.interface import implements
+  >>> from zope.component import adapts
+  >>> from zope.component import adaptedBy
+
+  >>> class FrontDeskNG(object):
+  ...
+  ...     implements(IDesk)
+  ...     adapts(IGuest)
+  ...
+  ...     def __init__(self, guest):
+  ...         self.guest = guest
+
+  >>> adaptedBy(FrontDeskNG)
+  (<InterfaceClass __builtin__.IGuest>,)
+
+
+adapter
+~~~~~~~
+
+Les adaptateurs peuvent être n'importe quel objet appelable. Vous pouvez
+utiliser le décorateur `adapter` pour déclarer qu'un objet appelable s'adapte à
+des interfaces (ou des classes).
+
+ - Emplacement : ``zope.component``
+
+ - Signature : `adapter(*interfaces)`
+
+Exemple::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
+  >>> from zope.interface import implementer
+  >>> from zope.component import adapter
+  >>> from zope.interface import implements
+
+  >>> class IJob(Interface):
+  ...     """A job"""
+
+  >>> class Job(object):
+  ...     implements(IJob)
 
   >>> class IPerson(Interface):
   ...
-  ...     name = Attribute("Name of person")
-  ...     email = Attribute("Email Address")
+  ...     name = Attribute("Name")
+  ...     job = Attribute("Job")
 
-
-Declaration
-~~~~~~~~~~~
-
-Need not to use directly.
-
-
-Interface
-~~~~~~~~~
-
-Using this class, you can define an interface.  To define an
-interface, just inherit from ``Interface`` class.
-
- - Location: ``zope.interface``
-
- - Signature: `Interface(name, doc='')`
-
-Example 1::
-
-  >>> from zope.interface import Attribute
-  >>> from zope.interface import Interface
-
-  >>> class IPerson(Interface):
+  >>> class Person(object):
+  ...     implements(IPerson)
   ...
-  ...     name = Attribute("Name of person")
-  ...     email = Attribute("Email Address")
+  ...     name = None
+  ...     job = None
 
+  >>> @implementer(IJob)
+  ... @adapter(IPerson)
+  ... def personJob(person):
+  ...     return person.job
 
-Example 2::
-
-  >>> from zope.interface import Interface
-
-  >>> class IHost(Interface):
-  ...
-  ...     def goodmorning(guest):
-  ...         """Say good morning to guest"""
+  >>> jack = Person()
+  >>> jack.name = "Jack"
+  >>> jack.job = Job()
+  >>> personJob(jack) #doctest: +ELLIPSIS
+  <Job object at ...>
 
 
 adapts
 ~~~~~~
 
-This function helps to declare adapter classes.
+Cette fonction permet de déclarer les classes adaptateurs.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `adapts(*interfaces)`
+ - Signature : `adapts(*interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -1919,7 +2602,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -1929,15 +2612,15 @@ Example::
 alsoProvides
 ~~~~~~~~~~~~
 
-Declare interfaces declared directly for an object.  The arguments
-after the object are one or more interfaces.  The interfaces given are
-added to the interfaces previously declared for the object.
+Déclare des interfaces additionnelles fournies par un objet. Les arguments après
+l'objet sont une ou plusieurs interfaces. Les interfaces données sont ajoutées
+aux interfaces précédemment déclarées pour l'objet.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `alsoProvides(object, *interfaces)`
+ - Signature : `alsoProvides(object, *interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -1954,7 +2637,7 @@ Example::
 
   >>> class Person(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     name = u""
 
   >>> jack = Person()
@@ -1962,25 +2645,48 @@ Example::
   >>> jack.college = "New College"
   >>> alsoProvides(jack, IStudent)
 
-  You can test it like this:
+  Vous pouvez tester de cette façon:
 
   >>> from zope.interface import providedBy
   >>> IStudent in providedBy(jack)
   True
 
 
+Attribute
+~~~~~~~~~
+
+En utilisant cette classe, vous pouvez définir des attributs dans une interface.
+
+ - Emplacement : ``zope.interface``
+
+ - Signature : `Attribute(name, doc='')`
+
+ - Voir aussi : `Interface`_
+
+Exemple ::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+
+  >>> class IPerson(Interface):
+  ...
+  ...     name = Attribute("Name of person")
+  ...     email = Attribute("Email Address")
+
+
 classImplements
 ~~~~~~~~~~~~~~~
 
-Declare additional interfaces implemented for instances of a class.
-The arguments after the class are one or more interfaces.  The
-interfaces given are added to any interfaces previously declared.
+Déclare des interfaces additionnelles qui doivent être fournies par les
+instances d'une classe. Les arguments après la classe sont une ou plusieurs
+interfaces. Les interfaces données sont ajoutées aux interfaces précédemment
+déclarées.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `classImplements(cls, *interfaces)`
+ - Signature : `classImplements(cls, *interfaces)`
 
-Example::
+Exemple::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -1997,7 +2703,7 @@ Example::
 
   >>> class Person(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     name = u""
   ...     college = u""
 
@@ -2006,7 +2712,7 @@ Example::
   >>> jack.name = "Jack"
   >>> jack.college = "New College"
 
-  You can test it like this:
+  Vous pouvez tester de cette façon :
 
   >>> from zope.interface import providedBy
   >>> IStudent in providedBy(jack)
@@ -2016,15 +2722,16 @@ Example::
 classImplementsOnly
 ~~~~~~~~~~~~~~~~~~~
 
-Declare the only interfaces implemented by instances of a class.  The
-arguments after the class are one or more interfaces.  The interfaces
-given replace any previous declarations.
+Déclare les seules interfaces qui devront être fournies par les instances d'une
+classe. Les arguments après la classe sont une ou plusieurs interfaces. Les
+interfaces fournies vont remplacer toutes les interfaces des déclarations
+précédentes.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `classImplementsOnly(cls, *interfaces)`
+ - Signature : `classImplementsOnly(cls, *interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2048,7 +2755,7 @@ Example::
   >>> jack = Person()
   >>> jack.college = "New College"
 
-  You can test it like this:
+  Vous pouvez tester de cette façon :
 
   >>> from zope.interface import providedBy
   >>> IPerson in providedBy(jack)
@@ -2060,16 +2767,16 @@ Example::
 classProvides
 ~~~~~~~~~~~~~
 
-Normally if a class implements a particular interface, the instance of
-that class will provide the interface implemented by that class.  But
-if you want a class to be provided by an interface, you can declare it
-using ``classProvides`` function.
+Normalement si une classe implémente une interface particulière, les instances
+de cette classe fourniront l'interface implémentée par la classe. Mais si vous
+voulez qu'une classe fournisse une interface fournisse une interface, vous
+pouvez le déclarer grâce à la fonction ``classProvides``.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `classProvides(*interfaces)`
+ - Signature : `classProvides(*interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2084,7 +2791,7 @@ Example::
   ...     classProvides(IPerson)
   ...     name = u"Jack"
 
-  You can test it like this:
+  Vous pouvez tester de cette façon :
 
   >>> from zope.interface import providedBy
   >>> IPerson in providedBy(Person)
@@ -2094,26 +2801,39 @@ Example::
 ComponentLookupError
 ~~~~~~~~~~~~~~~~~~~~
 
+C'est l'exception levée quand une recherche de composant échoue.
+
+Exemple ::
+
+  >>> class IPerson(Interface):
+  ...
+  ...     name = Attribute("Name of person")
+
+  >>> person = object()
+  >>> getAdapter(person, IPerson, 'not-exists') #doctest: +ELLIPSIS
+  Traceback (most recent call last):
+  ...
+  ComponentLookupError: ...
+
 
 createObject
 ~~~~~~~~~~~~
 
-Create an object using a factory.
+Crée un objet en utilisant une fabrique.
 
-Finds the named factory in the current site and calls it with the
-given arguments.  If a matching factory cannot be found raises
-ComponentLookupError.  Returns the created object.
+Cette fonction trouve une fabrique nommée dans le site courant et l'appelle avec
+les arguments donnés. Si la bonne fabrique ne peut pas être trouvée, une erreur
+``ComponentLookupError`` est déclenchée. Sinon l'objet créé est renvoyé.
 
-A context keyword argument can be provided to cause the factory to be
-looked up in a location other than the current site.  (Of course, this
-means that it is impossible to pass a keyword argument named "context"
-to the factory.
+Un argument mot-clé contextuel peut être fourni pour rechercher une fabrique
+dans un emplacement différent du site courant. (Bien sûr, cela signifie qu'il
+est impossible de transmettre à la fabrique un argument mot-clé nommé « context ».
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `createObject(factory_name, *args, **kwargs)`
+ - Signature : `createObject(factory_name, *args, **kwargs)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2146,17 +2866,22 @@ Example::
   <FakeDb object at ...>
 
 
+Déclaration
+~~~~~~~~~~~
+
+Need not to use directly.
+
+
 directlyProvidedBy
 ~~~~~~~~~~~~~~~~~~
 
-This function will return the interfaces directly provided by the
-given object.
+Cette fonction renvoie les interfaces fournies directement par un objet donné.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `directlyProvidedBy(object)`
+ - Signature : `directlyProvidedBy(object)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2196,15 +2921,15 @@ Example::
 directlyProvides
 ~~~~~~~~~~~~~~~~
 
-Declare interfaces declared directly for an object.  The arguments
-after the object are one or more interfaces.  The interfaces given
-replace interfaces previously declared for the object.
+Déclare que des interfaces sont fournies directement par un objet. Les arguments
+après l'objet sont une ou plusieurs interfaces. Les interfaces données
+remplacent celles précédemment déclarées pour l'objet.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `directlyProvides(object, *interfaces)`
+ - Signature : `directlyProvides(object, *interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2262,21 +2987,22 @@ Example::
 getAdapter
 ~~~~~~~~~~
 
-Get a named adapter to an interface for an object.  Returns an adapter
-that can adapt object to interface.  If a matching adapter cannot be
-found, raises ``ComponentLookupError`` .
+Cette fonction récupère un adaptateur (nommé) vers une interface, pour un objet
+donné. Elle renvoie un adaptateur qui peut adapter les objets à l'interface
+voulue. Si aucun adaptateur ne peut être trouvé, une erreur
+``ComponentLookupError`` est émise.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `getAdapter(object, interface=Interface, name=u'', context=None)`
+ - Signature : `getAdapter(object, interface=Interface, name=u'', context=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -2285,9 +3011,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -2295,7 +3021,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -2310,31 +3036,33 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
-  >>> getAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> getAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 getAdapterInContext
 ~~~~~~~~~~~~~~~~~~~
 
-Instead of this function, use `context` argument of `getAdapter`_
-function.
+Au lieu d'utiliser cette fonction, utilisez `getAdapter`_ avec un argument
+`context`.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getAdapterInContext(object, interface, context)`
+ - Signature : `getAdapterInContext(object, interface, context)`
 
-Example::
+ - Voir aussi : `queryAdapterInContext`_
+
+Exemple ::
 
   >>> from zope.component.globalregistry import BaseGlobalComponents
   >>> from zope.component import IComponentLookup
@@ -2352,8 +3080,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -2362,9 +3090,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -2372,7 +3100,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -2387,42 +3115,41 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> sm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar)
+  >>> sm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk)
 
   >>> from zope.component import getAdapterInContext
-  >>> from zope.component import queryAdapterInContext
 
-  >>> getAdapterInContext(jack, IRegistrar, sm) #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> getAdapterInContext(jack, IDesk, sm) #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 getAdapters
 ~~~~~~~~~~~
 
-Look for all matching adapters to a provided interface for objects.
-Return a list of adapters that match. If an adapter is named, only the
-most specific adapter of a given name is returned.
+Recherche pour des objets tous les adaptateurs fournissant une interface donnée.
+Une liste d'adaptateurs est renvoyée. Si un adaptateur est nommé, seul
+l'adaptateur le plus spécifique pour un nom donné est renvoyé.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getAdapters(objects, provided, context=None)`
+ - Signature : `getAdapters(objects, provided, context=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -2430,37 +3157,37 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
   ...         }
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
 
-  >>> gsm.registerAdapter(GuestRegistrarNG, name='ng')
+  >>> gsm.registerAdapter(FrontDeskNG, name='ng')
 
   >>> from zope.component import getAdapters
-  >>> list(getAdapters((jack,), IRegistrar)) #doctest: +ELLIPSIS
-  [(u'ng', <GuestRegistrarNG object at ...>)]
+  >>> list(getAdapters((jack,), IDesk)) #doctest: +ELLIPSIS
+  [(u'ng', <FrontDeskNG object at ...>)]
 
 
 getAllUtilitiesRegisteredFor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Return all registered utilities for an interface.  This includes
-overridden utilities.  The returned value is an iterable of utility
-instances.
+Renvoie tous les utilitaires inscrits pour une interface. Ceci inclut les
+utilitaires surchargés. La valeur renvoyée est un objet iterable listant les
+instances d'utilitaires correspondants.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getAllUtilitiesRegisteredFor(interface)`
+ - Signature : `getAllUtilitiesRegisteredFor(interface)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -2491,14 +3218,14 @@ Example::
 getFactoriesFor
 ~~~~~~~~~~~~~~~
 
-Return a tuple (name, factory) of registered factories that create
-objects which implement the given interface.
+Renvoie un tuple (nom, fabrique) de fabriques inscrites capables de créer des
+objets qui fournissent une interface donnée.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getFactoriesFor(interface, context=None)`
+ - Signature : `getFactoriesFor(interface, context=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2535,16 +3262,16 @@ Example::
 getFactoryInterfaces
 ~~~~~~~~~~~~~~~~~~~~
 
-Get interfaces implemented by a factory.  Finds the factory of the
-given name that is nearest to the context, and returns the interface
-or interface tuple that object instances created by the named factory
-will implement.
+Récupère les interfaces implémentées par une fabrique. Cette fonction trouve la
+fabrique possédant le nom donné la plus proche du contexte, puis renvoie
+l'interface ou le tuple d'interfaces que les instances créées par la fabrique
+vont fournir.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getFactoryInterfaces(name, context=None)`
+ - Signature : `getFactoryInterfaces(name, context=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2581,14 +3308,14 @@ Example::
 getGlobalSiteManager
 ~~~~~~~~~~~~~~~~~~~~
 
-Return the global site manager.  This function should never fail and
-always return an object that provides `IGlobalSiteManager`
+Renvoie le gestionnaire global de site. Cette fonction ne doit jamais échouer
+et doit toujours renvoyer un objet qui fournit `IGlobalSiteManager`.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getGlobalSiteManager()`
+ - Signature : `getGlobalSiteManager()`
 
-Example::
+Exemple ::
 
   >>> from zope.component import getGlobalSiteManager
   >>> from zope.component import globalSiteManager
@@ -2600,19 +3327,21 @@ Example::
 getMultiAdapter
 ~~~~~~~~~~~~~~~
 
-Look for a multi-adapter to an interface for an objects.  Returns a
-multi-adapter that can adapt objects to interface.  If a matching
-adapter cannot be found, raises ComponentLookupError.  The name
-consisting of an empty string is reserved for unnamed adapters. The
-unnamed adapter methods will often call the named adapter methods with
-an empty string for a name.
+Cette fonction recherche pour des objets un multi-adaptateur vers une interface
+donnée. Elle renvoie un multi-adaptateur qui peut s'adapter aux objets donnés et
+fournir l'interface voulue. Si aucun adaptateur ne peut être trouvé, une erreur
+`ComponentLookupError` est émise. Le nom constitué de la chaîne vide est réservé
+aux adaptateur sans nom. Les méthodes des adaptateurs sans nom appellent souvent
+les méthodes des adaptateurs nommés en fournissant un nom vide ('').
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getMultiAdapter(objects, interface=Interface, name='',
+ - Signature : `getMultiAdapter(objects, interface=Interface, name='',
    context=None)`
 
-Example::
+ - Voir aussi : `queryMultiAdapter`_
+
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -2664,17 +3393,17 @@ Example::
 getSiteManager
 ~~~~~~~~~~~~~~
 
-Get the nearest site manager in the given context.  If `context` is
-`None`, return the global site manager.  If the `context` is not
-`None`, it is expected that an adapter from the `context` to
-`IComponentLookup` can be found.  If no adapter is found, a
-`ComponentLookupError` is raised.
+Récupère le gestionnaire de site le plus proche du contexte donné. Si `context`
+est `None`, cette fonction renvoie le gestionnaire global de site. Si le
+`context` n'est pas `None`, on s'attend à ce qu'un adaptateur sur le contexte
+vers `IComponentLookup` soit trouvé. Si aucun adaptateur n'est trouvé, une
+erreur `ComponentLookupError` est émise.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getSiteManager(context=None)`
+ - Signature : `getSiteManager(context=None)`
 
-Example 1::
+Exemple 1 ::
 
   >>> from zope.component.globalregistry import BaseGlobalComponents
   >>> from zope.component import IComponentLookup
@@ -2695,7 +3424,7 @@ Example 1::
   >>> lsm is sm
   True
 
-Example 2::
+Exemple 2 ::
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
@@ -2708,14 +3437,14 @@ Example 2::
 getUtilitiesFor
 ~~~~~~~~~~~~~~~
 
-Look up the registered utilities that provide an interface.  Returns
-an iterable of name-utility pairs.
+Récupère les utilitaires inscrits pour une interface particulière. Renvoie un
+objet iterable listant les paires nom/utilitaire.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getUtilitiesFor(interface)`
+ - Signature : `getUtilitiesFor(interface)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -2746,15 +3475,15 @@ Example::
 getUtility
 ~~~~~~~~~~
 
-Get the utility that provides interface.  Returns the nearest utility
-to the context that implements the specified interface.  If one is not
-found, raises ComponentLookupError.
+Récupère l'utilitaire qui fournit une interface donnée. Cette fonction renvoie
+l'utilitaire le plus proche du contexte et qui fournit l'interface donnée. Si
+aucun n'est trouvé, une erreur ``ComponentLookupError`` est levée.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `getUtility(interface, name='', context=None)`
+ - Signature : `getUtility(interface, name='', context=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -2785,16 +3514,16 @@ Example::
 handle
 ~~~~~~
 
-Call all of the handlers for the given objects.  Handlers are
-subscription adapter factories that don't produce anything.  They do
-all of their work when called.  Handlers are typically used to handle
-events.
+Appelle tous les gestionnaires pour un objet donné. Les gestionnaires sont des
+fabriques d'adaptateurs d'abonnement qui ne produisent rien. Ils font tout leur
+travail lors de l'appel. Ils sont typiquement utilisés pour gérer des
+événements.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `handle(*objects)`
+ - Signature : `handle(*objects)`
 
-Example::
+Exemple ::
 
   >>> import datetime
 
@@ -2840,13 +3569,13 @@ Example::
 implementedBy
 ~~~~~~~~~~~~~
 
-Return the interfaces implemented for a class' instances.
+Renvoie les interfaces implémentées par une classe.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `implementedBy(class_)`
+ - Signature : `implementedBy(class_)`
 
-Example 1::
+Exemple 1 ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -2866,7 +3595,7 @@ Example 1::
   >>> implementedBy(Greeter)
   <implementedBy __builtin__.Greeter>
 
-Example 2::
+Exemple 2 ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2887,7 +3616,8 @@ Example 2::
 
   >>> from zope.interface import implementedBy
 
-  To get a list of all interfaces implemented by that class::
+  Pour récupérer une liste de toutes les interfaces implémentées par cette
+  classe::
 
   >>> [x.__name__ for x in implementedBy(Person)]
   ['IPerson', 'ISpecial']
@@ -2896,15 +3626,15 @@ Example 2::
 implementer
 ~~~~~~~~~~~
 
-Create a decorator for declaring interfaces implemented by a factory.
-A callable is returned that makes an implements declaration on objects
-passed to it.
+Créer un décorateur permettant de déclarer des interfaces implémentées par une
+fabrique. Un objet appelable est retourné qui fait une déclaration
+d'implémentation sur les objets qui lui sont transmis.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `implementer(*interfaces)`
+ - Signature : `implementer(*interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import implementer
   >>> class IFoo(Interface):
@@ -2923,17 +3653,17 @@ Example::
 implements
 ~~~~~~~~~~
 
-Declare interfaces implemented by instances of a class This function
-is called in a class definition.  The arguments are one or more
-interfaces.  The interfaces given are added to any interfaces
-previously declared.  Previous declarations include declarations for
-base classes unless implementsOnly was used.
+Déclare que des interfaces seront fournies par une classe. Cette fonction est
+appelée dans une définition de classe. Les arguments sont une ou plusieurs
+interfaces. Les interfaces données sont ajoutées aux interfaces précédemment
+déclarées. Les déclarations précédentes incluent les déclarations des classes
+debase, à moins que `implementsOnly` ne soit utilisé.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `implements(*interfaces)`
+ - Signature : `implements(*interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -2957,19 +3687,20 @@ Example::
   >>> IPerson in providedBy(jack)
   True
 
+
 implementsOnly
 ~~~~~~~~~~~~~~
 
-Declare the only interfaces implemented by instances of a class.  This
-function is called in a class definition.  The arguments are one or
-more interfaces.  Previous declarations including declarations for
-base classes are overridden.
+Déclare les seules interfaces qui doivent être implémentées par une classe.
+Cette fonction est appelée dans la définition de classe. Les arguments sont une
+ou plusieurs interfaces. Les déclarations précédentes, y compris celles des
+classes de base, sont remplacées.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `implementsOnly(*interfaces)`
+ - Signature : `implementsOnly(*interfaces)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -3005,35 +3736,78 @@ Example::
   True
 
 
+Interface
+~~~~~~~~~
+
+Grâce à cette classe, vous pouvez définir une interface. Pour définir une
+interface, contentez-vous d'hériter de cette classe.
+
+ - Emplacement : ``zope.interface``
+
+ - Signature : `Interface(name, doc='')`
+
+Exemple 1 ::
+
+  >>> from zope.interface import Attribute
+  >>> from zope.interface import Interface
+
+  >>> class IPerson(Interface):
+  ...
+  ...     name = Attribute("Name of person")
+  ...     email = Attribute("Email Address")
+
+
+Exemple 2::
+
+  >>> from zope.interface import Interface
+
+  >>> class IHost(Interface):
+  ...
+  ...     def goodmorning(guest):
+  ...         """Say good morning to guest"""
+
+
 moduleProvides
 ~~~~~~~~~~~~~~
 
-Declare interfaces provided by a module.  This function is used in a
-module definition.  The arguments are one or more interfaces.  The
-given interfaces are used to create the module's direct-object
-interface specification.  An error will be raised if the module
-already has an interface specification.  In other words, it is an
-error to call this function more than once in a module definition.
+Déclare les interfaces fournies par un module. Cette fonction est utilisée dans
+une définition de module. Les arguments sont une ou plusieurs interfaces. Les
+interfaces fournies sont utilisées pour créer la spécification d'interface objet
+du module. Une erreur est levée si le module a déjà une spécification
+d'interface. Autrement dit, c'est une erreur d'appeler cette fonction plus d'une
+fois dans une définition de module.
 
-This function is provided for convenience. It provides a more
-convenient way to call directlyProvides for a module.
+Cette fonction est fournie pour des raisons pratiques. Elle fournit une manière
+plus pratique d'appeler ``directlyProvides`` pour un module.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `moduleProvides(*interfaces)`
+ - Signature : `moduleProvides(*interfaces)`
+
+ - Voir aussi : `directlyProvides`_
+
+Vous pouvez consulter un exemple d'utilisation dans le code source de
+`zope.component` lui-même. Le fichier `__init__.py` possède celle
+instruction::
+
+  moduleProvides(IComponentArchitecture,
+                 IComponentRegistrationConvenience)
+
+Ainsi, le paquet `zope.component` fournit deux interfaces :
+`IComponentArchitecture` et `IComponentRegistrationConvenience`.
 
 
 noLongerProvides
 ~~~~~~~~~~~~~~~~
 
-Remove an interface from the list of an object's directly provided
-interfaces.
+Retire une interface de la liste des interfaces directements fournies par un
+objet.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `noLongerProvides(object, interface)`
+ - Signature : `noLongerProvides(object, interface)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -3076,39 +3850,38 @@ Example::
 provideAdapter
 ~~~~~~~~~~~~~~
 
-It is recommend to use `registerAdapter`_ .
+Il est recommandé d'utilier `registerAdapter`_ .
 
 
 provideHandler
 ~~~~~~~~~~~~~~
 
-It is recommend to use `registerHandler`_ .
+Il est recommandé d'utiliser `registerHandler`_ .
 
 
 provideSubscriptionAdapter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is recommend to use `registerSubscriptionAdapter`_ .
+Il est recommandé d'utiliser `registerSubscriptionAdapter`_ .
 
 
 provideUtility
 ~~~~~~~~~~~~~~
 
-It is recommend to use `registerUtility`_ .
+Il est recommandé d'utiliser `registerUtility`_ .
 
 
 providedBy
 ~~~~~~~~~~
 
-Test whether the interface is implemented by the object. Return true
-if the object asserts that it implements the interface, including
-asserting that it implements an extended interface.
+Teste si l'interface est implémentée par l'objet. Renvoie True si l'objet
+affirme qu'il implémente l'interface, y compris les interfaces étendues.
 
- - Location: ``zope.interface``
+ - Emplacement : ``zope.interface``
 
- - Signature: `providedBy(object)`
+ - Signature : `providedBy(object)`
 
-Example 1::
+Exemple 1::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -3132,7 +3905,7 @@ Example 1::
   >>> IPerson in providedBy(jack)
   True
 
-Example 2::
+Exemple 2::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
@@ -3163,22 +3936,22 @@ Example 2::
 queryAdapter
 ~~~~~~~~~~~~
 
-Look for a named adapter to an interface for an object.  Returns an
-adapter that can adapt object to interface.  If a matching adapter
-cannot be found, returns the default.
+Recherche pour un objet un adaptateur nommé vers une interface. Renvoie un
+adaptateur qui peut s'adapter à un objet et fournir une interface. Si aucun
+adaptateur ne peut être trouvé, la valeur par défaut est renvoyée.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `queryAdapter(object, interface=Interface, name=u'',
+ - Signature : `queryAdapter(object, interface=Interface, name=u'',
    default=None, context=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3187,9 +3960,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3197,7 +3970,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3212,32 +3985,50 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
-  >>> queryAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 queryAdapterInContext
 ~~~~~~~~~~~~~~~~~~~~~
 
-Instead of this function, use `context` argument of `queryAdapter`_
-function.
+Recherche pour un objet un adaptateur spécial vers une interface.
 
- - Location: ``zope.component``
+NOTE : cette méthode ne doit être utilisée que si un contexte personnalisé doit
+être fourni lors d'une recherche de composant personnalisée. Sinon, appelez
+l'interface comme ci-dessous:: 
 
- - Signature: `queryAdapterInContext(object, interface, context,
+  interface(object, default)
+
+Renvoie un adaptateur qui peut s'adapter à l'objet et fournir l'interface. Si
+aucun adaptateur n'est fourni, la valeur par défaut est renvoyée.
+
+Le contexte est adapté à IServiceService, et ce service d'adaptateurs, fourni par
+l'adaptateur, est utilisé.
+
+Si l'objet possède une méthode __conform__, cette méthode est appelée avec
+l'interface demandée. Si la méthode renvoie une valeur différente de None, cette
+valeur est retournée. Sinon, si l'objet implémente déjà l'interface, cet objet
+est renvoyé.
+
+ - Emplacement : ``zope.component``
+
+ - Signature : `queryAdapterInContext(object, interface, context,
    default=None)`
 
-Example::
+ - Voir aussi : `getAdapterInContext`_
+
+Example ::
 
   >>> from zope.component.globalregistry import BaseGlobalComponents
   >>> from zope.component import IComponentLookup
@@ -3255,8 +4046,8 @@ Example::
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3265,9 +4056,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3275,7 +4066,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3290,39 +4081,40 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> sm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar)
+  >>> sm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk)
 
-  >>> from zope.component import getAdapterInContext
   >>> from zope.component import queryAdapterInContext
 
-  >>> queryAdapterInContext(jack, IRegistrar, sm) #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapterInContext(jack, IDesk, sm) #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 queryMultiAdapter
 ~~~~~~~~~~~~~~~~~
 
-Look for a multi-adapter to an interface for objects.  Returns a
-multi-adapter that can adapt objects to interface.  If a matching
-adapter cannot be found, returns the default.  The name consisting of
-an empty string is reserved for unnamed adapters.  The unnamed adapter
-methods will often call the named adapter methods with an empty string
-for a name.
+Recherche pour des objets un multi-adaptateur vers une interface. Cette fonction
+renvoie un multi-adaptateur qui peut adapter les objets à l'interface. Si aucun
+adaptateur ne peut être trouvé, la valeur par défaut est renvoyée. Le nom
+correspondant à la chaîne vide est réservé aux adaptateurs sans nom. Les
+methodes des adaptateurs sans nom appellent souvent les méthodes des adaptateurs
+nommés avec un nom vide ('').
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `queryMultiAdapter(objects, interface=Interface,
+ - Signature : `queryMultiAdapter(objects, interface=Interface,
    name=u'', default=None, context=None)`
 
-Example::
+ - Voir aussi : `getMultiAdapter`_
+
+Exemple::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -3374,14 +4166,14 @@ Example::
 queryUtility
 ~~~~~~~~~~~~
 
-Look up a utility that provides an interface.  If one is not found,
-returns default.
+Cette fonction est utilisée pour rechercher un utilitaire qui fournit une
+interface. Si aucun n'est trouvé, la valeur par défaut est renvoyée.
 
- - Location: ``zope.component``
+ - Emplacement : ``zope.component``
 
- - Signature: `queryUtility(interface, name='', default=None)`
+ - Signature : `queryUtility(interface, name='', default=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -3412,20 +4204,22 @@ Example::
 registerAdapter
 ~~~~~~~~~~~~~~~
 
-Register an adapter factory.
+Cette fonction est utilisée pour inscrire une fabrique d'adaptateur.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registerAdapter(factory, required=None, provided=None,
+ - Signature : `registerAdapter(factory, required=None, provided=None,
    name=u'', info=u'')`
 
-Example::
+ - Voir aussi : `unregisterAdapter`_
+
+Exemple::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3434,9 +4228,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3444,7 +4238,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3459,39 +4253,39 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng')
 
-  You can test it like this:
+  Vous pouvez tester de cette façon :
 
-  >>> queryAdapter(jack, IRegistrar, 'ng') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
 
 registeredAdapters
 ~~~~~~~~~~~~~~~~~~
 
-Return an iterable of `IAdapterRegistrations`.  These registrations
-describe the current adapter registrations in the object.
+Renvoie un objet iterable listant les `IAdapterRegistrations`. Ces inscriptions
+décrivent les inscriptions d'adaptateurs actuelles valables.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registeredAdapters()`
+ - Signature : `registeredAdapters()`
 
-Example::
+Exemple::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3500,9 +4294,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3510,7 +4304,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3525,15 +4319,15 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng2')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng2')
 
 
   >>> reg_adapter = list(gsm.registeredAdapters())
@@ -3544,14 +4338,14 @@ Example::
 registeredHandlers
 ~~~~~~~~~~~~~~~~~~
 
-Return an iterable of `IHandlerRegistrations`.  These registrations
-describe the current handler registrations in the object.
+Renvoie un objet iterable listant les `IHandlerRegistrations`. Ces inscriptions
+décrivent les inscriptions de gestionnaires actuelles.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registeredHandlers()`
+ - Signature : `registeredHandlers()`
 
-Example::
+Exemple::
 
   >>> import datetime
 
@@ -3600,15 +4394,14 @@ Example::
 registeredSubscriptionAdapters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Return an iterable of `ISubscriptionAdapterRegistrations`.  These
-registrations describe the current subscription adapter registrations
-in the object.
+Renvoie un objet iterable listant les `ISubscriptionAdapterRegistrations`. Ces
+inscriptions décrivent les inscriptions d'adaptateurs d'abonnement actuelles.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registeredSubscriptionAdapters()`
+ - Signature : `registeredSubscriptionAdapters()`
 
-Example::
+Example ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -3661,14 +4454,14 @@ Example::
 registeredUtilities
 ~~~~~~~~~~~~~~~~~~~
 
-Return an iterable of `IUtilityRegistrations` .  These registrations
-describe the current utility registrations in the object.
+Cette fonction renvoie un objet iterable listant les `IUtilityRegistrations`.
+Ces inscriptions décrivent les inscriptions d'utilitaires actuelles.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registeredUtilities()`
+ - Signature : `registeredUtilities()`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -3698,17 +4491,20 @@ Example::
 registerHandler
 ~~~~~~~~~~~~~~~
 
-Register a handler.  A handler is a subscriber that doesn't compute an
-adapter but performs some function when called.
+Cette fonction est utilisée pour inscrire un gestionnaire. Un gestionnaire est
+un abonné qui ne crée pas d'adaptateur, mais effectue un traitement lorsqu'il
+est appelé.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registerHandler(handler, required=None, name=u'', info='')`
+ - Signature : `registerHandler(handler, required=None, name=u'', info='')`
 
-In the current implementation of ``zope.component`` doesn't support
-`name` attribute.
+ - Voir aussi : `unregisterHandler`_
 
-Example::
+Note : l'implémentation actuelle de ``zope.component`` ne prend pas en charge
+l'attribut `name`.
+
+Exemple ::
 
   >>> import datetime
 
@@ -3754,14 +4550,16 @@ Example::
 registerSubscriptionAdapter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Register a subscriber factory.
+Cette fonction est utilisée pour inscrire une fabrique d'abonné.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registerSubscriptionAdapter(factory, required=None,
+ - Signature : `registerSubscriptionAdapter(factory, required=None,
    provides=None, name=u'', info='')`
 
-Example::
+ - Voir aussi : `unregisterSubscriptionAdapter`_
+
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -3810,14 +4608,16 @@ Example::
 registerUtility
 ~~~~~~~~~~~~~~~
 
-Register a utility.
+Cette fonction est utilisée pour inscrire un utilitaire.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `registerUtility(component, provided=None, name=u'',
+ - Signature : `registerUtility(component, provided=None, name=u'',
    info=u'')`
 
-Example::
+ - Voir aussi : `unregisterUtility`_
+
+Exemple::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -3843,15 +4643,15 @@ Example::
 subscribers
 ~~~~~~~~~~~
 
-Get subscribers.  Subscribers are returned that provide the provided
-interface and that depend on and are computed from the sequence of
-required objects.
+Cette fonction est utilisée pour récupérer les abonnés. Les abonnés qui
+fournissent l'interface souhaités et qui dépendent de la séquence d'objets
+fournis sont renvoyés.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `subscribers(required, provided, context=None)`
+ - Signature : `subscribers(required, provided, context=None)`
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -3933,24 +4733,25 @@ Example::
 unregisterAdapter
 ~~~~~~~~~~~~~~~~~
 
-Register an adapter factory.  A boolean is returned indicating whether
-the registry was changed.  If the given component is None and there is
-no component registered, or if the given component is not None and is
-not registered, then the function returns False, otherwise it returns
-True.
+Cette fonction est utilisée pour désinscrire une fabrique d'adaptateur. Un
+booléen est renvoyé, indiquant si le registre a été modifié. Si le composant
+donné est None et qu'il n'y a aucun composant inscrit, ou si le composant donné
+n'est None mais n'est pas inscrit, alors la fonction renvoie False. Sinon True.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `unregisterAdapter(factory=None, required=None,
+ - Signature : `unregisterAdapter(factory=None, required=None,
    provided=None, name=u'')`
 
-Example::
+ - Voir aussi : `registerAdapter`_
+
+Exemple ::
 
   >>> from zope.interface import Attribute
   >>> from zope.interface import Interface
 
-  >>> class IRegistrar(Interface):
-  ...     """A registrar will register object's details"""
+  >>> class IDesk(Interface):
+  ...     """A frontdesk will register object's details"""
   ...
   ...     def register():
   ...         """Register object's details"""
@@ -3959,9 +4760,9 @@ Example::
   >>> from zope.interface import implements
   >>> from zope.component import adapts
 
-  >>> class GuestRegistrarNG(object):
+  >>> class FrontDeskNG(object):
   ...
-  ...     implements(IRegistrar)
+  ...     implements(IDesk)
   ...     adapts(IGuest)
   ...
   ...     def __init__(self, guest):
@@ -3969,7 +4770,7 @@ Example::
   ...
   ...     def register(self):
   ...         next_id = get_next_id()
-  ...         guests_db[next_id] = {
+  ...         bookings_db[next_id] = {
   ...         'name': guest.name,
   ...         'place': guest.place,
   ...         'phone': guest.phone
@@ -3984,45 +4785,47 @@ Example::
   ...         self.place = place
 
   >>> jack = Guest("Jack", "Bangalore")
-  >>> jack_registrar = GuestRegistrarNG(jack)
+  >>> jack_frontdesk = FrontDeskNG(jack)
 
-  >>> IRegistrar.providedBy(jack_registrar)
+  >>> IDesk.providedBy(jack_frontdesk)
   True
 
   >>> from zope.component import getGlobalSiteManager
   >>> gsm = getGlobalSiteManager()
-  >>> gsm.registerAdapter(GuestRegistrarNG,
-  ...                     (IGuest,), IRegistrar, 'ng6')
+  >>> gsm.registerAdapter(FrontDeskNG,
+  ...                     (IGuest,), IDesk, 'ng6')
 
-  You can test it like this:
+  Vous pouvez tester de cette façon :
 
-  >>> queryAdapter(jack, IRegistrar, 'ng6') #doctest: +ELLIPSIS
-  <GuestRegistrarNG object at ...>
+  >>> queryAdapter(jack, IDesk, 'ng6') #doctest: +ELLIPSIS
+  <FrontDeskNG object at ...>
 
-  Now unregister:
+  Maintenant on peut faire la désinscriptin :
 
-  >>> gsm.unregisterAdapter(GuestRegistrarNG, name='ng6')
+  >>> gsm.unregisterAdapter(FrontDeskNG, name='ng6')
   True
 
-  After unregistration:
+  Après la désinscription :
 
-  >>> print queryAdapter(jack, IRegistrar, 'ng6')
+  >>> print queryAdapter(jack, IDesk, 'ng6')
   None
 
 
 unregisterHandler
 ~~~~~~~~~~~~~~~~~
 
-Unregister a handler.  A handler is a subscriber that doesn't compute
-an adapter but performs some function when called.  A boolean is
-returned indicating whether the registry was changed.
+Cette fonction est utilisée pour désinscrire un gestionnaire. Un gestionnaire
+est un abonné qui ne crée pas d'adaptateur, mais effectue un traitement lors de
+son appel. Un booléen et renvoyé, indiquant si le registre a été modifié.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `unregisterHandler(handler=None, required=None,
+ - Signature : `unregisterHandler(handler=None, required=None,
    name=u'')`
 
-Example::
+ - Voir aussi : `registerHandler`_
+
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -4083,19 +4886,19 @@ Example::
 unregisterSubscriptionAdapter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unregister a subscriber factory.  A boolean is returned indicating
-whether the registry was changed.  If the given component is None and
-there is no component registered, or if the given component is not
-None and is not registered, then the function returns False, otherwise
-it returns True.
+Cette fonction est utilisée pour désinscrire une fabrique d'abonné. Un
+booléen est renvoyé, indiquant si le registre a été modifié. Si le composant
+donné est None et qu'il n'y a aucun composant inscrit, ou si le composant donné
+n'est None mais n'est pas inscrit, alors la fonction renvoie False. Sinon True.
 
- - Location: ``zope.component - IComponentRegistry``
+ - Emplacement : ``zope.component - IComponentRegistry``
 
- - Signature: `unregisterSubscriptionAdapter(factory=None,
+ - Signature : `unregisterSubscriptionAdapter(factory=None,
    required=None, provides=None, name=u'')`
 
+ - Voir aussi : `registerSubscriptionAdapter`_
 
-Example::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
@@ -4148,12 +4951,12 @@ Example::
   ...  if adapter.validate()]
   ['too short']
 
-  Now unregister:
+  Mainenant on peut effectuer la désinscription :
 
   >>> gsm.unregisterSubscriptionAdapter(AdequateLength)
   True
 
-  After unregistration:
+  Après la désinscription :
 
   >>> [adapter.validate()
   ...  for adapter in subscribers([doc], IValidate)
@@ -4164,18 +4967,19 @@ Example::
 unregisterUtility
 ~~~~~~~~~~~~~~~~~
 
-Unregister a utility.  A boolean is returned indicating whether the
-registry was changed.  If the given component is None and there is no
-component registered, or if the given component is not None and is not
-registered, then the function returns False, otherwise it returns
-True.
+Cette fonction est utilisée pour désinscrire un utilitaire. Un
+booléen est renvoyé, indiquant si le registre a été modifié. Si le composant
+donné est None et qu'il n'y a aucun composant inscrit, ou si le composant donné
+n'est None mais n'est pas inscrit, alors la fonction renvoie False. Sinon True.
 
  - Location: ``zope.component - IComponentRegistry``
 
  - Signature: `unregisterUtility(component=None, provided=None,
    name=u'')`
 
-Example::
+ - See also: `registerUtility`_
+
+Exemple::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import implements
@@ -4200,12 +5004,12 @@ Example::
   >>> queryUtility(IGreeter).greet('Jack')
   'Hello Jack'
 
-  Now unregister:
+  Maintenant on peut effectuer la désinscription :
 
   >>> gsm.unregisterUtility(greet)
   True
 
-  After unregistration:
+  Après la désinscription :
 
   >>> print queryUtility(IGreeter)
   None
