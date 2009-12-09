@@ -26,13 +26,13 @@ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF TITLE,
 MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS FOR A PARTICULAR
 PURPOSE.
 
-.. sidebar:: Acknowledgements
+.. sidebar:: Remerciements
 
   De nombreuses personnes m'ont aidé à écrire ce livre. Le brouillon initial a été
   relu par mon collègue Brad Allen. Quand j'ai annoncé ce livre sur mon blog, j'ai
   reçu de nombreux encouragements pour poursuivre ce travail. Kent Tenney a
-  modifié de nombreuses partie du livre et a également réécrit l'application
-  servant d'example. De nombreuses autres personnes m'ont envoyé des corrections
+  modifié de nombreuses parties du livre et a également réécrit l'application
+  servant d'exemple. De nombreuses autres personnes m'ont envoyé des corrections
   et des commentaires, dont Lorenzo Gil Sanchez, Michael Haubenwallner, Nando
   Quintana, Stephane Klein, Tim Cook, Kamal Gill et Thomas Herve. Lorenzo a
   traduit ce travail en espagnol et Stephane initié la traduction en français. Merci à
@@ -42,8 +42,8 @@ PURPOSE.
 .. .. sectnum::
 
 
-Getting started
----------------
+Mise en route
+-------------
 
 
 Introduction
@@ -57,7 +57,7 @@ deviennent actuellement très populaires. L'approche basée composants est d'une
 grande aide pour l'écriture et la maintenance de systèmes logiciels et 
 de leurs tests unitaires. Il existe de nombreux frameworks permettant la
 conception basée sur des composants dans différents langages, certains étant
-même indépendants du langage. On peut citer comme example : COM de Microsoft, ou
+même indépendants du langage. On peut citer comme exemple : COM de Microsoft, ou
 XPCOM de Mozilla.
 
 La **Zope Component Architecture (ZCA)** est un framework en Python qui autorise
@@ -284,7 +284,7 @@ Cette commande démarre un interprète Python que vous pourrez utiliser pour
 lancer le code de ce livre.
 
 
-Un example
+Un exemple
 ----------
 
 
@@ -722,7 +722,7 @@ déclaration peut également s'écrire en dehors de la classe. Au lieu d'écrire
 L'exemple revisité
 ~~~~~~~~~~~~~~~~~~
 
-Maintenant retournons à notre application example. Voici comment définir
+Maintenant retournons à notre application exemple. Voici comment définir
 l'interface de l'objet frontdesk::
 
   >>> from zope.interface import Interface
@@ -4028,7 +4028,7 @@ est renvoyé.
 
  - Voir aussi : `getAdapterInContext`_
 
-Example ::
+Exemple ::
 
   >>> from zope.component.globalregistry import BaseGlobalComponents
   >>> from zope.component import IComponentLookup
@@ -4401,7 +4401,7 @@ inscriptions décrivent les inscriptions d'adaptateurs d'abonnement actuelles.
 
  - Signature : `registeredSubscriptionAdapters()`
 
-Example ::
+Exemple ::
 
   >>> from zope.interface import Interface
   >>> from zope.interface import Attribute
