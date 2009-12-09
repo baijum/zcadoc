@@ -494,9 +494,10 @@ FrontDesk.__init__() et si nous le stockons en attribut de l'instance.
   `adaptateur`. Le `Gang of Four` [#patternbook]_ résume ainsi l'*esprit* de
   l'adaptateur::
 
-    « Convertir l'interface d'une classe en une autre interface à laquelle le client
-    s'attend. L'adaptateur permet à des classes de fonctionner ensemble même si
-    elles ont des interfaces incompatibles. »
+    « Convertir l'interface d'une classe en une autre interface
+    à laquelle le client s'attend. L'adaptateur permet à des
+    classes de fonctionner ensemble même si elles ont des
+    interfaces incompatibles. »
 
 En général, un objet adaptateur *contient* un objet adapté::
 
@@ -544,16 +545,16 @@ Introduction
 Le fichier README.txt [#readmes]_ dans chemin/vers/zope/interface définit les
 interfaces de cette manière::
 
-    Les interfaces sont des objets qui spécifient (documentent) le comportement
-    externe des objets qui les « fournissent ». Un interface spécifie un
-    comportement au travers :
+    Les interfaces sont des objets qui spécifient (documentent) le
+    comportement externe des objets qui les « fournissent ».
+    Une interface spécifie un comportement au travers :
 
     - de documentation informelle dans une docstring
 
     - de définitions d'attributs
 
-    - d'invariants qui sont des conditions posées sur les objets fournissant
-      l'interface.
+    - d'invariants qui sont des conditions posées sur les objets
+    fournissant l'interface.
 
 L'ouvrage de référence `Design Patterns` [#patternbook]_ par le `Gang of Four`
 recommande que vous devez « programmer pour une interface, pas pour une
@@ -636,21 +637,22 @@ Prenez cette exemple d'interface::
   ...     def goodmorning(guest):
   ...         """Say good morning to guest"""
 
-L'interface ``IHost`` possède deux attributs, ``name`` et ``goodmorning``.
-Rappelez-vous qu'en Python les méthodes des classes sont aussi des attributs.
-L'attribut ``name`` est défini en utilisant la classe
+L'interface ``IHost`` possède deux attributs, ``name`` et
+``goodmorning``.  Rappelez-vous qu'en Python les méthodes des classes sont aussi
+des attributs.  L'attribut ``name`` est défini en utilisant la classe
 ``zope.interface.Attribute``. Quand vous ajoutez l'attribut ``name`` à
 l'interface ``IHost``, vous ne définissez pas de valeur initiale. La raison de
 définir l'attribut ``name`` ici est simplement d'indiquer que toute
 implémentation de cette interface doit fournir un attribut nommé ``name``. Dans
 ce cas, vous ne dites même pas de quel type l'attribut doit être ! Vous pouvez
-juste fournir une chaîne de documentation comme premier argument à ``Attribute``.
+juste fournir une chaîne de documentation comme premier argument à
+``Attribute``.
 
 L'autre attribut, ``goodmorning`` est une méthode définie en utilisant une
 fonction. Notez bien que ``self`` n'est pas nécessaire dans les interfaces, car
 ``self`` est un détail d'implémentation de la classe. Il est possible pour un
-module d'implémenter cette interface. Si un module implémente cette interface, cela
-signifiera qu'un attribut ``name`` et une fonction ``goodmorning`` seront
+module d'implémenter cette interface. Si un module implémente cette interface,
+cela signifiera qu'un attribut ``name`` et une fonction ``goodmorning`` seront
 définis. Et la fonction ``goodmorning`` devra accepter un argument.
 
 Nous allons maintenant voir comment effectuer le lien entre les objets, les
@@ -665,8 +667,8 @@ Les objets fournissent des interfaces, tandis que les classes implémentent des
 interfaces. Autrement dit, les objets fournissent les interfaces que les classes
 implémentent. Dans l'exemple ci-dessus, l'objet ``host`` fournit l'interface
 ``IHost`` et la classe ``Host`` implémente l'interface ``IHost``. Un objet peut
-fournir plusieurs interfaces. Les objets peuvent également fournir directement des
-interfaces, en plus de celles implémentées par leur classe.
+fournir plusieurs interfaces. Les objets peuvent également fournir directement
+des interfaces, en plus de celles implémentées par leur classe.
 
 .. note::
 
@@ -1860,15 +1862,15 @@ Utilisez des objets Python classiques quand vous l'avez pas besoin de ces
 propriétés.
 
 Il n'y a pas de différence entre l'utilisation de la ZCA pour une application
-web, pour une application graphique lourde, ou pour toute autre application
-ou framework. Il est préférable de suivre une convention pour l'emplacement où
-vous allez inscrire les composants. Cette application utilise une convention qui
-peut être étendue en plaçant des inscriptions ou des composants similaires dans
-des modules séparés et en les important plus tard depuis le module principal
+web, pour une application graphique lourde, ou pour toute autre application ou
+framework. Il est préférable de suivre une convention pour l'emplacement où vous
+allez inscrire les composants. Cette application utilise une convention qui peut
+être étendue en plaçant des inscriptions ou des composants similaires dans des
+modules séparés et en les important plus tard depuis le module principal
 d'inscription. Dans cette application, le module principal pour l'inscription
 est `register.py`.
 
-Le code source de cette application peut être téléchargé sur:
+Le code source de cette application peut être téléchargé sur :
 http://www.muthukadan.net/downloads/zcalib.tar.bz2
 
 
