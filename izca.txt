@@ -48,28 +48,28 @@ Introduction
 ~~~~~~~~~~~~
 
 Developing a large software system is always very complicated.  An
-object oriented approach to analysis, design and programming has been
-shown to be well suited for dealing with large systems.  Component
-based design, and programming using components are becoming very
-popular these days.  Component based approach helps you to write and
+object-oriented approach to analysis, design and programming has been
+shown to be well-suited for dealing with large systems.  Component-
+based design and programming is becoming very
+popular these days.  A component-based approach helps you to write and
 maintain easily unit-testable software systems.  There are many
-frameworks for supporting component based design in different
-languages, some are even language neutral.  Examples of these are
+frameworks for supporting component-based design in different
+languages; some are even language neutral.  Examples of these are
 Microsoft's COM and Mozilla's XPCOM.
 
 **Zope Component Architecture (ZCA)** is a Python framework for
-supporting component based design and programming.  It is very well
+supporting component-based design and programming.  It is very well-
 suited to developing large Python software systems.  The ZCA is not
-specific to the Zope web application server: it can be used for
-developing any Python application.  Maybe it should be called as
+specific to the Zope web application server; it can be used for
+developing any Python application.  Maybe it should be called
 `Python Component Architecture`.
 
 The ZCA is all about using Python objects effectively.  Components
 are reusable objects with introspectable interfaces.  An interface is
 an object that describes how you work with a particular component.
-In other words, component provides an interface implemented in a
+In other words, a component provides an interface implemented in a
 class, or any other callable object.  It doesn't matter how the
-component is implemented, the important part is that it comply with
+component is implemented; the important part is that it complies with
 its interface contracts.  Using ZCA, you can spread the complexity of
 systems over multiple cooperating components.  It helps you to create
 two basic kinds of components: `adapter` and `utility`.
